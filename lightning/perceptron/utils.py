@@ -1,5 +1,3 @@
-import math
-
 import pytorch_lightning as pl
 import torch
 import wandb
@@ -63,22 +61,11 @@ class LoggedLitModule(pl.LightningModule):
                 self.log_examples(xs, ys, y_hats)
 
     def detect_loss(self):
-        try:
-            loss_on_test_values = self.loss(torch.tensor([0.]), torch.tensor([2.]))
-            if loss_on_test_values == 4.:
-                return "mse"
-            elif loss_on_test_values == 2.:
-                return "mae"
-            elif loss_on_test_values == math.log(2):
-                return "binary_cross_entropy_with_logits"
-            elif loss_on_test_values == 200.:
-                return "binary_cross_entropy"
-            else:
-                return "unknown"
-        except AttributeError:
+        classname = self.loss.__class__.__name__
+        if classname in ["method", "function"]:
             return "unknown"
-        except ValueError:
-            return "unknown"
+        else:
+            return classname
 
     def detect_optimizer(self):
         return self.optimizers().__class__.__name__
