@@ -91,10 +91,10 @@ class LoggedImageClassifierModule(LoggedLitModule):
                           ys[:self.max_logged_inputs],
                           y_hats[:self.max_logged_inputs])
 
-        if ys.shape[1] == 1:    # handle single-class case
+        if y_hats.shape[1] == 1:  # handle single-class case
             preds = torch.greater(y_hats, 0.5)
             preds = [bool(pred) for pred in preds]
-        else:    # assume we are in the typical one-hot case
+        else:  # assume we are in the typical one-hot case
             preds = torch.argmax(y_hats, 1)
 
         images_with_predictions = [
