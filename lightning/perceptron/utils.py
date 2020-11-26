@@ -48,7 +48,7 @@ class LoggedLitModule(pl.LightningModule):
 
     def do_logging(self, xs, ys, idx, y_hats, scalars, step="training"):
         for name, value in scalars.items():
-            self.log(name, value)
+            self.log(step + "/" + name, value)
 
         if idx == 0:
             if "x_range" not in wandb.run.config.keys():
@@ -91,7 +91,7 @@ class LoggedImageClassifierModule(LoggedLitModule):
                           ys[:self.max_logged_inputs],
                           y_hats[:self.max_logged_inputs])
 
-        if y_hats.shape[1] == 1:  # handle single-class case
+        if y_hats.shape[-1] == 1:  # handle single-class case
             preds = torch.greater(y_hats, 0.5)
             preds = [bool(pred) for pred in preds]
         else:  # assume we are in the typical one-hot case
