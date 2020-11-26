@@ -60,7 +60,8 @@ class LoggedLitModule(pl.LightningModule):
             if "nparams" not in wandb.run.config.keys():
                 wandb.run.config["nparams"] = self.count_params()
             if self.max_logged_inputs > 0:
-                self.log_examples(xs, ys, y_hats)
+                if step == "training":
+                    self.log_examples(xs, ys, y_hats)
 
     def detect_loss(self):
         classname = self.loss.__class__.__name__
