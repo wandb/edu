@@ -57,6 +57,8 @@ class LoggedLitModule(pl.LightningModule):
                 wandb.run.config["loss"] = self.detect_loss()
             if "optimizer" not in wandb.run.config.keys():
                 wandb.run.config["optimizer"] = self.detect_optimizer()
+            if "nparams" not in wandb.run.config.keys():
+                wandb.run.config["nparams"] = self.count_params()
             if self.max_logged_inputs > 0:
                 self.log_examples(xs, ys, y_hats)
 
@@ -69,6 +71,9 @@ class LoggedLitModule(pl.LightningModule):
 
     def detect_optimizer(self):
         return self.optimizers().__class__.__name__
+
+    def count_params(self):
+        return sum(p.numel() for p in self.parameters())
 
     def log_examples(*args, **kwargs):
         raise NotImplementedError
