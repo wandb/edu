@@ -59,6 +59,8 @@ class LoggedLitModule(pl.LightningModule):
                 wandb.run.config["optimizer"] = self.detect_optimizer()
             if "nparams" not in wandb.run.config.keys():
                 wandb.run.config["nparams"] = self.count_params()
+            if "dropout" not in wandb.run.config.keys():
+                wandb.run.config["dropout"] = self.detect_dropout()
             if self.max_logged_inputs > 0:
                 if step == "training":
                     self.log_examples(xs, ys, y_hats)
@@ -75,6 +77,12 @@ class LoggedLitModule(pl.LightningModule):
 
     def count_params(self):
         return sum(p.numel() for p in self.parameters())
+
+    def detect_dropout(self):
+        for module in self.modules():
+            if isinstance(module, torch.nn.Dropout):
+                return module.p
+        return 0
 
     def log_examples(*args, **kwargs):
         raise NotImplementedError
