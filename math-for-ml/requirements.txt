@@ -1,0 +1,8 @@
+autograd==1.3
+nbgitpuller==0.8.0
+okpy==1.15.0
+tensorflow==2.2.0
+torch==1.5.1
+torchvision==0.6.1
+torchviz==0.0.1
+wandb==0.9.1
