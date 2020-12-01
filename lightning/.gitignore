@@ -1,0 +1,5 @@
+wandb-debug.log
+**/wandb/*
+!**/wandb/settings
+**/__pycache__
+**/.ipynb_checkpoints
