@@ -1,0 +1,3 @@
+[default]
+entity=wandb
+project=emotion-video
