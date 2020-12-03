@@ -20,7 +20,7 @@ class LoggedLitModule(pl.LightningModule):
 
         self.max_logged_inputs = max_logged_inputs
 
-    def on_fit_start(self):
+    def on_pretrain_routine_start(self):
         print(self)
         print(f"Parameter Count: {self.count_params()}")
 
