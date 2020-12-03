@@ -47,8 +47,8 @@ class LoggedLitModule(pl.LightningModule):
         self.do_logging(xs, ys, idx, y_hats, logging_scalars, step="validation")
 
     def do_logging(self, xs, ys, idx, y_hats, scalars, step="training"):
-        for name, value in scalars.items():
-            self.log(step + "/" + name, value)
+        self.log_dict(
+            {step + "/" + name: value for name, value in scalars.items()})
 
         if idx == 0:
             if "x_range" not in wandb.run.config.keys():
