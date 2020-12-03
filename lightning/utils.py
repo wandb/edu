@@ -20,6 +20,10 @@ class LoggedLitModule(pl.LightningModule):
 
         self.max_logged_inputs = max_logged_inputs
 
+    def on_fit_start(self):
+        print(self)
+        print(f"Parameter Count: {self.count_params()}")
+
     def training_step(self, xys, idx):
         xs, ys = xys
         y_hats = self.forward(xs)
