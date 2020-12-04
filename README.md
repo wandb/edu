@@ -3,7 +3,7 @@
 # Learn Machine Learning
 
 This repository contains materials for learning to do machine learning,
-organized into separate courses, linked below.
+organized by topic, linked below.
 
 ## ⚡ [Learn deep learning with PyTorch Lightning →](https://github.com/wandb/edu/tree/main/lightning)
 
