@@ -103,7 +103,7 @@ class LoggedLitModule(pl.LightningModule):
         params_dict = dict(list(self.named_parameters()))
         graph = torchviz.make_dot(ys, params=params_dict)
         graph.format = "png"
-        fname = Path(self.logger.save_dir) / "graph"
+        fname = Path(self.logger.experiment.dir) / "graph"
         graph.render(fname)
         wandb.save(fname + graph.format)
         self.graph_logged = True
