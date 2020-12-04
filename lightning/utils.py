@@ -1,6 +1,14 @@
+from pathlib import Path
+
 import pytorch_lightning as pl
 import torch
 import wandb
+
+try:
+    import torchviz
+    no_torchviz = False
+except ImportError:
+    no_torchviz = True
 
 
 class LoggedLitModule(pl.LightningModule):
@@ -19,6 +27,7 @@ class LoggedLitModule(pl.LightningModule):
         self.validation_metrics = []
 
         self.max_logged_inputs = max_logged_inputs
+        self.graph_logged = False
 
     def on_pretrain_routine_start(self):
         print(self)
@@ -68,6 +77,8 @@ class LoggedLitModule(pl.LightningModule):
             if self.max_logged_inputs > 0:
                 if step == "training":
                     self.log_examples(xs, ys, y_hats)
+            if not (self.graph_logged or no_torchviz):
+                self.log_graph(ys)
 
     def detect_loss(self):
         classname = self.loss.__class__.__name__
@@ -87,6 +98,15 @@ class LoggedLitModule(pl.LightningModule):
             if isinstance(module, torch.nn.Dropout):
                 return module.p
         return 0
+
+    def log_graph(self, ys):
+        params_dict = dict(list(self.named_parameters()))
+        graph = torchviz.make_dot(ys, params=params_dict)
+        graph.format = "png"
+        fname = Path(self.logger.save_dir) / "graph"
+        graph.render(fname)
+        wandb.save(fname + graph.format)
+        self.graph_logged = True
 
     def log_examples(*args, **kwargs):
         raise NotImplementedError
