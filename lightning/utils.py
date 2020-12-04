@@ -74,11 +74,11 @@ class LoggedLitModule(pl.LightningModule):
                 wandb.run.config["nparams"] = self.count_params()
             if "dropout" not in wandb.run.config.keys():
                 wandb.run.config["dropout"] = self.detect_dropout()
-            if self.max_logged_inputs > 0:
-                if step == "training":
+            if step == "training":
+                if self.max_logged_inputs > 0:
                     self.log_examples(xs, ys, y_hats)
-            if not (self.graph_logged or no_torchviz):
-                self.log_graph(ys)
+                if not (self.graph_logged or no_torchviz):
+                    self.log_graph(y_hats)
 
     def detect_loss(self):
         classname = self.loss.__class__.__name__
@@ -99,9 +99,9 @@ class LoggedLitModule(pl.LightningModule):
                 return module.p
         return 0
 
-    def log_graph(self, ys):
+    def log_graph(self, y_hats):
         params_dict = dict(list(self.named_parameters()))
-        graph = torchviz.make_dot(ys, params=params_dict)
+        graph = torchviz.make_dot(y_hats, params=params_dict)
         graph.format = "png"
         fname = Path(self.logger.experiment.dir) / "graph"
         graph.render(fname)
