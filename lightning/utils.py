@@ -105,7 +105,7 @@ class LoggedLitModule(pl.LightningModule):
         graph.format = "png"
         fname = Path(self.logger.experiment.dir) / "graph"
         graph.render(fname)
-        wandb.save(fname.with_suffix(graph.format))
+        wandb.save(fname.with_suffix("." + graph.format))
         self.graph_logged = True
 
     def log_examples(*args, **kwargs):
