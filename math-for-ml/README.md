@@ -1,3 +1,5 @@
+<img src="https://i.imgur.com/gb6B4ig.png" width="400" alt="Weights & Biases" />
+
 # Math for Machine Learning
 
 This short course introduces the core concepts and intuitions
