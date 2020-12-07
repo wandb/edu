@@ -16,7 +16,7 @@ they are intended for use in one of three ways.
 
 ## Binder - One-Click Version
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/wandb/edu/math-for-ml-qc/master)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/wandb/edu/math-for-ml-qc/main)
 
 If you click the badge above,
 you'll launch a free cloud server
