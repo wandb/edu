@@ -138,7 +138,7 @@ class LoggedImageClassifierModule(LoggedLitModule):
             preds = torch.argmax(y_hats, 1)
 
         if self.labels is None:
-            self.labels = {ii: ii for ii in range(torch.max(preds))}
+            self.labels = {ii: ii for ii in range(torch.max(preds) + 1)}
         preds = [self.labels[int(pred)] for pred in preds]
 
         images_with_predictions = [
