@@ -114,7 +114,7 @@ class LoggedLitModule(pl.LightningModule):
 
 class LoggedImageClassifierModule(LoggedLitModule):
 
-    def __init__(self, max_images_to_display=32):
+    def __init__(self, max_images_to_display=32, labels=None):
 
         super().__init__(max_logged_inputs=max_images_to_display)
 
@@ -123,6 +123,8 @@ class LoggedImageClassifierModule(LoggedLitModule):
 
         self.training_metrics.append(self.train_acc)
         self.validation_metrics.append(self.valid_acc)
+
+        self.labels = labels
 
     def log_examples(self, xs, ys, y_hats):
         xs, ys, y_hats = (xs[:self.max_logged_inputs],
@@ -134,6 +136,10 @@ class LoggedImageClassifierModule(LoggedLitModule):
             preds = [bool(pred) for pred in preds]
         else:  # assume we are in the typical one-hot case
             preds = torch.argmax(y_hats, 1)
+
+        if self.labels is None:
+            self.labels = {ii: ii for ii in range(torch.max(preds))}
+        preds = [self.labels[pred] for pred in preds]
 
         images_with_predictions = [
             wandb.Image(x, caption=f"Pred: {pred}")
