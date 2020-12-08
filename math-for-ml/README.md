@@ -1,3 +1,5 @@
+<img src="https://i.imgur.com/gb6B4ig.png" width="400" alt="Weights & Biases" />
+
 # Math for Machine Learning
 
 This short course introduces the core concepts and intuitions
@@ -16,7 +18,7 @@ they are intended for use in one of three ways.
 
 ## Binder - One-Click Version
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/wandb/edu/math-for-ml-qc/master)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/wandb/edu/main?filepath=math-for-ml%2Fexercises)
 
 If you click the badge above,
 you'll launch a free cloud server
