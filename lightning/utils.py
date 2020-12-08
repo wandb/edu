@@ -137,9 +137,8 @@ class LoggedImageClassifierModule(LoggedLitModule):
         else:  # assume we are in the typical one-hot case
             preds = torch.argmax(y_hats, 1)
 
-        if self.labels is None:
-            self.labels = {ii: ii for ii in range(torch.max(preds) + 1)}
-        preds = [self.labels[int(pred)] for pred in preds]
+        if self.labels is not None:
+            preds = [self.labels[int(pred)] for pred in preds]
 
         images_with_predictions = [
             wandb.Image(x, caption=f"Pred: {pred}")
