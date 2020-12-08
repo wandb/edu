@@ -139,7 +139,7 @@ class LoggedImageClassifierModule(LoggedLitModule):
 
         if self.labels is None:
             self.labels = {ii: ii for ii in range(torch.max(preds))}
-        preds = [self.labels[pred] for pred in preds]
+        preds = [self.labels[int(pred)] for pred in preds]
 
         images_with_predictions = [
             wandb.Image(x, caption=f"Pred: {pred}")
