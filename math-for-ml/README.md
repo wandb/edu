@@ -10,7 +10,7 @@ calculus,
 and probability.
 
 These notebooks are supplementary to
-a lecture series (not included)
+a [YouTube lecture series](https://www.youtube.com/watch?v=uZeDTwWcnuY&list=PLD80i8An1OEGZ2tYimemzwC3xqkU0jKUg)
 and presume proficiency with Python.
 
 Outside of official offerings of the course,
