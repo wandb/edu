@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/gb6B4ig.png" width="400" alt="Weights & Biases" />
+<div style="text-align:center"> <img src="https://i.imgur.com/Ze1y98K.png" width="600" alt="Weights & Biases" /> </div>
 
 # Math for Machine Learning
 
