@@ -52,9 +52,8 @@ class LoggedLitModule(pl.LightningModule):
         loss = self.loss(y_hats, ys)
 
         logging_scalars = {"loss": loss}
-        for metric in self.validation_metrics:
-            metric_str = metric.__class__.__name__.lower()
-            logging_scalars[metric_str] = metric(y_hats, ys)
+        for metric in self.training_metrics:
+            self.add_metric(metric, logging_scalars, y_hats, ys)
 
         self.do_logging(xs, ys, idx, y_hats, logging_scalars, step="validation")
 
