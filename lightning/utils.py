@@ -40,8 +40,7 @@ class LoggedLitModule(pl.LightningModule):
 
         logging_scalars = {"loss": loss}
         for metric in self.training_metrics:
-            metric_str = metric.__class__.__name__.lower()
-            logging_scalars[metric_str] = metric(y_hats, ys)
+            self.add_metric(metric, logging_scalars, y_hats, ys)
 
         self.do_logging(xs, ys, idx, y_hats, logging_scalars)
 
@@ -110,6 +109,11 @@ class LoggedLitModule(pl.LightningModule):
 
     def log_examples(*args, **kwargs):
         raise NotImplementedError
+        
+    def add_metric(self, metric, logging_scalars, y_hats, ys):
+        metric_str = metric.__class__.__name__.lower()
+        value = metric(y_hats, ys)
+        logging_scalars[metric_str] = value
 
 
 class LoggedImageClassifierModule(LoggedLitModule):
@@ -131,12 +135,8 @@ class LoggedImageClassifierModule(LoggedLitModule):
                           ys[:self.max_logged_inputs],
                           y_hats[:self.max_logged_inputs])
 
-        if y_hats.shape[-1] == 1:  # handle single-class case
-            preds = torch.greater(y_hats, 0.5)
-            preds = [bool(pred) for pred in preds]
-        else:  # assume we are in the typical one-hot case
-            preds = torch.argmax(y_hats, 1)
-
+        preds = self.preds_from_y_hats(y_hats)
+        
         if self.labels is not None:
             preds = [self.labels[int(pred)] for pred in preds]
 
@@ -146,3 +146,22 @@ class LoggedImageClassifierModule(LoggedLitModule):
 
         self.logger.experiment.log({"predictions": images_with_predictions,
                                     "global_step": self.global_step}, commit=False)
+        
+    def add_metric(self, metric, logging_scalars, y_hats, ys):
+        metric_str = metric.__class__.__name__.lower()
+        if metric_str == "accuracy":
+            preds = self.preds_from_y_hats(y_hats)
+            value = metric(preds, ys)
+        else:
+            value = metric(y_hats, ys)
+        logging_scalars[metric_str] = value
+        
+    @staticmethod
+    def preds_from_y_hats(y_hats):
+        if y_hats.shape[-1] == 1:  # handle single-class case
+            preds = torch.greater(y_hats, 0.5)
+            preds = [bool(pred) for pred in preds]
+        else:  # assume we are in the typical one-hot case
+            preds = torch.argmax(y_hats, 1)
+        return preds
+
