@@ -5,6 +5,8 @@ import shutil
 
 import pytorch_lightning as pl
 import torch
+from torch.utils.data import DataLoader, TensorDataset
+
 import torchvision
 import wandb
 
@@ -192,10 +194,10 @@ class MNISTDataModule(pl.LightningDataModule):
         self.digits = mnist.data.float()
         self.digits = torch.divide(self.digits, 255.)
     
-        self.training_data = torch.utils.data.TensorDataset(self.digits[:-validation_size, None, :, :],
-                                                            self.digits[:-validation_size, None, :, :])
-        self.validation_data = torch.utils.data.TensorDataset(self.digits[-validation_size:, None, :, :],
-                                                              self.digits[-validation_size:, None, :, :])
+        self.training_data = TensorDataset(self.digits[:-validation_size, None, :, :],
+                                           self.digits[:-validation_size, None, :, :])
+        self.validation_data = TensorDataset(self.digits[-validation_size:, None, :, :],
+                                             self.digits[-validation_size:, None, :, :])
         self.validation_size = validation_size
 
     def train_dataloader(self):  # ⚡: how do we go from dataset to dataloader?
