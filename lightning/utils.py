@@ -3,10 +3,10 @@ from pathlib import Path
 import requests
 import shutil
 
+import numpy as np
 import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-
 import torchvision
 import wandb
 
