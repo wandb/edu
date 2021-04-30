@@ -5,6 +5,7 @@ import shutil
 
 import pytorch_lightning as pl
 import torch
+import torchvision
 import wandb
 
 try:
