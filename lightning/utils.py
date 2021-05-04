@@ -258,8 +258,7 @@ class FilterLogger(pl.Callback):
             "global_step": trainer.global_step
         })
   
-    def fetch_filters(self, module, reversed=False, output_shape=None):
-    
+    def fetch_filters(self, module, reversed=False, output_shape=None):    
         weights = self.get_weights(module)
         assert len(weights), "could not find any weights"
 
