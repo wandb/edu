@@ -225,7 +225,7 @@ class MNISTDataModule(pl.LightningDataModule):
         shutil.unpack_archive(path)
         
         
-class FilterLogger(pl.Callback):
+class FilterLogCallback(pl.Callback):
     """PyTorch Lightning Callback for logging the "filters" of a PyTorch Module.
   
     Filters are weights that touch input or output, and so are often interpretable.
@@ -294,8 +294,8 @@ class FilterLogger(pl.Callback):
         return weights
     
     
-class ImageLogger(pl.Callback):
-    """Logs the input and output and output images produced by a module.
+class ImageLogCallback(pl.Callback):
+    """Logs the input and output images produced by a module.
   
     Useful in combination with, e.g., an autoencoder architecture,
     a convolutional GAN, or any image-to-image transformation network.
