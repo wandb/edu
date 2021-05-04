@@ -4,6 +4,7 @@ import requests
 import shutil
 
 import numpy as np
+from PIL import Image
 import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader, TensorDataset
