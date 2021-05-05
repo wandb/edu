@@ -1,7 +1,5 @@
 import os
 from pathlib import Path
-import requests
-import shutil
 
 import numpy as np
 from PIL import Image
@@ -16,6 +14,10 @@ try:
     no_torchviz = False
 except ImportError:
     no_torchviz = True
+    
+# drop slow mirror from list of MNIST mirrors
+torchvision.datasets.MNIST.mirrors = [mirror for mirror in torchvision.datasets.MNIST.mirrors
+                                      if not mirror.startswith("http://yann.lecun.com")]
 
 
 class LoggedLitModule(pl.LightningModule):
@@ -189,24 +191,10 @@ class AbstractMNISTDataModule(pl.LightningDataModule):
 
     def prepare_data(self):
         # download the data from the internet
-        if not os.path.exists("MNIST"):
-            self._download_MNIST(dir=".")
-        mnist = torchvision.datasets.MNIST(".", train=True, download=False)
+        mnist = torchvision.datasets.MNIST(".", download=True)
 
     def setup(self, stage=None):
         pass
-
-    @staticmethod
-    def _download_MNIST(url=None, dir="."):
-        if url is None:
-            url = "http://www.di.ens.fr/~lelarge/MNIST.tar.gz"
-        compressed_bytes = requests.get(url)
-      
-        path = Path(dir) / "MNIST.tar.gz"
-        with open(path, "wb") as f:
-            f.write(compressed_bytes.content)
-      
-        shutil.unpack_archive(path)
         
     def train_dataloader(self):
         """The DataLoaders returned by a DataModule produce data for a model.
