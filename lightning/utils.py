@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+import random
+import string
 
 import numpy as np
 from PIL import Image
@@ -14,6 +16,11 @@ try:
     no_torchviz = False
 except ImportError:
     no_torchviz = True
+try:
+    from wonderwords import Randomword
+    no_wonderwords = False
+except ImportError:
+    no_wonderwords = True
     
 # drop slow mirror from list of MNIST mirrors
 torchvision.datasets.MNIST.mirrors = [mirror for mirror in torchvision.datasets.MNIST.mirrors
@@ -380,3 +387,15 @@ class ImageLogCallback(pl.Callback):
                               for mosaic in mosaics],
             "global_step": trainer.global_step
             })
+
+# handle random name generation, optionally with random words instead of chars
+if no_wonderwords:
+    chars = string.ascii_lowercase
+    make_random_name = lambda : "".join([random.choice(chars) for ii in range(10)])
+else:
+    r = RandomWord()
+    def make_random_name():
+        name = "-".join(
+            [r.word(word_min_length=3, word_max_length=7, include_parts_of_speech=["adjective"]),
+             r.word(word_min_length=5, word_max_length=7, include_parts_of_speech=["noun"])])
+        return name
