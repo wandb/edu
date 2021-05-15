@@ -17,7 +17,7 @@ try:
 except ImportError:
     no_torchviz = True
 try:
-    from wonderwords import Randomword
+    from wonderwords import RandomWord
     no_wonderwords = False
 except ImportError:
     no_wonderwords = True
