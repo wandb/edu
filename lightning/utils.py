@@ -213,7 +213,7 @@ class AbstractMNISTDataModule(pl.LightningDataModule):
         """The DataLoaders returned by a DataModule produce data for a model.
         
         This DataLoader is used during validation, at the end of each epoch."""
-        return DataLoader(self.validation_data, batch_size=self.validation_size)        
+        return DataLoader(self.validation_data, batch_size=self.validation_size, shuffle=False)        
         
         
 class MNISTDataModule(AbstractMNISTDataModule):
