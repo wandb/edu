@@ -5,4 +5,4 @@ tensorflow==2.2.0
 torch==1.5.1
 torchvision==0.6.1
 torchviz==0.0.1
-wandb==0.9.1
+wandb
