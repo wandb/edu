@@ -8,7 +8,7 @@ test = {
                     "code": r"""
                     >>> # TESTS BEGIN HERE
                     >>> ## you must define an array with right name
-                    >>> isinstance(set_second_to_zero_and_repeat_3_2, np.ndarray)
+                    >>> isinstance(set_second_to_zero_and_repeat_3, np.ndarray)
                     True
                     >>> ## it should have two dimensions
                     >>> set_second_to_zero_and_repeat_3.ndim
