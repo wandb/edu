@@ -1,5 +1,5 @@
 test = {
-    "name": "is_orthonormal",
+    "name": "apply_to_batch",
     "points": 1,
     "suites": [
         {
@@ -7,52 +7,38 @@ test = {
                 {
                     "code": r"""
                     >>> # TESTS BEGIN HERE
-                    >>> ## you must define a function called normalize
-                    >>> callable(is_orthonormal)
+                    >>> ## you must define a function called apply_to_batch
+                    >>> callable(apply_to_batch)
                     True
-                    >>> ## it should take and return a single value
-                    >>> out = is_orthonormal(np.eye(2))
-                    >>> ## the return is of type bool
+                    >>> ## it should run when applied to compatible inputs
+                    >>> out = apply_to_batch(identity, vectors)
+                    >>> ## the return is of type array
                     >>> type(out)
-                    <class 'bool'>
+                    <class 'numpy.ndarray'>
                     """,
                     "hidden": False,
                     "locked": False
                 },
                 {
                     "code": r"""
-                    >>> # the identity matrix is orthonormal
-                    >>> is_orthonormal(np.eye(20))
+                    >>> # applying the identity matrix shouldn't change inputs
+                    >>> np.allclose(vectors, apply_to_batch(identity, vectors))
                     True
-                    >>> # a scaled version of the identity is not
-                    >>> is_orthonormal(2 *  np.eye(20))
-                    False
-                    >>> # permuting the rows preserves orthonormality
-                    >>> is_orthonormal(np.random.permutation(np.eye(20)))
+                    >>> # the result should be the same as normal matrix multiplication
+                    >>> np.allclose(random_matrix @ vectors, apply_to_batch(random_matrix, vectors))
                     True
-                    """
-                },
-                {
-                    "code": r"""
-                    >>> # the U and V components of SVD are orthogonal
-                    >>> is_orthonormal(U)
+                    >>> # return_first should pull out the first entry in each vector
+                    >>> np.allclose(vectors[0], apply_to_batch(return_first, vectors))
                     True
-                    >>> is_orthonormal(V_T.T)
-                    True
-                    >>> # but the singular value matrix is generically not
-                    >>> is_orthonormal(S)
-                    False
-                    >>> # a random gaussian matrix is not quite orthonormal
-                    >>> is_orthonormal(random_values)
-                    False
                     """
                 }
             ],
             "setup": r"""
-            shape = 20
-            square_matrix = la.random_matrix.SymmetricWigner(shape).M
-            U, S, V_T = la.svd.compact(square_matrix)
-            random_values =  np.random.standard_normal((shape, shape))
+            shape, count = 5, 10
+            identity = np.eye(shape)
+            return_first = np.array([[1.] + [0.] * shape - 1])
+            random_matrix = np.random.standard_normal((shape, shape))
+            vectors = np.random.standard_normal((shape, count))
             """,
             "teardown": r"""
             """,

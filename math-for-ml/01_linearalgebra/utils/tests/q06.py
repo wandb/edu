@@ -1,5 +1,5 @@
 test = {
-    "name": "Norm",
+    "name": "Zero Second and Repeat Thrice",
     "points": 1,
     "suites": [
         {
@@ -7,34 +7,27 @@ test = {
                 {
                     "code": r"""
                     >>> # TESTS BEGIN HERE
-                    >>> ## you must define a function called norm
-                    >>> callable(norm)
+                    >>> ## you must define an array with right name
+                    >>> isinstance(set_second_to_zero_and_repeat_3_2, np.ndarray)
                     True
-                    >>> ## all-zeros vector has norm 0
-                    >>> int(np.round(norm(all_zeros)))
-                    0
-                    >>> ## vector with one 1 has norm 1
-                    >>> int(np.round(norm(one_hot)))
-                    1
-                    >>> ## all ones vector of length n
-                    >>> ## has norm sqrt(n)
-                    >>> np.isclose(norm(all_ones), all_ones_norm)
-                    True
-                    >>> ## we should get same answer as numpy
-                    >>> np.isclose(np.linalg.norm(random_vector), norm(random_vector))
-                    True
+                    >>> ## it should have two dimensions
+                    >>> set_second_to_zero_and_repeat_3_2.ndim
+                    2
+                    >>> ## it takes length-2 vectors as input
+                    >>> set_second_to_zero_and_repeat_3_2.shape[1]
+                    2
+                    >>> ## its output has 3 times the length of the input
+                    >>> set_second_to_zero_and_repeat_3_2.shape[0] // 3
+                    2
+                    >>> ## its output is three copies of the input
+                    >>> set_second_to_zero_and_repeat_3_2 @ [1., 2.]
+                    array([1., 0., 1., 0., 1., 0.])
                     """,
                     "hidden": False,
                     "locked": False
                 }
             ],
             "setup": r"""
-            shape = 5
-            all_zeros = np.zeros(shape)
-            one_hot = np.array([1, 0, 0, 0, 0])
-            all_ones = np.ones(shape)
-            all_ones_norm = np.sqrt(shape)
-            random_vector = np.random.randn(shape)
             """,
             "teardown": r"""
             """,

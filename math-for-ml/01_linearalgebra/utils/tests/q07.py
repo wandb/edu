@@ -1,5 +1,5 @@
 test = {
-    "name": "Normalize",
+    "name": "Refactoring",
     "points": 1,
     "suites": [
         {
@@ -7,26 +7,23 @@ test = {
                 {
                     "code": r"""
                     >>> # TESTS BEGIN HERE
-                    >>> ## you must define a function called normalize
-                    >>> callable(normalize)
+                    >>> ## you must define an array V
+                    >>> type(V)
+                    <class 'numpy.ndarray'>
+                    >>> ## make sure you multiply in the right order!
+                    >>> np.array_equal(WXYZ @ random_vec, V @ random_vec)
+                    False
+                    >>> ## result from their pipeline and yours should be (almost) same
+                    >>> np.allclose(their_pipeline(random_vec), V @ random_vec)
                     True
-                    >>> ## testing on all_ones vector first
-                    >>> int(np.round(np.linalg.norm(normalize(all_ones))))
-                    1
-                    >>> np.allclose(normalize(all_ones), 1 / np.sqrt(shape))
-                    True
-                    >>> ## and now on a random vector
-                    >>> int(np.round(np.linalg.norm(normalize(random_vector))))
-                    1
                     """,
                     "hidden": False,
                     "locked": False
                 }
             ],
             "setup": r"""
-            shape = 5
-            all_ones = np.ones(shape)
-            random_vector = np.random.randn(shape)
+            WXYZ = W @ X @ Y @ Z
+            random_vec = np.random.standard_normal(size=(2, 1))
             """,
             "teardown": r"""
             """,

@@ -1,5 +1,5 @@
 test = {
-    "name": "Dot Product",
+    "name": "Matrix Type Checking",
     "points": 1,
     "suites": [
         {
@@ -7,36 +7,29 @@ test = {
                 {
                     "code": r"""
                     >>> # TESTS BEGIN HERE
-                    >>> ## you must define a function called dot
-                    >>> callable(dot)
+                    >>> ## you must define a function called are_compatible
+                    >>> callable(are_compatible)
                     True
-                    >>> ## all-zeros vector should always return 0
-                    >>> int(dot(all_zeros, all_zeros))
-                    0
-                    >>> int(dot(all_zeros, random_vector))
-                    0
-                    >>> ## dot product with all-ones vector is sum
-                    >>> ## sum of numbers up to 5 is 15
-                    >>> int(np.round(dot(range_vector, all_ones)))
-                    15
-                    >>> ## sum needs to also work on a random vector
-                    >>> np.isclose(sum(random_vector), dot(random_vector, all_ones))
+                    >>> ## that function should return booleans
+                    >>> isinstance(are_compatible(A, B), bool)
                     True
-                    >>> ## and we should get same answer as numpy in general
-                    >>> np.isclose(np.dot(random_vector, second_random_vector), dot(random_vector, second_random_vector))
+                    >>> ## when the inner shapes are the same, return True
+                    >>> are_compatible(A, B)
                     True
+                    >>> ## when the inner shapes differ, return False
+                    >>> are_compatible(A, M)
+                    False
                     """,
                     "hidden": False,
                     "locked": False
                 }
             ],
             "setup": r"""
-            shape = 5
-            range_vector = np.array([1, 2, 3, 4, 5])
-            all_zeros = np.zeros(shape)
-            all_ones = np.ones(shape)
-            random_vector = np.random.randn(shape)
-            second_random_vector = np.random.randn(shape)
+            random_outer_shapes = np.random.randint(1, 5, size=2)
+            random_inner_shape = np.random.randint(1, 5)
+            A = np.random.randn(random_outer_shapes[0], random_inner_shape)
+            B = np.random.randn(random_inner_shape, random_outer_shapes[1])
+            M = np.random.randn(random_inner_shape + 1, random_outer_shapes[1])
             """,
             "teardown": r"""
             """,
