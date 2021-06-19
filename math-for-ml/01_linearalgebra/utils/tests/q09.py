@@ -32,11 +32,15 @@ test = {
                     >>> # applying that repeater to the 0 vector should give a 0 vector
                     >>> np.allclose(np.zeros(6), repeat_3_2 @ zeros_2)
                     True
+                    >>> # applying that repeater to the 1s vector should give a 1s vector
+                    >>> np.allclose(np.ones(6), repeat_3_2 @ ones_2)
+                    True
                     """
                 }
             ],
             "setup": r"""
             zeros_2 = np.zeros(2)
+            ones_2 = np.ones(2)
             """,
             "teardown": r"""
             """,
