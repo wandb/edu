@@ -36,7 +36,7 @@ test = {
             "setup": r"""
             shape, count = 5, 10
             identity = np.eye(shape)
-            return_first = np.array([[1.] + [0.] * shape - 1])
+            return_first = np.array([[1.] + [0.] * (shape - 1)])
             random_matrix = np.random.standard_normal((shape, shape))
             vectors = np.random.standard_normal((shape, count))
             """,
