@@ -33,6 +33,23 @@ test = {
                     """,
                     "hidden": False,
                     "locked": False
+                },
+                {
+                    "code": r"""
+                    >>> # TESTS BEGIN HERE
+                    >>> ## the symbol x should be defined
+                    >>> isinstance(x, sympy.Symbol)
+                    True
+                    >>> ## the is_little_o_x2 dictionary should be defined
+                    >>> isinstance(is_little_o_x2, dict)
+                    True
+                    >>> ## the outputs should match the answers in the dictionary
+                    >>> items = is_little_o_x2.items()
+                    >>> all(is_little_o(x ** 2, key, x) == val for key, val in items)
+                    True
+                    """,
+                    "hidden": False,
+                    "locked": False
                 }
             ],
             "setup": r"""
