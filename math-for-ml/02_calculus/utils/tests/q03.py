@@ -13,21 +13,19 @@ test = {
                     >>> ## it should run on and return the right types
                     >>> isinstance(linear_approx(identity, 0., 0.), float)
                     True
-                    >>> ## if epsilon is 0, should return the input
+                    >>> ## if epsilon is 0, should return f(input)
                     >>> np.isclose(linear_approx(identity, 0., 0.), 0.)
                     True
                     >>> np.isclose(linear_approx(constant, 0., 0.), constant(0.))
                     True
                     >>> np.isclose(linear_approx(np.square, 0., 0.), 0.)
                     True
-                    >>> np.isclose(linear_approx(np.square, val, 0.), val)
-                    True
-                    >>> np.isclose(linear_approx(np.square, 0., val), 0.)
+                    >>> np.isclose(linear_approx(np.square, val, 0.), np.square(val))
                     True
                     >>> ## linear approximation of abs is line with slope +/-1
-                    >>> np.isclose(linear_approx(np.abs, val, 0.), 0.)
+                    >>> np.isclose(linear_approx(np.abs, val, val), 0.)
                     True
-                    >>> np.isclose(linear_approx(np.abs, val, np.abs(val)), -2 * val)
+                    >>> np.isclose(linear_approx(np.abs, val, np.abs(val)), -1 * val)
                     True
                     >>> ## linear approximation of square is 2 * x
                     >>> np.isclose(linear_approx(np.square, 1., -1.), -1.)
