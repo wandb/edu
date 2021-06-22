@@ -25,7 +25,7 @@ test = {
                     >>> is_little_o_x[x ** 2]
                     True
                     >>> ## the exponential function is not o(x^n) for any n
-                    >>> is_little_o2[sympy.exp(x)]
+                    >>> is_little_o_x[sympy.exp(x)]
                     False
                     """,
                     "hidden": False,

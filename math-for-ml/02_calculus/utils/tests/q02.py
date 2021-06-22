@@ -18,7 +18,7 @@ test = {
                     False
                     >>> ## x^n is o(x^n+1), not the other way around
                     >>> is_little_o_x2[1e6 * x ** 3]
-                    >>> True
+                    True
                     >>> ## x^n is o(x^n+1), not the other way around
                     >>> is_little_o_x2[x]
                     False

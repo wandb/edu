@@ -20,7 +20,7 @@ test = {
                     True
                     >>> np.isclose(linear_approx(np.square, 0., 0.), 0.)
                     True
-                    >>> np.isclose(linear_approx(np.square, val, 0.), val.)
+                    >>> np.isclose(linear_approx(np.square, val, 0.), val)
                     True
                     >>> np.isclose(linear_approx(np.square, 0., val), 0.)
                     True

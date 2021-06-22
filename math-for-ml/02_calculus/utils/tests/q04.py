@@ -18,9 +18,9 @@ test = {
                     True
                     >>> np.isclose(gd_step(0., constant, 0.), 0.)
                     True
-                    >>> np.isclose(gd_step(val, identity, 0.), 0.)
+                    >>> np.isclose(gd_step(val, identity, 0.), val)
                     True
-                    >>> np.isclose(gd_step(val, np.square, 0.), 0.)
+                    >>> np.isclose(gd_step(val, np.square, 0.), val)
                     True
                     >>> ## gradient of identity is identity
                     >>> np.isclose(gd_step(0., identity, val), -val)
@@ -28,9 +28,9 @@ test = {
                     >>> np.isclose(gd_step(val, identity, 1.), 0.)
                     True
                     >>> ## gradient of square is 2 * x
-                    >>> np.isclose(gd_step(val., np.square, 1/2), 0.)
+                    >>> np.isclose(gd_step(val, np.square, 1/2), 0.)
                     True
-                    >>> np.isclose(gd_step(val., np.square, 1), -val)
+                    >>> np.isclose(gd_step(val, np.square, 1), -val)
                     True
                     """,
                     "hidden": False,
