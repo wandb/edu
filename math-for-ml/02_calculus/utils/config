@@ -1,0 +1,13 @@
+{
+    "name": "Calculus",
+    "endpoint": "",
+    "src": [""],
+    "tests": {
+        "utils/tests/q*.py": "ok_test"
+    },
+    "protocols": [
+       "file_contents",
+       "grading",
+       "backup"
+    ]
+}
