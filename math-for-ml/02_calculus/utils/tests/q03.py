@@ -23,7 +23,7 @@ test = {
                     >>> np.isclose(linear_approx(np.square, val, 0.), np.square(val))
                     True
                     >>> ## linear approximation of abs is line with slope +/-1
-                    >>> np.isclose(linear_approx(np.abs, val, val), 0.)
+                    >>> np.isclose(linear_approx(np.abs, val, -val), 0.)
                     True
                     >>> np.isclose(linear_approx(np.abs, val, np.abs(val)), -1 * val)
                     True

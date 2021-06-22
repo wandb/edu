@@ -22,10 +22,10 @@ test = {
                     True
                     >>> np.isclose(gd_step(val, np.square, 0.), val)
                     True
-                    >>> ## gradient of identity is the sign
+                    >>> ## gradient of identity is 1
                     >>> np.isclose(gd_step(1., identity, 1.), 0.)
                     True
-                    >>> np.isclose(gd_step(-2., identity, 1.), 1.)
+                    >>> np.isclose(gd_step(-2., identity, 1.), -1.)
                     True
                     >>> ## gradient of square is 2 * x
                     >>> np.isclose(gd_step(val, np.square, 1/2), 0.)
