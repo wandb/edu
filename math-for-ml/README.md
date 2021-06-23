@@ -32,7 +32,7 @@ you can return where you left off.
 
 ## Binder - Temporary One-Click Version
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/wandb/edu/main?filepath=math-for-ml%2Fexercises)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/wandb/edu/main?filepath=math-for-ml)
 
 If you click the badge above,
 you'll launch a free cloud server
