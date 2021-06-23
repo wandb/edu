@@ -14,9 +14,23 @@ a [YouTube lecture series](https://www.youtube.com/watch?v=uZeDTwWcnuY&list=PLD8
 and presume proficiency with Python.
 
 Outside of official offerings of the course,
-they are intended for use in one of three ways.
+they are intended for use in multiple ways.
 
-## Binder - One-Click Version
+## Colab - Persistent One-Click Version
+
+| Notebook    | Link |
+|-------------|------|
+| Linear Algebra  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://wandb.me/m4ml-linalg-colab) |
+| Calculus  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://wandb.me/m4ml-calc-colab) |
+| Probability | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://wandb.me/m4ml-prob-colab) |
+
+Click the badges in the table above to access the exercises as
+[Google Colab notebooks](https://research.google.com/colaboratory/).
+The only requirement is a Google account.
+If you save your work to your own Google Drive,
+you can return where you left off.
+
+## Binder - Temporary One-Click Version
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/wandb/edu/main?filepath=math-for-ml%2Fexercises)
 
@@ -25,7 +39,9 @@ you'll launch a free cloud server
 provided by the
 [Binder project](https://mybinder.readthedocs.io/en/latest/)
 with the appropriate computational environment.
-This environment is _ephemeral_:
+There is no need to create an account.
+This environment is _ephemeral_,
+or temporary:
 after 20 minutes of inactivity,
 it will disappear.
 You'll be able to run the notebooks,
