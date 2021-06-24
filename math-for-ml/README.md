@@ -13,8 +13,8 @@ These notebooks are supplementary to
 a [YouTube lecture series](https://www.youtube.com/watch?v=uZeDTwWcnuY&list=PLD80i8An1OEGZ2tYimemzwC3xqkU0jKUg)
 and presume proficiency with Python.
 
-Outside of official offerings of the course,
-they are intended for use in multiple ways.
+The notebooks can be executed in any
+of the following ways.
 
 ## Colab - Persistent One-Click Version
 
