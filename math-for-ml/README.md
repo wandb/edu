@@ -42,7 +42,7 @@ with the appropriate computational environment.
 There is no need to create an account.
 This environment is _ephemeral_,
 or temporary:
-after 20 minutes of inactivity,
+after 10 minutes of inactivity,
 it will disappear.
 You'll be able to run the notebooks,
 but the only way to permanently save any work
