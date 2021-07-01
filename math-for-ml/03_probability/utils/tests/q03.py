@@ -20,7 +20,7 @@ test = {
                     >>> np.isclose(surprise(constant_pmf, 0), 0.)
                     True
                     >>> ## the inverse of the surprise is the negative exponent
-                    >>> neg_exps = [-1 * np.exp(surprise(rand_pmf, ii)) for ii in range(5)]
+                    >>> neg_exps = [np.exp(-1 * surprise(rand_pmf, ii)) for ii in range(4)]
                     >>> np.allclose(rand_pmf, neg_exps)
                     True
                     """,
