@@ -1,6 +1,11 @@
 lemon-dataset/
 wandb/
 artifact/
+artifacts/
+model-dev-course/lesson1/artifacts/
+*.csv
+*.json
+*.png
 
 # Jupyter Notebook
 .ipynb_checkpoints
