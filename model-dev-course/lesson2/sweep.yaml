@@ -1,0 +1,28 @@
+program: src/train.py
+method: grid
+project: lemon-test1
+entity: wandb_course
+metric:
+  name: f1_score
+  goal: maximize
+parameters:
+  bs:
+    values:
+      - 16
+    distribution: categorical
+  img_size:
+    values:
+      - 256
+      - 512
+    distribution: categorical
+  arch:
+    values:
+      - 'resnet50'
+      - 'convnext_base'
+    distribution: categorical
+  seed:
+    values:
+      - 1
+      - 2
+      - 3
+    distribution: categorical
