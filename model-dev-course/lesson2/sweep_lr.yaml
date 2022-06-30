@@ -1,0 +1,16 @@
+program: src/train.py
+method: grid
+project: lemon-project
+entity: wandb_course
+metric:
+  name: f1_score
+  goal: maximize
+parameters:
+  bs:
+    value: 16
+  img_size:
+    values: 256
+  arch:
+    value:  'convnext_tiny'
+  seed:
+    values: [1,2,3]
