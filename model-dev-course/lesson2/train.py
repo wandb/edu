@@ -16,6 +16,7 @@ default_cfg.seed = 42
 default_cfg.epochs = 2
 default_cfg.lr = 2e-3
 default_cfg.arch = 'resnet18'
+default_cfg.log_model = False
 default_cfg.PROJECT_NAME = 'lemon-project'
 default_cfg.ENTITY = 'wandb_course'
 default_cfg.PROCESSED_DATA_AT = 'lemon_dataset_split_data:latest'
