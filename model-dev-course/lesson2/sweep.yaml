@@ -14,7 +14,7 @@ parameters:
     values:
       - 'resnet18'
       - 'convnext_tiny'
-      - 'regnetx_032'
+      - 'regnetx_004'
   lr:
     distribution: 'log_uniform_values'
     min: 1e-5

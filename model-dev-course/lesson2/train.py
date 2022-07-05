@@ -1,4 +1,4 @@
-import os
+import argparse, os
 from pathlib import Path
 import pandas as pd
 from ml_collections import config_dict
@@ -11,7 +11,7 @@ from fastai.callback.wandb import WandbCallback
 default_cfg = config_dict.ConfigDict()
 default_cfg.img_size = 256
 default_cfg.target_column = 'mold'
-default_cfg.bs = 32
+default_cfg.bs = 16
 default_cfg.seed = 42
 default_cfg.epochs = 2
 default_cfg.lr = 2e-3
@@ -20,6 +20,18 @@ default_cfg.log_model = False
 default_cfg.PROJECT_NAME = 'lemon-project'
 default_cfg.ENTITY = 'wandb_course'
 default_cfg.PROCESSED_DATA_AT = 'lemon_dataset_split_data:latest'
+
+def parse_args():
+    "Overriding default argments"
+    argparser = argparse.ArgumentParser(description='Process hyper-parameters')
+    argparser.add_argument('--img_size', type=int, default=default_cfg.img_size, help='image size')
+    argparser.add_argument('--bs', type=int, default=default_cfg.bs, help='batch size')
+    argparser.add_argument('--seed', type=int, default=default_cfg.seed, help='random seed')
+    argparser.add_argument('--epochs', type=int, default=default_cfg.epochs, help='number of training epochs')
+    argparser.add_argument('--lr', type=float, default=default_cfg.lr, help='learning rate')
+    argparser.add_argument('--arch', type=str, default=default_cfg.arch, help='timm backbone architecture')
+    argparser.add_argument('--log_model', action="store_true", help='log best model W&B')
+    return argparser.parse_args()
 
 
 def prepare_data(PROCESSED_DATA_AT):
@@ -50,19 +62,22 @@ def log_predictions(learn):
     wandb.log({'predictions_table': wandb.Table(dataframe=df)})
 
 def train(cfg):
-    with wandb.init(project=cfg.PROJECT_NAME, entity=cfg.ENTITY, job_type="training", config=cfg.to_dict()):
+    with wandb.init(project=cfg.PROJECT_NAME, entity=cfg.ENTITY, job_type="training", config=dict(cfg)):
         cfg = wandb.config
         df, path = prepare_data(cfg.PROCESSED_DATA_AT)
         dls = get_dataloaders(df, path, cfg.seed, cfg.target_column, cfg.img_size, cfg.bs)
         learn = vision_learner(dls, 
                                cfg.arch,
                                metrics=[accuracy, Precision(), Recall(), F1Score()],
-                               cbs=[WandbCallback(log_preds=False), SaveModelCallback(monitor='f1_score')])
+                               cbs=[WandbCallback(log_preds=False, log_model=cfg.log_model), 
+                                    SaveModelCallback(monitor='f1_score')]).to_fp16()
         learn.fine_tune(cfg.epochs, cfg.lr)   
-        log_predictions(learn)
+        if cfg.log_model:
+            log_predictions(learn)
         
-        
+
 if __name__ == '__main__':
+    default_cfg.update(vars(parse_args()))
     train(default_cfg)
 
 
