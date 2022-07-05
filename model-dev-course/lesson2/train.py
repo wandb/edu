@@ -21,6 +21,7 @@ default_cfg.PROJECT_NAME = 'lemon-project'
 default_cfg.ENTITY = 'wandb_course'
 default_cfg.PROCESSED_DATA_AT = 'lemon_dataset_split_data:latest'
 
+# optional
 def parse_args():
     "Overriding default argments"
     argparser = argparse.ArgumentParser(description='Process hyper-parameters')
