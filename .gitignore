@@ -1,5 +1,6 @@
 lemon-dataset/
 wandb/
+models/
 artifact/
 artifacts/
 model-dev-course/lesson1/artifacts/
