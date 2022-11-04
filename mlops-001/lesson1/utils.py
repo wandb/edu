@@ -1,5 +1,6 @@
-from fastai.vision.all import *
 import wandb
+
+from fastai.vision.all import *
 
 def faccuracy(inp, targ):
     "Foreground accuracy per item"
