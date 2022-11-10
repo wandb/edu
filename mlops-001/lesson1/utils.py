@@ -85,35 +85,16 @@ class MIOU(DiceMulti):
                                           self.inter[c]/(self.union[c]-self.inter[c]) if self.union[c] > 0 else np.nan)
         return np.nanmean(binary_iou_scores)
     
-@patch
-def _iou(self:DiceMulti, nm):
-    c=CLASS_INDEX[nm]
-    return self.inter[c]/(self.union[c]-self.inter[c]) if self.union[c] > 0 else np.nan
+class IOU(DiceMulti):
+    @property
+    def value(self): 
+        c=CLASS_INDEX[self.nm]
+        return self.inter[c]/(self.union[c]-self.inter[c]) if self.union[c] > 0 else np.nan
 
-class BackgroundIOU(DiceMulti):
-    @property
-    def value(self): return self._iou('background')
-
-class RoadIOU(DiceMulti):
-    @property
-    def value(self): return self._iou('road')
-    
-class TrafficLightIOU(DiceMulti):
-    @property
-    def value(self): return self._iou('traffic light')
-    
-class TrafficSignIOU(DiceMulti):
-    @property
-    def value(self): return self._iou('traffic sign')  
-    
-class PersonIOU(DiceMulti):
-    @property
-    def value(self): return self._iou('person')
-
-class VehicleIOU(DiceMulti):
-    @property
-    def value(self): return self._iou('vehicle')
-    
-class BicycleIOU(DiceMulti):
-    @property
-    def value(self): return self._iou('bicycle')
+class BackgroundIOU(IOU): nm = 'background'
+class RoadIOU(IOU): nm = 'road'
+class TrafficLightIOU(IOU): nm = 'traffic light'
+class TrafficSignIOU(IOU): nm = 'traffic sign'
+class PersonIOU(IOU): nm = 'person'
+class VehicleIOU(IOU): nm = 'vehicle'
+class BicycleIOU(IOU): nm = 'bicycle'
