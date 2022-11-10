@@ -9,17 +9,13 @@ CLASS_INDEX = {v:k for k,v in params.BDD_CLASSES.items()}
 def iou_per_class(inp, targ):
     "Compute iou per class"
     iou_scores = []
-    eps = 1e-6
     for c in range(inp.shape[0]):
         dec_preds = inp.argmax(dim=0)
         p = torch.where(dec_preds == c, 1, 0)
         t = torch.where(targ == c, 1, 0)
         c_inter = (p * t).float().sum().item()
         c_union = (p + t).float().sum().item()
-        if c_union:
-            iou_scores.append(c_inter / (c_union - c_inter + eps))
-        else:
-            iou_scores.append(-1)
+        iou_scores.append(c_inter / (c_union - c_inter) if c_union > 0 else np.nan)
     return iou_scores
 
 def create_row(sample, pred_label, prediction, class_labels):
