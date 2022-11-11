@@ -1,5 +1,6 @@
 import wandb
-
+from sklearn.metrics import ConfusionMatrixDisplay
+from IPython.display import display, Markdown
 from fastai.vision.all import *
 
 import params
@@ -144,4 +145,39 @@ class VehicleIouMacro(IOUMacro): nm = 'vehicle'
 class BicycleIouMacro(IOUMacro): nm = 'bicycle'
 
 
+def display_diagnostics(learner, dls=None, return_vals=False):
+    """
+    Display a confusion matrix for the unet learner.
+    If `dls` is None it will get the validation set from the Learner
+    
+    You can create a test dataloader using the `test_dl()` method like so:
+    >> dls = ... # You usually create this from the DataBlocks api, in this library it is get_data()
+    >> tdls = dls.test_dl(test_dataframe, with_labels=True)
+    
+    See: https://docs.fast.ai/tutorial.pets.html#adding-a-test-dataloader-for-inference
+    
+    """
+    probs, targs = learner.get_preds(dl = dls)
+    preds = probs.argmax(dim=1)
+    classes = list(params.BDD_CLASSES.values())
+    y_true = targs.flatten().numpy()
+    y_pred = preds.flatten().numpy()
+    
+    tdf, pdf = [pd.DataFrame(r).value_counts().to_frame(c) for r,c in zip((y_true, y_pred) , ['y_true', 'y_pred'])]
+    countdf = tdf.join(pdf, how='outer').reset_index(drop=True).fillna(0).astype(int).rename(index= params.BDD_CLASSES)
+    countdf = countdf/countdf.sum() 
+    display(Markdown('### % Of Pixels In Each Class'))
+    display(countdf.style.format('{:.1%}'))
+    
+    
+    disp = ConfusionMatrixDisplay.from_predictions(y_true=y_true, y_pred=y_pred,
+                                                   display_labels=classes,
+                                                   normalize='pred')
+    fig = disp.ax_.get_figure()
+    fig.set_figwidth(10)
+    fig.set_figheight(10) 
+    disp.ax_.set_title('Confusion Matrix (by Pixels)', fontdict={'fontsize': 32, 'fontweight': 'medium'})
+    fig.show()
+    
+    if return_vals: return countdf, disp
 
