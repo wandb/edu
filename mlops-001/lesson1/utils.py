@@ -94,3 +94,54 @@ class TrafficSignIOU(IOU): nm = 'traffic sign'
 class PersonIOU(IOU): nm = 'person'
 class VehicleIOU(IOU): nm = 'vehicle'
 class BicycleIOU(IOU): nm = 'bicycle'
+
+
+class IOUMacro(DiceMulti):
+    @property
+    def value(self): 
+        c=CLASS_INDEX[self.nm]
+        if c not in self.count: return np.nan
+        else: return self.macro[c]/self.count[c] if self.count[c] > 0 else np.nan
+
+    def reset(self): self.macro,self.count = {},{}
+
+    def accumulate(self, learn):
+        pred,targ = learn.pred.argmax(dim=self.axis), learn.y
+        for c in range(learn.pred.shape[self.axis]):
+            p = torch.where(pred == c, 1, 0)
+            t = torch.where(targ == c, 1, 0)
+            c_inter = (p*t).float().sum(dim=(1,2))
+            c_union = (p+t).float().sum(dim=(1,2))
+            m = c_inter / (c_union - c_inter)
+            macro = m[~torch.any(m.isnan())]
+            count = macro.shape[1]
+
+            if count > 0:
+                msum = macro.sum().item()
+                if c in self.count:
+                    self.count[c] += count
+                    self.macro[c] += msum
+                else:
+                    self.count[c] = count
+                    self.macro[c] = msum
+
+
+class MIouMacro(IOUMacro):
+    @property
+    def value(self):
+        binary_iou_scores = np.array([])
+        for c in self.count:
+            binary_iou_scores = np.append(binary_iou_scores, self.macro[c]/self.count[c] if self.count[c] > 0 else np.nan)
+        return np.nanmean(binary_iou_scores)
+
+
+class BackgroundIouMacro(IOUMacro): nm = 'background'
+class RoadIouMacro(IOUMacro): nm = 'road'
+class TrafficLightIouMacro(IOUMacro): nm = 'traffic light'
+class TrafficSignIouMacro(IOUMacro): nm = 'traffic sign'
+class PersonIouMacro(IOUMacro): nm = 'person'
+class VehicleIouMacro(IOUMacro): nm = 'vehicle'
+class BicycleIouMacro(IOUMacro): nm = 'bicycle'
+
+
+
