@@ -1,0 +1,20 @@
+program: train.py
+method: random
+project: mlops-course-001
+entity: av-team
+metric:
+  name: miou
+  goal: maximize
+parameters:
+  log_preds:
+      value: False
+  batch_size:
+    values: [8, 12]
+  img_size:
+    values: [180, 240]
+  arch:
+    values:
+      - 'resnet18'
+      - 'convnext_tiny'
+      - 'regnet_x_400mf'
+      - 'mobilenet_v3_small'
