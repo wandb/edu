@@ -20,17 +20,17 @@ default_config = SimpleNamespace(
     epochs=10, # for brevity, increase for better results :)
     lr=2e-3,
     pretrained=True,  # whether to use pretrained encoder,
-    mixed_precision=False, # use automatic mixed precision
+    mixed_precision=True, # use automatic mixed precision
     arch="resnet18",
     seed=42,
-    log_preds=True,
+    log_preds=False,
 )
 
 
 def parse_args():
     "Overriding default argments"
     argparser = argparse.ArgumentParser(description='Process hyper-parameters')
-    argparser.add_argument('--img_size', type=tuple, default=default_config.img_size, help='image size (x,y)')
+    argparser.add_argument('--img_size', type=int, default=default_config.img_size, help='image size')
     argparser.add_argument('--batch_size', type=int, default=default_config.batch_size, help='batch size')
     argparser.add_argument('--epochs', type=int, default=default_config.epochs, help='number of training epochs')
     argparser.add_argument('--lr', type=float, default=default_config.lr, help='learning rate')
@@ -53,15 +53,15 @@ def download_data():
 def label_func(fname):
     return (fname.parent.parent/"labels")/f"{fname.stem}_mask.png"
         
-def prepare_df(processed_dataset_dir, is_test=False):
-    "Set absolute path image names and split"
+def get_df(processed_dataset_dir, is_test=False):
     df = pd.read_csv(processed_dataset_dir / 'data_split.csv')
-    if is_test: 
-        # grab the test part of the split
-        df = df[df.Stage == 'test'].reset_index(drop=True)
-    else:
+    
+    if not is_test:
         df = df[df.Stage != 'test'].reset_index(drop=True)
         df['is_valid'] = df.Stage == 'valid'
+    else:
+        df = df[df.Stage == 'test'].reset_index(drop=True)
+        
     
     # assign paths
     df["image_fname"] = [processed_dataset_dir/f'images/{f}.jpg' for f in df.File_Name.values]
@@ -77,7 +77,6 @@ def get_data(df, bs=4, img_size=180, augment=True):
                   batch_tfms=aug_transforms() if augment else None,
                  )
     return block.dataloaders(df, bs=bs)
-
 
 
 def log_predictions(learn):
@@ -103,7 +102,7 @@ def train(config):
         
         # prepare data
         processed_dataset_dir = download_data()
-        proc_df = prepare_df(processed_dataset_dir, label_func)
+        proc_df = get_df(processed_dataset_dir)
         dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
         
         metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
