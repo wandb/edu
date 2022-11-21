@@ -1,0 +1,34 @@
+# The program to run
+program: train.py
+
+# Method can be grid, random or bayes
+method: random
+
+# Project this sweep is part of
+project: mlops-course-001
+entity: av-team
+
+# Metric to optimize
+metric:
+  name: miou
+  goal: maximize
+
+
+# Parameters space to search
+parameters:
+  log_preds:
+    value: False
+  lr:
+    distribution: log_uniform_values
+    min: 1e-5
+    max: 1e-2
+  batch_size:
+    values: [4, 8]
+  img_size:
+    value: 240
+  arch:
+    values:
+      - 'resnet18'
+      - 'convnext_tiny'
+      - 'regnet_x_400mf'
+      - 'mobilenet_v3_small'
