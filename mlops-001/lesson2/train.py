@@ -109,7 +109,8 @@ def train(config):
                TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
 
     cbs = [WandbCallback(log_preds=False, log_model=True), 
-           SaveModelCallback(monitor='miou'),] + ([MixedPrecision()] if config.mixed_precision else [])
+           SaveModelCallback(fname=f'run-{wandb.run.id}-model', monitor='miou')]
+    cbs += ([MixedPrecision()] if config.mixed_precision else [])
 
     learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
                          metrics=metrics)
