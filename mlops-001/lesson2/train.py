@@ -64,7 +64,7 @@ def get_df(processed_dataset_dir, is_test=False):
         
     
     # assign paths
-    df["image_fname"] = [processed_dataset_dir/f'images/{f}.jpg' for f in df.File_Name.values]
+    df["image_fname"] = [processed_dataset_dir/f'images/{f}' for f in df.File_Name.values]
     df["label_fname"] = [label_func(f) for f in df.image_fname.values]
     return df
 
