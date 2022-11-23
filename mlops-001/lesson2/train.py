@@ -94,49 +94,55 @@ def final_metrics(learn):
     for k,v in final_results.items(): 
         wandb.summary[k] = v
 
-
-def save_learner(learn, run):
-    art = wandb.Artifact('learner', type="fastai learner")
+def save_learner(learn):
+    art = wandb.Artifact(f'run-{wandb.run.id}-learner', type="fastai learner")
     with art.new_file('fastai_model.pkl') as f:
         learn.export(f.name)
     run.log_artifact(art)
         
-def save_dls(dls, run, nm='train'):
+def save_dls(dls, nm='train'):
     torch.save(dls, f'{nm}-dataloader.pkl')
-    art = wandb.Artifact(f'{nm}_dls', type="fastai dataloaders")
+    art = wandb.Artifact(f'run-{wandb.run.id}-{nm}-dls', type="fastai dataloaders")
     art.add_file(f'{nm}-dataloader.pkl')
     run.log_artifact(art)
 
     
 def train(config):
     set_seed(config.seed)
-    with wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config) as run:
+    run = wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config)
         
-        # good practice to inject params using sweeps
-        config = wandb.config
-        
-        # prepare data
-        processed_dataset_dir = download_data()
-        proc_df = get_df(processed_dataset_dir)
-        dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
-        save_dls(dls, run)
-        
-        metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
-                   TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
-        
-        cbs = [WandbCallback(log_preds=False, log_model=True), 
-               SaveModelCallback(monitor='miou'),] + ([MixedPrecision()] if config.mixed_precision else [])
-        
-        learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
-                             metrics=metrics)
-        
-        learn.fit_one_cycle(config.epochs, config.lr, cbs=cbs)
-        if config.log_preds:
-            log_predictions(learn)
-        final_metrics(learn)
-        _, disp = display_diagnostics(learner=learn, return_vals=True)
-        wandb.log({"confusion matrix": disp.figure_})
-        save_learner(learn, run)
+    # good practice to inject params using sweeps
+    config = wandb.config
+
+    # prepare data
+    processed_dataset_dir = download_data()
+    proc_df = get_df(processed_dataset_dir)
+    dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
+    save_dls(dls)
+
+    metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
+               TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
+
+    cbs = [WandbCallback(log_preds=False, log_model=True), 
+           SaveModelCallback(fname=f'run-{wandb.run.id}-model', monitor='miou')]
+    
+    if config.mixed_precision: 
+        cbs += [MixedPrecision()]
+
+    learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
+                         metrics=metrics)
+
+    learn.fit_one_cycle(config.epochs, config.lr, cbs=cbs)
+    
+    if config.log_preds:
+        log_predictions(learn)
+    
+    final_metrics(learn)
+    
+    _, disp = display_diagnostics(learner=learn, return_vals=True)
+    
+    wandb.log({"confusion matrix": disp.figure_})
+    save_learner(learn)
 
         
 if __name__ == '__main__':
