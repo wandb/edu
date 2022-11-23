@@ -95,29 +95,31 @@ def final_metrics(learn):
 
 def train(config):
     set_seed(config.seed)
-    with wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config):
+    run = wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config)
         
-        # good practice to inject params using sweeps
-        config = wandb.config
-        
-        # prepare data
-        processed_dataset_dir = download_data()
-        proc_df = get_df(processed_dataset_dir)
-        dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
-        
-        metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
-                   TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
-        
-        cbs = [WandbCallback(log_preds=False, log_model=True), 
-               SaveModelCallback(monitor='miou'),] + ([MixedPrecision()] if config.mixed_precision else [])
-        
-        learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
-                             metrics=metrics)
-        
-        learn.fit_one_cycle(config.epochs, config.lr, cbs=cbs)
-        if config.log_preds:
-            log_predictions(learn)
-        final_metrics(learn)
+    # good practice to inject params using sweeps
+    config = wandb.config
+
+    # prepare data
+    processed_dataset_dir = download_data()
+    proc_df = get_df(processed_dataset_dir)
+    dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
+
+    metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
+               TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
+
+    cbs = [WandbCallback(log_preds=False, log_model=True), 
+           SaveModelCallback(monitor='miou'),] + ([MixedPrecision()] if config.mixed_precision else [])
+
+    learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
+                         metrics=metrics)
+
+    learn.fit_one_cycle(config.epochs, config.lr, cbs=cbs)
+    if config.log_preds:
+        log_predictions(learn)
+    final_metrics(learn)
+    
+    wandb.finish()
 
 if __name__ == '__main__':
     parse_args()
