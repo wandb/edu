@@ -3,6 +3,7 @@
 import argparse, os
 import wandb
 from pathlib import Path
+import torch
 import torchvision.models as tvmodels
 import pandas as pd
 from fastai.vision.all import *
@@ -10,7 +11,7 @@ from fastai.callback.wandb import WandbCallback
 
 import params
 from utils import get_predictions, create_iou_table, MIOU, BackgroundIOU, \
-                  RoadIOU, TrafficLightIOU, TrafficSignIOU, PersonIOU, VehicleIOU, BicycleIOU, t_or_f
+                  RoadIOU, TrafficLightIOU, TrafficSignIOU, PersonIOU, VehicleIOU, BicycleIOU, t_or_f, display_diagnostics
 # defaults
 default_config = SimpleNamespace(
     framework="fastai",
@@ -93,9 +94,23 @@ def final_metrics(learn):
     for k,v in final_results.items(): 
         wandb.summary[k] = v
 
+
+def save_learner(learn, run):
+    art = wandb.Artifact('learner', type="fastai learner")
+    with art.new_file('fastai_model.pkl') as f:
+        learn.export(f.name)
+    run.log_artifact(art)
+        
+def save_dls(dls, run, nm='train'):
+    torch.save(dls, f'{nm}-dataloader.pkl')
+    art = wandb.Artifact(f'{nm}_dls', type="fastai dataloaders")
+    art.add_file(f'{nm}-dataloader.pkl')
+    run.log_artifact(art)
+
+    
 def train(config):
     set_seed(config.seed)
-    with wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config):
+    with wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config) as run:
         
         # good practice to inject params using sweeps
         config = wandb.config
@@ -104,6 +119,7 @@ def train(config):
         processed_dataset_dir = download_data()
         proc_df = get_df(processed_dataset_dir)
         dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
+        save_dls(dls, run)
         
         metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
                    TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
@@ -118,9 +134,12 @@ def train(config):
         if config.log_preds:
             log_predictions(learn)
         final_metrics(learn)
+        _, disp = display_diagnostics(learner=learn, return_vals=True)
+        wandb.log({"confusion matrix": disp.figure_})
+        save_learner(learn, run)
 
+        
 if __name__ == '__main__':
     parse_args()
     train(default_config)
-
 
