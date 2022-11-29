@@ -70,7 +70,7 @@ artifact = run.use_artifact('av-team/model-registry/BDD Semantic Segmentation:la
 artifact_dir = Path(artifact.download())
 
 _model_pth = first(artifact_dir.ls())
-model_path = str(_model_pth.parent.absolute()/_model_pth.stem)
+model_path = _model_pth.parent.absolute()/_model_pth.stem
 
 producer_run = artifact.logged_by()
 wandb.config.update(producer_run.config)
