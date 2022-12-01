@@ -8,7 +8,7 @@ organized by topic, linked below.
 These materials are intended for use with our in-person and webinar courses,
 but may be useful on their own.
 
-## 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/model-dev-course)
+## 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/mlops-001)
 
 ## ⚡ [Learn deep learning with PyTorch Lightning →](https://github.com/wandb/edu/tree/main/lightning)
 
