@@ -9,7 +9,9 @@ from utils import get_predictions, create_iou_table, MIOU, BackgroundIOU, \
                   t_or_f, display_diagnostics
 
 def download_data():
-    "Grab dataset from artifact"
+    """Grab dataset from artifact
+    @wandbcode{course-lesson3}
+    """
     processed_data_at = wandb.use_artifact(f'{params.PROCESSED_DATA_AT}:latest')
     processed_dataset_dir = Path(processed_data_at.download())
     return processed_dataset_dir
