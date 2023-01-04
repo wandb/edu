@@ -19,4 +19,4 @@ but may be useful on their own.
 
 ## 🧮 [Get a refresher on the math you need for ML →](https://github.com/wandb/edu/tree/main/math-for-ml)
 
-## 🏫 [Resources for Educators, Teaching Assistants, and Students](https://github.com/wandb/edu/tree/main/edu_resources/)
+## 🏫 [Resources for Educators, Teaching Assistants, and Students →](https://github.com/wandb/edu/tree/main/edu_resources/)
