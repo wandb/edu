@@ -1,4 +1,8 @@
-<img src="https://i.imgur.com/gb6B4ig.png" width="400" alt="Weights & Biases" />
+<p align="center">
+  <img src=".github/wb-logo-lightbg.png#gh-light-mode-only" width="600" alt="Weights & Biases" />
+  <img src=".github/wb-logo-darkbg.png#gh-dark-mode-only" width="600" alt="Weights & Biases" />
+</p>
+
 
 # Resources for Educators, Teaching Assistants, and Students
 
