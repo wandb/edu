@@ -11,6 +11,10 @@ Below are some resources that you can make use of as a student, student instruct
 
 We've included introductory content to help get you and your students started using _Weights & Biases_ to enable collaborative, repeatable machine and deep learning in your classroom, research lab, or student-run organization.
 
+## Teaching Weights & Biases
+
+The resources below are targeted at educators or instructors who are teaching machine learning, deep learning or reinforcement learning courses who want to make use of Weights & Biases in the classroom. We've curated a mix of videos, slide decks, and free resources for educators to help you and your students build reproducible, collaborative models with ease:
+
 - Introduction to using Weights and Biases – [[Video]](https://www.youtube.com/watch?v=Se1HvbAM0O4) [[Slides]](https://docs.google.com/presentation/d/19Kh3EndlKfD_jGXqUaUiW_wsfn59PJY5KiRTQk3WkYA)
 
 - [Collaborative Consistency: Crafting Repeatable Results](https://docs.google.com/presentation/d/13Zbn7_EOKtdNvl9m6W-yZLSR3rSI9QAaQDb84jmuG04/edit?usp=sharing) slide deck – A W&B 101 slide deck introducing the 'how' and 'why' behind reproducible, collaborative ML and DL research; also learn about research groups like OpenAI, HarmonAI, and others who use W&B to power their research and explore their work on the W&B platform
@@ -19,6 +23,7 @@ We've included introductory content to help get you and your students started us
 
 ## Using Weights & Biases with Your Favorite Library
 
-Whether you use more traditional machine learning frameworks (such as [scikit-learn](https://docs.wandb.ai/guides/integrations/scikit) or [XGBoost](https://docs.wandb.ai/guides/integrations/xgboost)) or deep learning frameworks (like [TensorFlow](https://docs.wandb.ai/guides/integrations/tensorflow), [PyTorch](https://docs.wandb.ai/guides/integrations/pytorch), Jax, [Keras](https://docs.wandb.ai/guides/integrations/keras), HuggingFace, etc.) Weights & Biases has you covered! Weights & Biases also integrates with SageMaker, [Kubeflow Pipelines](https://docs.wandb.ai/guides/integrations/other/kubeflow-pipelines-kfp), [Docker](https://docs.wandb.ai/guides/integrations/other/docker), [Ray Tune](https://docs.wandb.ai/guides/integrations/other/ray-tune), [Databricks](https://docs.wandb.ai/guides/integrations/other/databricks), and even [OpenAI's Gym](https://docs.wandb.ai/guides/integrations/other/openai-gym) for reinforcement learning. 
+Whether you use more traditional machine learning frameworks (such as [scikit-learn](https://docs.wandb.ai/guides/integrations/scikit) or [XGBoost](https://docs.wandb.ai/guides/integrations/xgboost)) or deep learning frameworks (like [TensorFlow](https://docs.wandb.ai/guides/integrations/tensorflow), [PyTorch](https://docs.wandb.ai/guides/integrations/pytorch), Jax, [Keras](https://docs.wandb.ai/guides/integrations/keras), HuggingFace, etc.) Weights & Biases has you covered! Weights & Biases also integrates with [SageMaker](https://docs.wandb.ai/guides/integrations/other/sagemaker), [Kubeflow Pipelines](https://docs.wandb.ai/guides/integrations/other/kubeflow-pipelines-kfp), [Docker](https://docs.wandb.ai/guides/integrations/other/docker), [Ray Tune](https://docs.wandb.ai/guides/integrations/other/ray-tune), [Databricks](https://docs.wandb.ai/guides/integrations/other/databricks), and even [OpenAI's Gym](https://docs.wandb.ai/guides/integrations/other/openai-gym) for reinforcement learning. 
 
 - [Using your favorite ML or DL library with W&B: Integrations](https://docs.wandb.ai/guides/integrations)
+- Creating your own Integration: if one of the dozens of W&B-authored integrations isn't quite what you're looking for we encourage you to create your own Integration using this guide: https://docs.wandb.ai/guides/integrations/add-wandb-to-any-library 
