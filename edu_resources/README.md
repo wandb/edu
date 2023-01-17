@@ -11,7 +11,7 @@ Below are some resources that you can make use of as a student, student instruct
 
 We've included introductory content to help get you and your students started using _Weights & Biases_ to enable collaborative, repeatable machine and deep learning in your classroom, research lab, or student-run organization.
 
-## Teaching Weights & Biases
+## Teaching with Weights & Biases
 
 The resources below are targeted at educators or instructors who are teaching machine learning, deep learning or reinforcement learning courses who want to make use of Weights & Biases in the classroom. We've curated a mix of videos, slide decks, and free resources for educators to help you and your students build reproducible, collaborative models with ease:
 
@@ -27,3 +27,20 @@ Whether you use more traditional machine learning frameworks (such as [scikit-le
 
 - [Using your favorite ML or DL library with W&B: Integrations](https://docs.wandb.ai/guides/integrations)
 - Creating your own Integration: if one of the dozens of W&B-authored integrations isn't quite what you're looking for we encourage you to create your own Integration using this guide: https://docs.wandb.ai/guides/integrations/add-wandb-to-any-library 
+
+
+## How to Cite Us
+
+If you've used Weights & Biases in your research we would love it if you cited us! Below is a BibTeX citation for you to use. Our whitepaper is available on [this page](https://docs.wandb.ai/company/company-faq#how-do-i-cite-weights-and-biases-in-a-paper).
+
+If you'd like to explore papers by other researchers who use Weights & Biases in their machine and deep learning workflows, please check out the [500+ citations here on Google Scholar](https://scholar.google.com/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=11167871456995846170&scipsc=).
+
+```
+@misc{wandb,
+title = {Experiment Tracking with Weights and Biases},
+year = {2020},
+note = {Software available from wandb.com},
+url={https://www.wandb.com/},
+author = {Biewald, Lukas},
+}
+```
