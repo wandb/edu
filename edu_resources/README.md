@@ -54,5 +54,10 @@ author = {Biewald, Lukas},
   <img src="https://raw.githubusercontent.com/wandb/edu/a533d97b22fc88358a322406d4a193116482f549/edu_resources/files/all_research_orgs.svg" width="600" alt="Weights & Biases Integrations" />
 </p>
 
+## Contact us
 
+Contact us at research [at] `wandb` [dot] ai if you'd like to learn more about W&B-hosted webinars for your class. With our 45-minute webinar we can introduce you to using Weights & Biases for your experiment tracking needs. Wih the 1.5-hour webinar one of our W&B staff will introduce you to our product for the first half of the webinar; to solidify student learning the second half of the webinar is devoted to an in-class Kaggle-like competition. At the end of either webinar - the 45-minute or 1.5-hour webinar - the participants will have developed
 
+- an understanding of experiment tracking and reproducibility in machine learning: why it's important and how Weights & Biases can help you throughout your model-building lifecycle
+- familiarity with the core features and functionalities of Weights & Biases
+- comfort with system metrics: Am I using the right-sized GPU for the job? Have I under- or overprovisioned my GPUs?
