@@ -29,6 +29,11 @@ Whether you use more traditional machine learning frameworks (such as [scikit-le
 - Creating your own Integration: if one of the dozens of W&B-authored integrations isn't quite what you're looking for we encourage you to create your own Integration using this guide: https://docs.wandb.ai/guides/integrations/add-wandb-to-any-library 
 
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wandb/edu/a533d97b22fc88358a322406d4a193116482f549/edu_resources/files/wandb_for_research_and_education_-_integrations.svg" width="600" alt="Weights & Biases Integrations" />
+</p>
+
+
 ## How to Cite Us
 
 If you've used Weights & Biases in your research we would love it if you cited us! Below is a BibTeX citation for you to use. Our whitepaper is available on [this page](https://docs.wandb.ai/company/company-faq#how-do-i-cite-weights-and-biases-in-a-paper).
@@ -44,3 +49,10 @@ url={https://www.wandb.com/},
 author = {Biewald, Lukas},
 }
 ```
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wandb/edu/a533d97b22fc88358a322406d4a193116482f549/edu_resources/files/all_research_orgs.svg" width="600" alt="Weights & Biases Integrations" />
+</p>
+
+
+
