@@ -1,0 +1,5 @@
+PROJECT_NAME = 'pyimagesearch'
+ENTITY = 'wandb_course'
+RAW_DATA_FOLDER = 'lemon-dataset/'
+ANNOTATIONS_FILE = 'lemon-dataset/annotations/instances_default.json'
+DATA_AT = 'lemon_data'
