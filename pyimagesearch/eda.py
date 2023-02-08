@@ -1,74 +1,142 @@
-from pycocotools.coco import COCO
-import skimage.io as io
+import os
+from typing import List
+
 import numpy as np
 import pandas as pd
-import os
+import skimage.io as io
+from pycocotools.coco import COCO
 
-import wandb
 import params
+import wandb
 
-# we define some helper functions to load the annotations and labels
-def get_anns(img):
-    annIds = coco.getAnnIds(imgIds=img['id'], catIds=catIds, iscrowd=None)
-    return coco.loadAnns(annIds)
 
-def get_label(ann):
-    return [cat['name'] for cat in cats if cat['id'] == ann['category_id']][0]
+def get_annotations(image: dict, coco_obj: COCO, categoryIds: List[dict]):
+    # get the annotation ids and annotations corresponding to the give image
+    annotationIds = coco_obj.getAnnIds(
+        imgIds=image["id"], catIds=categoryIds, iscrowd=None
+    )
+    annotations = coco_obj.loadAnns(annotationIds)
+    return annotations
 
-# We will log the images with the corresponding bounding boxes and masks 
-# to a wandb.Table to visualize and do further EDA on the W&B workspace
-def make_wandb_image(img):
-    "Helper function to create an annotated wandb.Image"
-    pth = os.path.join(params.RAW_DATA_FOLDER, img['file_name'])
-    img_array = io.imread(pth)
-    anns = get_anns(img)
 
-    truth_box_data = [{'position': {'minX': ann['bbox'][0],
-                                  'minY': ann['bbox'][1],
-                                  'maxX': ann['bbox'][0]+ann['bbox'][2],
-                                  'maxY': ann['bbox'][1]+ann['bbox'][3]},
-                      'class_id': ann['category_id'],
-                      'box_caption': get_label(ann),
-                      'domain': 'pixel'} for ann in anns]
+def get_label(annotation: dict, categories: List[dict]):
+    labels = [
+        category["name"]
+        for category in categories
+        if category["id"] == annotation["category_id"]
+    ]
+    return labels[0]
 
-    masks = [coco.annToMask(ann)*ann['category_id'] for ann in anns]
+
+def make_wandb_image(
+    image: dict, coco_obj: COCO, categoryIds: List, categories: List[dict]
+):
+    """Helper function to create an annotated wandb.Image"""
+    image_path = os.path.join(params.RAW_DATA_FOLDER, image["file_name"])
+    image_array = io.imread(image_path)
+
+    annotations = get_annotations(
+        image=image, coco_obj=coco_obj, categoryIds=categoryIds
+    )
+    truth_box_data = [
+        {
+            "position": {
+                "minX": annotation["bbox"][0],
+                "minY": annotation["bbox"][1],
+                "maxX": annotation["bbox"][0] + annotation["bbox"][2],
+                "maxY": annotation["bbox"][1] + annotation["bbox"][3],
+            },
+            "class_id": annotation["category_id"],
+            "box_caption": get_label(annotation=annotation, categories=categories),
+            "domain": "pixel",
+        }
+        for annotation in annotations
+    ]
+
+    masks = [
+        coco_obj.annToMask(annotation) * annotation["category_id"]
+        for annotation in annotations
+    ]
     mask = np.stack(masks).max(axis=0)  # arbitrary way to select a label...
+
+    # We will log the images with the corresponding bounding boxes and masks
+    # to a wandb.Table to visualize and do further EDA on the W&B workspace
     return wandb.Image(
-                    img_array,
-                    classes=cats,
-                    boxes={'ground_truth': {'box_data': truth_box_data}},
-                    masks={'ground_truth': {'mask_data': mask}}
-                    )
+        image_array,
+        classes=categories,
+        boxes={"ground_truth": {"box_data": truth_box_data}},
+        masks={"ground_truth": {"mask_data": mask}},
+    )
 
-# we are interested in mold, so let's create a function to filter this catergory
-def is_mold(img):
-    anns = get_anns(img)
+
+def is_mold(image: dict, coco_obj: COCO, categoryIds: List[dict]):
+    """A function to filter mold catergory"""
+    annotations = get_annotations(
+        image=image, coco_obj=coco_obj, categoryIds=categoryIds
+    )
+
     # 4 is id of mold category
-    return 4 in [x['category_id'] for x in anns]
+    return 4 in [annotation["category_id"] for annotation in annotations]
 
-# The filename contains the different info about each image separated by an underscore.
-# We will log this information in separate columns
-def make_row(img):
-    "Refactor of each table row"
-    fname = img['file_name'].split('/')[1].split('.')[0]
-    return [make_wandb_image(img), *fname.split('_'), img['file_name'], is_mold(img)]
+
+def make_row(image: dict, coco_obj: COCO, categoryIds: List, categories: List[dict]):
+    """Refactor each dictionary into a table row"""
+    # get the filename and split the file name into file componenets
+    file_name = image["file_name"]
+    file_components = file_name.split("/")[-1].split(".")[0].split("_")
+
+    # build image for the table
+    wandb_image = make_wandb_image(
+        image=image,
+        coco_obj=coco_obj,
+        categoryIds=categoryIds,
+        categories=categories,
+    )
+
+    # whether the lemon has mold or not
+    has_mold = is_mold(image=image, coco_obj=coco_obj, categoryIds=categoryIds)
+
+    # build the row of the table and return it
+    row = [
+        wandb_image,
+        *file_components,
+        file_name,
+        has_mold,
+    ]
+    return row
+
 
 if __name__ == "__main__":
-    # we will read the COCO object using the pycoco library, 
+    # we will read the COCO object using the pycoco library,
     # this is a standard format for object detection/segmentation.
-    coco = COCO(params.ANNOTATIONS_FILE)
+    coco_obj = COCO(params.ANNOTATIONS_FILE)
 
-    # get categories
-    cats = coco.loadCats(coco.getCatIds())
-    catIds = coco.getCatIds()
+    # get category ids and categories
+    categoryIds = coco_obj.getCatIds()
+    categories = coco_obj.loadCats(categoryIds)
 
-    # get image ids
-    imgIds = coco.getImgIds()
-    imgs = coco.loadImgs(imgIds)
+    # get image ids and images
+    imageIds = coco_obj.getImgIds()
+    images = coco_obj.loadImgs(imageIds)
 
-    # Let's log the dataset as a Table, it takes around 5 minutes depending on your connection.
-    imgs = imgs[0:5]  # uncomment to log a sample only
-    with wandb.init(project=params.PROJECT_NAME, entity=params.ENTITY, job_type="EDA") as run:    
-        df = pd.DataFrame(data=[make_row(img) for img in imgs],
-                        columns='imgs,ids,n1,n2,n3,n4,file_name,is_mold'.split(','))
-        run.log({'table_coco_sample': wandb.Table(dataframe=df)})
+    # upload 5 image to wandb
+    images = images[0:5]
+
+    # let's log the dataset as a Table, it takes around 5 minutes depending on your connection.
+    columns = ["images", "ids", "n1", "n2", "n3", "n4", "file_name", "is_mold"]
+    with wandb.init(
+        project=params.PROJECT_NAME, entity=params.ENTITY, job_type="EDA"
+    ) as run:
+        df = pd.DataFrame(
+            data=[
+                make_row(
+                    image=image,
+                    coco_obj=coco_obj,
+                    categoryIds=categoryIds,
+                    categories=categories,
+                )
+                for image in images
+            ],
+            columns=columns,
+        )
+        run.log({"table_coco_sample": wandb.Table(dataframe=df)})
