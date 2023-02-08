@@ -1,53 +1,66 @@
-import argparse, os
+import argparse
+import os
 from pathlib import Path
+
 import pandas as pd
+from fastai.callback.wandb import WandbCallback
+from fastai.vision.all import *
 from ml_collections import config_dict
 
-import wandb
-from fastai.vision.all import *
-from fastai.callback.wandb import WandbCallback
-
 import params
+import wandb
+
 
 def prepare_data(PROCESSED_DATA_AT):
     "Get/Download the datasets"
     processed_data_at = wandb.use_artifact(PROCESSED_DATA_AT)
     processed_dataset_dir = Path(processed_data_at.download())
-    df = pd.read_csv(processed_dataset_dir / 'data_split.csv')
-    df = df[df.stage != 'train'].reset_index(drop=True) # for eval we need test and validation datasets only
-    df['test'] = df.stage == 'test'
+    df = pd.read_csv(processed_dataset_dir / "data_split.csv")
+    df = df[df.stage != "train"].reset_index(
+        drop=True
+    )  # for eval we need test and validation datasets only
+    df["test"] = df.stage == "test"
     return df, processed_dataset_dir
 
-def eval(cfg):
-    
-    set_seed(cfg.seed, reproducible=True)
-    
-    run = wandb.init(project=cfg.PROJECT_NAME, entity=cfg.ENTITY, job_type="evaluation", tags=['staging'])
 
-    artifact = run.use_artifact('wandb_course/model-registry/Lemon Mold Detector:staging', type='model')
+def eval(cfg):
+    set_seed(cfg.seed, reproducible=True)
+
+    run = wandb.init(
+        project=cfg.PROJECT_NAME,
+        entity=cfg.ENTITY,
+        job_type="evaluation",
+        tags=["staging"],
+    )
+
+    artifact = run.use_artifact(
+        "wandb_course/model-registry/Lemon Mold Detector:staging", type="model"
+    )
     artifact_dir = artifact.download()
-    model_path = Path(artifact_dir).absolute()/'model'
-    
+    model_path = Path(artifact_dir).absolute() / "model"
+
     producer_run = artifact.logged_by()
-    cfg.img_size = producer_run.config['img_size']
-    cfg.bs = producer_run.config['bs']
-    cfg.arch = producer_run.config['arch']
-        
+    cfg.img_size = producer_run.config["img_size"]
+    cfg.bs = producer_run.config["bs"]
+    cfg.arch = producer_run.config["arch"]
+
     wandb.config.update(cfg)
-    
+
     df, path = prepare_data(cfg.PROCESSED_DATA_AT)
-    
-    dls = ImageDataLoaders.from_df(df, path=path,
-                                   fn_col='file_name', 
-                                   label_col=cfg.target_column, 
-                                   valid_col='test', 
-                                   item_tfms=Resize(cfg.img_size), 
-                                   bs=cfg.bs,
-                                   shuffle=False
-                                  )
-    learn = vision_learner(dls, 
-                           cfg.arch,
-                           metrics=[accuracy, Precision(), Recall(), F1Score()])
+
+    dls = ImageDataLoaders.from_df(
+        df,
+        path=path,
+        fn_col="file_name",
+        label_col=cfg.target_column,
+        valid_col="test",
+        item_tfms=Resize(cfg.img_size),
+        bs=cfg.bs,
+        shuffle=False,
+    )
+    learn = vision_learner(
+        dls, cfg.arch, metrics=[accuracy, Precision(), Recall(), F1Score()]
+    )
 
     learn.load(model_path)
 
@@ -66,15 +79,14 @@ def eval(cfg):
     wandb.summary["tst/loss"] = tst_loss
 
     run.finish()
-  
-if __name__ == '__main__':
 
+
+if __name__ == "__main__":
     default_cfg = config_dict.ConfigDict()
     default_cfg.PROJECT_NAME = params.PROJECT_NAME
     default_cfg.ENTITY = params.ENTITY
-    default_cfg.PROCESSED_DATA_AT = f'{params.DATA_AT}:latest'
-    default_cfg.target_column = 'mold'
+    default_cfg.PROCESSED_DATA_AT = f"{params.DATA_AT}:latest"
+    default_cfg.target_column = "mold"
     default_cfg.seed = 42
 
     eval(default_cfg)
-
