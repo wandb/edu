@@ -19,3 +19,7 @@ Having a disciplined, flexible and collaborative process - an effective MLOps sy
 - Automating hyperparameter optimization with Sweeps
 - Model evaluation techniques that ensure reproducibility and enterprise-level governance
 
+# My Notes
+
+**Baseline run overview**  
+<img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-07%2004_35_52-royal-sky-5%20_%20mlops-course-001%20%E2%80%93%20Weights%20%26%20Biases.jpg">
