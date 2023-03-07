@@ -20,3 +20,6 @@ but may be useful on their own.
 ## 🧮 [Get a refresher on the math you need for ML →](https://github.com/wandb/edu/tree/main/math-for-ml)
 
 ## 🏫 [Resources for Educators, Teaching Assistants, and Students →](https://github.com/wandb/edu/tree/main/edu_resources/)
+
+**Baseline run overview**  
+<src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-07%2004_35_52-royal-sky-5%20_%20mlops-course-001%20%E2%80%93%20Weights%20%26%20Biases.jpg">
