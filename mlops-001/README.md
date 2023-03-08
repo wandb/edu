@@ -24,5 +24,5 @@ Having a disciplined, flexible and collaborative process - an effective MLOps sy
 **Baseline run overview**  
 <img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-07%2004_35_52-royal-sky-5%20_%20mlops-course-001%20%E2%80%93%20Weights%20%26%20Biases.jpg">
 
-Lesson 1 [01_EDA.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/01_EDA.ipynb), [02_Split.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/02_Split.ipynb), [03_Baseline.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/03_Baseline.ipynb)
-Lesson 2 [04_refactor_baseline_02.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson2/04_refactor_baseline_02.ipynb)
+Lesson 1: [01_EDA.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/01_EDA.ipynb), [02_Split.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/02_Split.ipynb), [03_Baseline.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/03_Baseline.ipynb)  
+Lesson 2: [04_refactor_baseline_02.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson2/04_refactor_baseline_02.ipynb)  
