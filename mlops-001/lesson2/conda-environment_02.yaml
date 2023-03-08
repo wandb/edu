@@ -1,0 +1,27 @@
+name: course
+channels:
+  - conda-forge
+dependencies:
+  - libgfortran-ng=12.2.0
+  - _openmp_mutex=4.5
+  - libnvjpeg=11.9.0.8
+  - libgcc-ng=12.2.0
+  - libgomp=12.2.0
+  - gmp=6.2.1
+  - nettle=3.6
+  - cuda-driver-dev=11.6.55
+  - readline=8.1.2
+  - gds-tools=1.4.0.31
+  - openh264=2.1.1
+  - ld_impl_linux-64=2.39
+  - libuuid=2.32.1
+  - libcufile=1.4.0.31
+  - libcufile-dev=1.4.0.31
+  - cuda-gdb=11.8.86
+  - libstdcxx-ng=12.2.0
+  - ncurses=6.3
+  - libgfortran5=12.2.0
+  - cuda-samples=11.6.101
+  - cuda-nsight=11.8.86
+  - gnutls=3.6.13
+  - libnsl=2.0.0
