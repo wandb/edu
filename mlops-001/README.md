@@ -35,7 +35,8 @@ Lesson 2: [04_refactor_baseline_02.ipynb](https://nbviewer.org/github/Nov05/wand
 1. For lesson 2, if you use a local machine, file `conda-environment.yaml` in Lesson 2 won't work for Windows, cause pytorch just does **NOT** support Windows. You can install Ubuntu WSL and [set up the enviroment with miniconda](https://www.how2shout.com/linux/install-miniconda-on-ubuntu-22-04-lts-jammy-linux/) there. 
 2. If you use Google Colab, there is no need install conda then create the env from yaml, which would cause a few problems that are hard to solve. You can just pip install `wandb` and run the notebooks.    
 3. Remeber to change the configurations in `params.py` and `sweep.yaml`.  
-<img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2004_39_06-root%40guido_%20_mnt_d_github_wandb-edu_mlops-001_lesson2.jpg">   
+<img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2004_39_06-root%40guido_%20_mnt_d_github_wandb-edu_mlops-001_lesson2.jpg">  
+
 4. If you run into **error** `Could not load library libcudnn_cnn_infer.so.8. Error: libcuda.so: cannot open shared object file: No such file or directory
 Please make sure libcudnn_cnn_infer.so.8 is in your library path`, [add the following config](https://discuss.pytorch.org/t/libcudnn-cnn-infer-so-8-library-can-not-found/164661).   
 
