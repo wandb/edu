@@ -35,6 +35,7 @@ Please make sure libcudnn_cnn_infer.so.8 is in your library path`, [add the foll
 > `export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH`  
 > Be sure that your library is in /usr/lib/wsl/lib, to see it you can run  
 > `ldconfig -p | grep cuda`   
-You can check the config with command `$cat ~/.bashrc`.
+> 
+You can check the config with command `$cat ~/.bashrc`.  
 [Install text editor](https://help.ubuntu.com/community/gedit) with command `$sudo apt-get install gedit`.  
 
