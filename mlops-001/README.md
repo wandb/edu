@@ -26,3 +26,7 @@ Having a disciplined, flexible and collaborative process - an effective MLOps sy
 
 Lesson 1: [01_EDA.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/01_EDA.ipynb), [02_Split.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/02_Split.ipynb), [03_Baseline.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson1/03_Baseline.ipynb)  
 Lesson 2: [04_refactor_baseline_02.ipynb](https://nbviewer.org/github/Nov05/wandb-edu/blob/main/mlops-001/lesson2/04_refactor_baseline_02.ipynb)  
+
+Caution: the file `conda-environment.yaml` in Lesson 2 doesn't work for Windows (pytorch just doesn't support windows). You can install Ubuntu WSL and [set up the enviroment with miniconda](https://www.how2shout.com/linux/install-miniconda-on-ubuntu-22-04-lts-jammy-linux/) there.  
+<img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2004_39_06-root%40guido_%20_mnt_d_github_wandb-edu_mlops-001_lesson2.jpg">  
+
