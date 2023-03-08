@@ -32,7 +32,7 @@ Lesson 2: [04_refactor_baseline_02.ipynb](https://nbviewer.org/github/Nov05/wand
 <img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2011_45_24-20230224_mlops_lesson-1_03-baseline%20report%20_%20mlops-course-001%20%E2%80%93%20Weights%20%26%20Biases.jpg" width=600>  
 
 【**Caution**】  
-1. For lesson 2, if you use a local machine, file `conda-environment.yaml` in Lesson 2 won't work for Windows, cause pytorch just does **NOT** support Windows. You can install Ubuntu WSL and [set up the enviroment with miniconda](https://www.how2shout.com/linux/install-miniconda-on-ubuntu-22-04-lts-jammy-linux/) there. 
+1. For lesson 2, if you use a local machine, file `conda-environment.yaml` in Lesson 2 won't work for Windows, cause pytorch/vision just does **NOT** support Windows well. You can install Ubuntu WSL and [set up the enviroment with miniconda](https://www.how2shout.com/linux/install-miniconda-on-ubuntu-22-04-lts-jammy-linux/) there. 
 2. If you use Google Colab, there is no need to install conda then create the env from yaml, which would cause a few problems that are hard to solve. You can just pip install `wandb` and run the notebooks.    
 3. Remeber to change the configurations in `params.py` and `sweep.yaml`.  
 <img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2004_39_06-root%40guido_%20_mnt_d_github_wandb-edu_mlops-001_lesson2.jpg">  
