@@ -29,7 +29,7 @@ Lesson 2: [04_refactor_baseline_02.ipynb](https://nbviewer.org/github/Nov05/wand
 <img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-07%2004_35_52-royal-sky-5%20_%20mlops-course-001%20%E2%80%93%20Weights%20%26%20Biases.jpg">  
 
 **[My baseline report](https://api.wandb.ai/links/novemberfifth/dlmvt4ss)**  
-<img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2011_45_24-20230224_mlops_lesson-1_03-baseline%20report%20_%20mlops-course-001%20%E2%80%93%20Weights%20%26%20Biases.jpg">  
+<img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2011_45_24-20230224_mlops_lesson-1_03-baseline%20report%20_%20mlops-course-001%20%E2%80%93%20Weights%20%26%20Biases.jpg" width=600>  
 
 【**Caution**】file `conda-environment.yaml` in Lesson 2 doesn't work for Windows (pytorch just doesn **NOT** support Windows). You can install Ubuntu WSL and [set up the enviroment with miniconda](https://www.how2shout.com/linux/install-miniconda-on-ubuntu-22-04-lts-jammy-linux/) there.  
 <img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2004_39_06-root%40guido_%20_mnt_d_github_wandb-edu_mlops-001_lesson2.jpg">  
