@@ -33,7 +33,7 @@ Lesson 2: [04_refactor_baseline_02.ipynb](https://nbviewer.org/github/Nov05/wand
 
 【**Caution**】file `conda-environment.yaml` in Lesson 2 doesn't work for Windows (pytorch just doesn **NOT** support Windows). You can install Ubuntu WSL and [set up the enviroment with miniconda](https://www.how2shout.com/linux/install-miniconda-on-ubuntu-22-04-lts-jammy-linux/) there.  
 <img src="https://raw.githubusercontent.com/Nov05/pictures/master/repos/wandb-edu/2023-03-08%2004_39_06-root%40guido_%20_mnt_d_github_wandb-edu_mlops-001_lesson2.jpg">  
-If you run into **issue** `Could not load library libcudnn_cnn_infer.so.8. Error: libcuda.so: cannot open shared object file: No such file or directory
+If you run into **error** `Could not load library libcudnn_cnn_infer.so.8. Error: libcuda.so: cannot open shared object file: No such file or directory
 Please make sure libcudnn_cnn_infer.so.8 is in your library path`, [add the following config](https://discuss.pytorch.org/t/libcudnn-cnn-infer-so-8-library-can-not-found/164661).   
 > As discussed in this issue 155 it is just a matter to add this in the `.bashrc`:  
 > `export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH`  
