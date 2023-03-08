@@ -6,7 +6,7 @@ method: random
 
 # Project this sweep is part of
 project: mlops-course-001
-entity: av-team
+entity: novemberfifth
 
 # Metric to optimize
 metric:
