@@ -185,4 +185,3 @@ def display_diagnostics(learner, dls=None, return_vals=False):
     fig.show()
     
     if return_vals: return countdf, disp
-

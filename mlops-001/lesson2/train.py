@@ -125,5 +125,3 @@ def train(config):
 if __name__ == '__main__':
     parse_args()
     train(default_config)
-
-
