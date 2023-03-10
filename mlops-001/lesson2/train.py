@@ -11,6 +11,7 @@ from fastai.callback.wandb import WandbCallback
 import params
 from utils import get_predictions, create_iou_table, MIOU, BackgroundIOU, \
                   RoadIOU, TrafficLightIOU, TrafficSignIOU, PersonIOU, VehicleIOU, BicycleIOU, t_or_f
+
 # defaults
 default_config = SimpleNamespace(
     framework="fastai",
@@ -44,15 +45,18 @@ def parse_args():
     vars(default_config).update(vars(args))
     return
 
+
 def download_data():
     "Grab dataset from artifact"
     processed_data_at = wandb.use_artifact(f'{params.PROCESSED_DATA_AT}:latest')
     processed_dataset_dir = Path(processed_data_at.download())
     return processed_dataset_dir
 
+
 def label_func(fname):
     return (fname.parent.parent/"labels")/f"{fname.stem}_mask.png"
         
+
 def get_df(processed_dataset_dir, is_test=False):
     df = pd.read_csv(processed_dataset_dir / 'data_split.csv')
     
@@ -62,11 +66,11 @@ def get_df(processed_dataset_dir, is_test=False):
     else:
         df = df[df.Stage == 'test'].reset_index(drop=True)
         
-    
     # assign paths
     df["image_fname"] = [processed_dataset_dir/f'images/{f}' for f in df.File_Name.values]
     df["label_fname"] = [label_func(f) for f in df.image_fname.values]
     return df
+
 
 def get_data(df, bs=4, img_size=180, augment=True):
     block = DataBlock(blocks=(ImageBlock, MaskBlock(codes=params.BDD_CLASSES)),
@@ -85,6 +89,7 @@ def log_predictions(learn):
     table = create_iou_table(samples, outputs, predictions, params.BDD_CLASSES)
     wandb.log({"pred_table":table})
     
+
 def final_metrics(learn):
     "Log latest metrics values"
     scores = learn.validate()
@@ -92,6 +97,7 @@ def final_metrics(learn):
     final_results = {metric_names[i] : scores[i] for i in range(len(scores))}
     for k,v in final_results.items(): 
         wandb.summary[k] = v
+
 
 def train(config):
     set_seed(config.seed)
@@ -121,6 +127,7 @@ def train(config):
     final_metrics(learn)
     
     wandb.finish()
+
 
 if __name__ == '__main__':
     parse_args()
