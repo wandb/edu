@@ -24,12 +24,11 @@ parameters:
   batch_size:
     values: [4, 8]
   img_size:
-    value: [240, 320]
+    value: 180
   arch:
     values:
       - 'resnet18'
       - 'convnext_tiny'
       - 'regnet_x_400mf'
       - 'mobilenet_v3_small'
-      - 'resnet152'
       - 'googlenet'

@@ -4,6 +4,8 @@ models/
 artifact/
 artifacts/
 model-dev-course/lesson1/artifacts/
+mlops-001/lesson2/artifacts/
+mlops-001/lesson2/models/
 *.csv
 *.json
 *.png
