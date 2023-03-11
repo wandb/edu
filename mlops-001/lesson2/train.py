@@ -18,7 +18,7 @@ default_config = SimpleNamespace(
     img_size=180, #(180, 320) in 16:9 proportions,
     batch_size=8, #8 keep small in Colab to be manageable
     augment=True, # use data augmentation
-    epochs=10, # for brevity, increase for better results :)
+    epochs=30, # for brevity, increase for better results :)
     lr=2e-3,
     pretrained=True,  # whether to use pretrained encoder,
     mixed_precision=True, # use automatic mixed precision
@@ -99,30 +99,30 @@ def final_metrics(learn):
         wandb.summary[k] = v
 
 
-def train(config):
-    set_seed(config.seed)
+def train(cnfg):
+    set_seed(cnfg.seed)
     run = wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config)
         
     # good practice to inject params using sweeps
-    config = wandb.config
+    cnfg = wandb.config
 
     # prepare data
     processed_dataset_dir = download_data()
     proc_df = get_df(processed_dataset_dir)
-    dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
+    dls = get_data(proc_df, bs=cnfg.batch_size, img_size=cnfg.img_size, augment=cnfg.augment)
 
     metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
                TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
 
     cbs = [WandbCallback(log_preds=False, log_model=True), 
            SaveModelCallback(fname=f'run-{wandb.run.id}-model', monitor='miou')]
-    cbs += ([MixedPrecision()] if config.mixed_precision else [])
+    cbs += ([MixedPrecision()] if cnfg.mixed_precision else [])
 
-    learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
+    learn = unet_learner(dls, arch=getattr(tvmodels, cnfg.arch), pretrained=cnfg.pretrained, 
                          metrics=metrics)
 
-    learn.fit_one_cycle(config.epochs, config.lr, cbs=cbs)
-    if config.log_preds:
+    learn.fit_one_cycle(cnfg.epochs, cnfg.lr, cbs=cbs)
+    if cnfg.log_preds:
         log_predictions(learn)
     final_metrics(learn)
     
