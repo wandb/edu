@@ -104,7 +104,7 @@ def train(config):
     run = wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config)
         
     # good practice to inject params using sweeps
-    wandb.config = config
+    config = wandb.config
 
     # prepare data
     processed_dataset_dir = download_data()
