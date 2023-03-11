@@ -99,30 +99,30 @@ def final_metrics(learn):
         wandb.summary[k] = v
 
 
-def train(cnfg):
-    set_seed(cnfg.seed)
+def train(config):
+    set_seed(config.seed)
     run = wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training", config=config)
         
     # good practice to inject params using sweeps
-    cnfg = wandb.config
+    wandb.config = config
 
     # prepare data
     processed_dataset_dir = download_data()
     proc_df = get_df(processed_dataset_dir)
-    dls = get_data(proc_df, bs=cnfg.batch_size, img_size=cnfg.img_size, augment=cnfg.augment)
+    dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
 
     metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
                TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
 
     cbs = [WandbCallback(log_preds=False, log_model=True), 
            SaveModelCallback(fname=f'run-{wandb.run.id}-model', monitor='miou')]
-    cbs += ([MixedPrecision()] if cnfg.mixed_precision else [])
+    cbs += ([MixedPrecision()] if config.mixed_precision else [])
 
-    learn = unet_learner(dls, arch=getattr(tvmodels, cnfg.arch), pretrained=cnfg.pretrained, 
+    learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
                          metrics=metrics)
 
-    learn.fit_one_cycle(cnfg.epochs, cnfg.lr, cbs=cbs)
-    if cnfg.log_preds:
+    learn.fit_one_cycle(config.epochs, config.lr, cbs=cbs)
+    if config.log_preds:
         log_predictions(learn)
     final_metrics(learn)
     
