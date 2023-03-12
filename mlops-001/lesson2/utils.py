@@ -21,7 +21,7 @@ def iou_per_class(inp, targ):
         t = torch.where(targ == c, 1, 0)
         c_inter = (p * t).float().sum().item()
         c_union = (p + t).float().sum().item()
-        iou_scores.append(c_inter / (c_union - c_inter) if c_union > 0 else np.nan)
+        iou_scores.append(c_inter / (c_union-c_inter) if c_union > 0 else np.nan)
     return iou_scores
 
 def create_row(sample, pred_label, prediction, class_labels):

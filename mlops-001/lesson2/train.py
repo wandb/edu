@@ -109,7 +109,7 @@ def train(config):
     # prepare data
     processed_dataset_dir = download_data()
     proc_df = get_df(processed_dataset_dir)
-    dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment)
+    dls = get_data(proc_df, bs=config.batch_size, img_size=config.img_size, augment=config.augment) ## data loaders
 
     metrics = [MIOU(), BackgroundIOU(), RoadIOU(), TrafficLightIOU(),
                TrafficSignIOU(), PersonIOU(), VehicleIOU(), BicycleIOU()]
@@ -118,8 +118,7 @@ def train(config):
            SaveModelCallback(fname=f'run-{wandb.run.id}-model', monitor='miou')]
     cbs += ([MixedPrecision()] if config.mixed_precision else [])
 
-    learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, 
-                         metrics=metrics)
+    learn = unet_learner(dls, arch=getattr(tvmodels, config.arch), pretrained=config.pretrained, metrics=metrics)
 
     learn.fit_one_cycle(config.epochs, config.lr, cbs=cbs)
     if config.log_preds:
