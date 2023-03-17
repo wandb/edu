@@ -1,80 +1,127 @@
-import argparse, os
-from pathlib import Path
-import pandas as pd
-from ml_collections import config_dict
-
+from types import SimpleNamespace
 import wandb
-from fastai.vision.all import *
-from fastai.callback.wandb import WandbCallback
+import torch
+import torch.nn as nn
+import torchvision.transforms as T
+from torch.utils.data import DataLoader
+from fastprogress import progress_bar
+from torcheval.metrics import (
+    Mean,
+    BinaryAccuracy,
+    BinaryPrecision,
+    BinaryRecall,
+    BinaryF1Score,
+)
 
 import params
+from utils import get_data, set_seed, ImageDataset, load_model, to_device, get_class_name_in_snake_case as snake_case
 
-def prepare_data(PROCESSED_DATA_AT):
-    "Get/Download the datasets"
-    processed_data_at = wandb.use_artifact(PROCESSED_DATA_AT)
-    processed_dataset_dir = Path(processed_data_at.download())
-    df = pd.read_csv(processed_dataset_dir / 'data_split.csv')
-    df = df[df.stage != 'train'].reset_index(drop=True) # for eval we need test and validation datasets only
-    df['test'] = df.stage == 'test'
-    return df, processed_dataset_dir
+default_cfg = SimpleNamespace(
+    img_size=256,
+    bs=16,
+    seed=42,
+    epochs=2,
+    lr=2e-3,
+    wd=1e-5,
+    arch="resnet18",
+    log_model=True,
+    log_preds=False,
+    # these are params that are not being changed
+    image_column="file_name",
+    target_column="mold",
+    PROJECT_NAME=params.PROJECT_NAME,
+    ENTITY=params.ENTITY,
+    PROCESSED_DATA_AT=params.DATA_AT,
+    model_artifact_name = "wandb_course/model-registry/Lemon Mold Detector:candidate",
+)
 
-def eval(cfg):
-    
-    set_seed(cfg.seed, reproducible=True)
-    
-    run = wandb.init(project=cfg.PROJECT_NAME, entity=cfg.ENTITY, job_type="evaluation", tags=['staging'])
+def main(cfg):
 
-    artifact = run.use_artifact('wandb_course/model-registry/Lemon Mold Detector:staging', type='model')
-    artifact_dir = artifact.download()
-    model_path = Path(artifact_dir).absolute()/'model'
-    
-    producer_run = artifact.logged_by()
-    cfg.img_size = producer_run.config['img_size']
-    cfg.bs = producer_run.config['bs']
-    cfg.arch = producer_run.config['arch']
-        
+    set_seed(cfg.seed)
+
+    run = wandb.init(
+        project=cfg.PROJECT_NAME,
+        entity=cfg.ENTITY,
+        job_type="evaluation",
+        tags=["staging"],
+    )
+
     wandb.config.update(cfg)
+
+    df, processed_dataset_dir = get_data(cfg.PROCESSED_DATA_AT, eval=True)
+
+    test_data = df[df["test"] == True]
+    val_data = df[df["test"] == False]
+
+    test_transforms = val_transforms = [
+        T.Resize(cfg.img_size),
+        T.ToTensor(),
+    ]
+    val_dataset = ImageDataset(
+        val_data,
+        processed_dataset_dir,
+        image_column=cfg.image_column,
+        target_column=cfg.target_column,
+        transform=val_transforms,
+    )
+
+    test_dataset = ImageDataset(
+        test_data,
+        processed_dataset_dir,
+        image_column=cfg.image_column,
+        target_column=cfg.target_column,
+        transform=val_transforms,
+    )
+
+    test_dataloader = DataLoader(
+        test_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
+    )
+    valid_dataloader = DataLoader(
+        test_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
+    )
+    model = load_model(cfg.model_artifact_name)
+
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    def cross_entropy(x, y):
+        "A flattened version of nn.BCEWithLogitsLoss"
+        loss_func = nn.BCEWithLogitsLoss()
+        return loss_func(x.squeeze(), y.squeeze().float())
+
+    @torch.inference_mode()
+    def evaluate(loader):
+        loss_mean = Mean(device=device)
+        metrics = [BinaryAccuracy(device=device),
+                BinaryPrecision(device=device),
+                BinaryRecall(device=device),
+                BinaryF1Score(device=device),
+                ]
+
+        for b in progress_bar(loader, leave=True, total=len(loader)):
+            images, labels = to_device(b, device)
+            outputs = model(images).squeeze()
+            loss = cross_entropy(outputs, labels)
+            loss_mean.update(loss)
+            for metric in metrics:
+                metric.update(outputs, labels.long())
+
+
+        return loss, metrics
+
+    valid_loss, valid_metrics = evaluate(valid_dataloader)
+    test_loss, test_metrics   = evaluate(test_dataloader)
+
+    def log_summary(loss, metrics, suffix="valid"):
+        wandb.summary[f"{suffix}_loss"] = loss
+        for m in metrics:
+            wandb.summary[f"{suffix}_{snake_case(m)}"] = m.compute()
     
-    df, path = prepare_data(cfg.PROCESSED_DATA_AT)
+    log_summary(valid_loss, valid_metrics, suffix="valid")
+    log_summary(test_loss, test_metrics, suffix="test")
     
-    dls = ImageDataLoaders.from_df(df, path=path,
-                                   fn_col='file_name', 
-                                   label_col=cfg.target_column, 
-                                   valid_col='test', 
-                                   item_tfms=Resize(cfg.img_size), 
-                                   bs=cfg.bs,
-                                   shuffle=False
-                                  )
-    learn = vision_learner(dls, 
-                           cfg.arch,
-                           metrics=[accuracy, Precision(), Recall(), F1Score()])
-
-    learn.load(model_path)
-
-    val_loss, val_accuracy, val_precision, val_recall, val_f1 = learn.validate(ds_idx=0)
-    tst_loss, tst_accuracy, tst_precision, tst_recall, tst_f1 = learn.validate(ds_idx=1)
-
-    wandb.summary["valid_loss"] = val_loss
-    wandb.summary["accuracy"] = val_accuracy
-    wandb.summary["precision_score"] = val_precision
-    wandb.summary["recall_score"] = val_recall
-    wandb.summary["f1_score"] = val_f1
-    wandb.summary["tst/accuracy"] = tst_accuracy
-    wandb.summary["tst/precision_score"] = tst_precision
-    wandb.summary["tst/recall_score"] = tst_recall
-    wandb.summary["tst/f1_score"] = tst_f1
-    wandb.summary["tst/loss"] = tst_loss
-
     run.finish()
-  
-if __name__ == '__main__':
 
-    default_cfg = config_dict.ConfigDict()
-    default_cfg.PROJECT_NAME = params.PROJECT_NAME
-    default_cfg.ENTITY = params.ENTITY
-    default_cfg.PROCESSED_DATA_AT = f'{params.DATA_AT}:latest'
-    default_cfg.target_column = 'mold'
-    default_cfg.seed = 42
-
-    eval(default_cfg)
-
+if __name__ == "__main__":
+    main(default_cfg)

@@ -40,7 +40,7 @@ default_cfg = SimpleNamespace(
     lr=2e-3,
     wd=1e-5,
     arch="convnext_tiny",
-    log_model=True,
+    log_model=False,
     log_preds=False,
     # these are params that are not being changed
     image_column="file_name",
@@ -86,7 +86,7 @@ class ClassificationTrainer:
         self.valid_dataloader = valid_dataloader
         self.train_metrics = [m(device=self.device) for m in metrics]
         self.valid_metrics = [m(device=self.device) for m in metrics]
-        self.loss = Mean()
+        self.loss = Mean(device=device)
 
     def loss_func(self, x, y):
         "A flattened version of nn.BCEWithLogitsLoss"
@@ -132,7 +132,7 @@ class ClassificationTrainer:
                 images, labels = to_device(b, self.device)
                 preds_b = self.model(images).squeeze()
                 loss = self.loss_func(preds_b, labels)
-                self.loss.update(loss.detach().cpu(), weight=len(images))
+                self.loss.update(loss)
                 preds.append(preds_b)
                 if train:
                     self.train_step(loss)
