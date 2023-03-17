@@ -60,25 +60,12 @@ tfms = {
 def parse_args(default_cfg):
     "Overriding default argments"
     parser = argparse.ArgumentParser(description="Process hyper-parameters")
-    parser.add_argument(
-        "--img_size", type=int, default=default_cfg.img_size, help="image size"
-    )
+    parser.add_argument("--img_size", type=int, default=default_cfg.img_size, help="image size")
     parser.add_argument("--bs", type=int, default=default_cfg.bs, help="batch size")
-    parser.add_argument(
-        "--seed", type=int, default=default_cfg.seed, help="random seed"
-    )
-    parser.add_argument(
-        "--epochs",
-        type=int,
-        default=default_cfg.epochs,
-        help="number of training epochs",
-    )
-    parser.add_argument(
-        "--lr", type=float, default=default_cfg.lr, help="learning rate"
-    )
-    parser.add_argument(
-        "--arch", type=str, default=default_cfg.arch, help="timm backbone architecture"
-    )
+    parser.add_argument("--seed", type=int, default=default_cfg.seed, help="random seed")
+    parser.add_argument("--epochs",type=int,default=default_cfg.epochs, help="number of training epochs")
+    parser.add_argument("--lr", type=float, default=default_cfg.lr, help="learning rate")
+    parser.add_argument("--arch", type=str, default=default_cfg.arch, help="timm backbone architecture")
     args = vars(parser.parse_args())
 
     # update config with parsed args
@@ -206,12 +193,8 @@ class ClassificationTrainer:
                     self.train_step(loss)
                     for m in self.train_metrics:
                         m.update(preds_b, labels.long())
-                    wandb.log(
-                        {
-                            "train_loss": loss.item(),
-                            "learning_rate": self.schedule.get_last_lr()[0],
-                        }
-                    )
+                    wandb.log({"train_loss": loss.item(),
+                               "learning_rate": self.schedule.get_last_lr()[0]})
                 else:
                     for m in self.valid_metrics:
                         m.update(preds_b, labels.long())
