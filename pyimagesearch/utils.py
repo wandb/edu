@@ -1,7 +1,11 @@
-import re, wandb, torch, random
+import re, wandb, torch, random, os
 from pathlib import Path
+
 import numpy as np
 from fastprogress import progress_bar
+from PIL import Image
+import torchvision.transforms as T
+import pandas as pd
 
 VAL_DATA_AT = "fastai/fmnist_pt/validation_data:latest"
 
@@ -42,6 +46,68 @@ def to_device(t, device):
         return t.to(device)
     else:
         raise ("Not a Tensor or list of Tensors")
+    
+
+def prepare_data(PROCESSED_DATA_AT, eval=False):
+    "Get/Download the datasets"
+    processed_data_at = wandb.use_artifact(PROCESSED_DATA_AT)
+    processed_dataset_dir = Path(processed_data_at.download())
+    df = pd.read_csv(processed_dataset_dir / "data_split.csv")
+    if eval: # for eval we need test and validation datasets only
+        df = df[df.stage != "train"].reset_index(drop=True)  
+        df["test"] = df.stage == "test"
+    else:
+        df = df[df.stage != "test"].reset_index(drop=True)
+        df["valid"] = df.stage == "valid"
+    return df, processed_dataset_dir
+
+
+class ImageDataset:
+    def __init__(
+        self,
+        dataframe,
+        root_dir,
+        transform=None,
+        image_column="file_name",
+        target_column="mold",
+    ):
+        """
+        Args:
+            dataframe (pandas.DataFrame): DataFrame containing image filenames and labels.
+            root_dir (string): Directory containing the images.
+            transform (callable, optional): Optional transform to be applied on an image sample.
+            image_column (string, optional): Name of the column containing the image filenames.
+            target_column (string, optional): Name of the column containing the labels.
+        """
+        self.dataframe = dataframe
+        self.root_dir = root_dir
+        if transform is not None:
+            self.transform = T.Compose(transform)
+        self.image_column = image_column
+        self.target_column = target_column
+
+    def __len__(self):
+        return len(self.dataframe)
+
+    def loc(self, idx):
+        idx_of_image_column = self.dataframe.columns.get_loc(self.image_column)
+        idx_of_target_column = self.dataframe.columns.get_loc(self.target_column)
+        x = self.dataframe.iloc[idx, idx_of_image_column]
+        y = self.dataframe.iloc[idx, idx_of_target_column]
+        return x, y
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        img_name, label = self.loc(idx)
+        img_path = os.path.join(self.root_dir, img_name)
+        image = Image.open(img_path)
+
+        if self.transform:
+            image = self.transform(image)
+
+        return image, 1.0 if label else 0.0
 
 
 def model_size(module):
