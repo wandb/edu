@@ -36,10 +36,10 @@ default_cfg = SimpleNamespace(
     img_size=256,
     bs=16,
     seed=42,
-    epochs=2,
+    epochs=10,
     lr=2e-3,
     wd=1e-5,
-    arch="resnet18",
+    arch="convnext_tiny",
     log_model=True,
     log_preds=False,
     # these are params that are not being changed
@@ -67,8 +67,8 @@ def parse_args(default_cfg):
     parser.add_argument("--lr", type=float, default=default_cfg.lr, help="learning rate")
     parser.add_argument("--wd", type=float, default=default_cfg.wd, help="weight decay")
     parser.add_argument("--arch", type=str, default=default_cfg.arch, help="timm backbone architecture")
-    parser.add_argument("--log_model", type=bool, action="store_true", help="log model to wandb")
-    parser.add_argument("--log_preds", type=bool, action="store_true", help="log model predictions to wandb")
+    parser.add_argument("--log_model", action="store_true", help="log model to wandb")
+    parser.add_argument("--log_preds", action="store_true", help="log model predictions to wandb")
     args = vars(parser.parse_args())
 
     # update config with parsed args
@@ -151,8 +151,8 @@ class ClassificationTrainer:
         print(f"Epoch {epoch+1}/{self.epochs} - train_loss: {train_loss.item():2.3f} - val_loss: {val_loss.item():2.3f}")
     
     def fit(self, log_preds=False):      
-            for epoch in progress_bar(range(self.epochs), total=self.epochs, leave=True):
-                _, train_loss = self.one_epoch(train=True)
+        for epoch in progress_bar(range(self.epochs), total=self.epochs, leave=True):
+            _, train_loss = self.one_epoch(train=True)
             wandb.log({f"train_{snake_case(m)}": m.compute() for m in self.train_metrics})
                             
             ## validation
