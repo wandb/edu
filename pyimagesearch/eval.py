@@ -14,7 +14,14 @@ from torcheval.metrics import (
 )
 
 import params
-from utils import get_data, set_seed, ImageDataset, load_model, to_device, get_class_name_in_snake_case as snake_case
+from utils import (
+    get_data,
+    set_seed,
+    ImageDataset,
+    load_model,
+    to_device,
+    get_class_name_in_snake_case as snake_case,
+)
 
 default_cfg = SimpleNamespace(
     img_size=256,
@@ -32,11 +39,11 @@ default_cfg = SimpleNamespace(
     PROJECT_NAME=params.PROJECT_NAME,
     ENTITY=params.ENTITY,
     PROCESSED_DATA_AT=params.DATA_AT,
-    model_artifact_name = "wandb_course/model-registry/Lemon Mold Detector:candidate",
+    model_artifact_name="wandb_course/model-registry/Lemon Mold Detector:candidate",
 )
 
-def main(cfg):
 
+def main(cfg):
     set_seed(cfg.seed)
 
     run = wandb.init(
@@ -81,7 +88,6 @@ def main(cfg):
     )
     model = load_model(cfg.model_artifact_name)
 
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -93,11 +99,12 @@ def main(cfg):
     @torch.inference_mode()
     def evaluate(loader):
         loss_mean = Mean(device=device)
-        metrics = [BinaryAccuracy(device=device),
-                BinaryPrecision(device=device),
-                BinaryRecall(device=device),
-                BinaryF1Score(device=device),
-                ]
+        metrics = [
+            BinaryAccuracy(device=device),
+            BinaryPrecision(device=device),
+            BinaryRecall(device=device),
+            BinaryF1Score(device=device),
+        ]
 
         for b in progress_bar(loader, leave=True, total=len(loader)):
             images, labels = to_device(b, device)
@@ -107,21 +114,21 @@ def main(cfg):
             for metric in metrics:
                 metric.update(outputs, labels.long())
 
-
         return loss, metrics
 
     valid_loss, valid_metrics = evaluate(valid_dataloader)
-    test_loss, test_metrics   = evaluate(test_dataloader)
+    test_loss, test_metrics = evaluate(test_dataloader)
 
     def log_summary(loss, metrics, suffix="valid"):
         wandb.summary[f"{suffix}_loss"] = loss
         for m in metrics:
             wandb.summary[f"{suffix}_{snake_case(m)}"] = m.compute()
-    
+
     log_summary(valid_loss, valid_metrics, suffix="valid")
     log_summary(test_loss, test_metrics, suffix="test")
-    
+
     run.finish()
+
 
 if __name__ == "__main__":
     main(default_cfg)
