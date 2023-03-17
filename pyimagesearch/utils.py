@@ -48,7 +48,7 @@ def to_device(t, device):
         raise ("Not a Tensor or list of Tensors")
     
 
-def prepare_data(PROCESSED_DATA_AT, eval=False):
+def get_data(PROCESSED_DATA_AT, eval=False):
     "Get/Download the datasets"
     processed_data_at = wandb.use_artifact(PROCESSED_DATA_AT)
     processed_dataset_dir = Path(processed_data_at.download())

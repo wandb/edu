@@ -1,10 +1,7 @@
-import os, argparse
+import argparse
 from types import SimpleNamespace
-from pathlib import Path
-import pandas as pd
 from fastprogress import progress_bar
 
-from PIL import Image
 import timm
 
 import wandb
@@ -24,6 +21,8 @@ from torcheval.metrics import (
 )
 
 from utils import (
+    get_data,
+    ImageDataset,
     set_seed,
     to_device,
     save_model,
@@ -35,8 +34,6 @@ import params
 
 default_cfg = SimpleNamespace(
     img_size=256,
-    image_column="file_name",
-    target_column="mold",
     bs=16,
     seed=42,
     epochs=2,
@@ -44,7 +41,10 @@ default_cfg = SimpleNamespace(
     wd=1e-5,
     arch="resnet18",
     log_model=True,
-    log_preds=True,
+    log_preds=False,
+    # these are params that are not being changed
+    image_column="file_name",
+    target_column="mold",
     PROJECT_NAME=params.PROJECT_NAME,
     ENTITY=params.ENTITY,
     PROCESSED_DATA_AT=params.DATA_AT,
@@ -65,70 +65,15 @@ def parse_args(default_cfg):
     parser.add_argument("--seed", type=int, default=default_cfg.seed, help="random seed")
     parser.add_argument("--epochs",type=int,default=default_cfg.epochs, help="number of training epochs")
     parser.add_argument("--lr", type=float, default=default_cfg.lr, help="learning rate")
+    parser.add_argument("--wd", type=float, default=default_cfg.wd, help="weight decay")
     parser.add_argument("--arch", type=str, default=default_cfg.arch, help="timm backbone architecture")
+    parser.add_argument("--log_model", type=bool, action="store_true", help="log model to wandb")
+    parser.add_argument("--log_preds", type=bool, action="store_true", help="log model predictions to wandb")
     args = vars(parser.parse_args())
 
     # update config with parsed args
     for k, v in args.items():
         setattr(default_cfg, k, v)
-
-
-def prepare_data(PROCESSED_DATA_AT):
-    "Get/Download the datasets"
-    processed_data_at = wandb.use_artifact(PROCESSED_DATA_AT)
-    processed_dataset_dir = Path(processed_data_at.download())
-    df = pd.read_csv(processed_dataset_dir / "data_split.csv")
-    df = df[df.stage != "test"].reset_index(drop=True)
-    df["valid"] = df.stage == "valid"
-    return df, processed_dataset_dir
-
-
-class ImageDataset:
-    def __init__(
-        self,
-        dataframe,
-        root_dir,
-        transform=None,
-        image_column="file_name",
-        target_column="mold",
-    ):
-        """
-        Args:
-            dataframe (pandas.DataFrame): DataFrame containing image filenames and labels.
-            root_dir (string): Directory containing the images.
-            transform (callable, optional): Optional transform to be applied on an image sample.
-            image_column (string, optional): Name of the column containing the image filenames.
-            target_column (string, optional): Name of the column containing the labels.
-        """
-        self.dataframe = dataframe
-        self.root_dir = root_dir
-        if transform is not None:
-            self.transform = T.Compose(transform)
-        self.image_column = image_column
-        self.target_column = target_column
-
-    def __len__(self):
-        return len(self.dataframe)
-
-    def loc(self, idx):
-        idx_of_image_column = self.dataframe.columns.get_loc(self.image_column)
-        idx_of_target_column = self.dataframe.columns.get_loc(self.target_column)
-        x = self.dataframe.iloc[idx, idx_of_image_column]
-        y = self.dataframe.iloc[idx, idx_of_target_column]
-        return x, y
-
-    def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
-        img_name, label = self.loc(idx)
-        img_path = os.path.join(self.root_dir, img_name)
-        image = Image.open(img_path)
-
-        if self.transform:
-            image = self.transform(image)
-
-        return image, 1.0 if label else 0.0
 
 
 class ClassificationTrainer:
@@ -227,7 +172,7 @@ def train(cfg):
         set_seed(cfg.seed)
 
         cfg = wandb.config
-        df, processed_dataset_dir = prepare_data(cfg.PROCESSED_DATA_AT)
+        df, processed_dataset_dir = get_data(cfg.PROCESSED_DATA_AT)
 
         train_ds = ImageDataset(
             df[~df.valid],
