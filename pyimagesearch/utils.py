@@ -1,6 +1,7 @@
 import re, wandb, torch, random, os
 from pathlib import Path
-
+from types import SimpleNamespace
+import timm
 import numpy as np
 from fastprogress import progress_bar
 from PIL import Image
@@ -107,7 +108,7 @@ class ImageDataset:
         if self.transform:
             image = self.transform(image)
 
-        return image, 1.0 if label else 0.0
+        return image, label
 
 
 def model_size(module):
@@ -136,3 +137,28 @@ def save_model(model, model_name):
     at = wandb.Artifact(model_name, type="model")
     at.add_file(f"models/{model_name}.pth")
     wandb.log_artifact(at)
+
+def first(iterable, default=None):
+    "Returns first element of `iterable` that is not None"
+    return next(filter(None, iterable), default)
+
+def load_model(model_artifact_name, eval=True):
+    "Load the model from wandb"
+    
+    artifact = wandb.use_artifact(model_artifact_name, type="model")
+    model_path = Path(artifact.download()).absolute()
+
+    # recover model info from the registry
+    producer_run = artifact.logged_by()
+    model_config = SimpleNamespace(
+        img_size = producer_run.config["img_size"],
+        bs = producer_run.config["bs"],
+        arch = producer_run.config["arch"],
+    )
+
+    model_weights = torch.load(first(model_path.glob("*.pth")))  # get first file
+    model = timm.create_model(model_config.arch, pretrained=False, num_classes=1)
+    model.load_state_dict(model_weights)
+    if eval:
+        model.eval()
+    return model
