@@ -29,13 +29,13 @@ import params
 
 # Set the default configuration parameters for the experiment
 default_cfg = SimpleNamespace(
-    img_size=256,                          # Image size
-    bs=16,                                 # Batch size
+    image_size=256,                        # Image size
+    batch_size=16,                         # Batch size
     seed=42,                               # Random seed
     epochs=10,                             # Number of training epochs
-    lr=2e-3,                               # Learning rate
-    wd=1e-5,                               # Weight decay
-    arch="convnext_tiny",                  # Timm backbone architecture
+    learning_rate=2e-3,                    # Learning rate
+    weight_decay=1e-5,                     # Weight decay
+    model_arch="convnext_tiny",            # Timm backbone architecture
     log_model=False,                       # Whether or not to log the model to Wandb
     log_preds=False,                       # Whether or not to log the model predictions to Wandb
     # these are params that are not being changed
@@ -47,22 +47,22 @@ default_cfg = SimpleNamespace(
 )
 
 # Define the image data transformations
-tfms = {
-    "train": [T.Resize(default_cfg.img_size), T.ToTensor(), T.RandomHorizontalFlip()],
-    "valid": [T.Resize(default_cfg.img_size), T.ToTensor()],
+transforms = {
+    "train": [T.Resize(default_cfg.image_size), T.ToTensor(), T.RandomHorizontalFlip()],
+    "valid": [T.Resize(default_cfg.image_size), T.ToTensor()],
 }
 
 # Override the default configuration parameters with any command-line arguments
 def parse_args(default_cfg):
     "Overriding default argments"
     parser = argparse.ArgumentParser(description="Process hyper-parameters")
-    parser.add_argument("--img_size", type=int, default=default_cfg.img_size, help="image size")
-    parser.add_argument("--bs", type=int, default=default_cfg.bs, help="batch size")
+    parser.add_argument("--image_size", type=int, default=default_cfg.image_size, help="image size")
+    parser.add_argument("--batch_size", type=int, default=default_cfg.batch_size, help="batch size")
     parser.add_argument("--seed", type=int, default=default_cfg.seed, help="random seed")
     parser.add_argument("--epochs",type=int,default=default_cfg.epochs, help="number of training epochs")
-    parser.add_argument("--lr", type=float, default=default_cfg.lr, help="learning rate")
-    parser.add_argument("--wd", type=float, default=default_cfg.wd, help="weight decay")
-    parser.add_argument("--arch", type=str, default=default_cfg.arch, help="timm backbone architecture")
+    parser.add_argument("--learning_rate", type=float, default=default_cfg.learning_rate, help="learning rate")
+    parser.add_argument("--weight_decay", type=float, default=default_cfg.weight_decay, help="weight decay")
+    parser.add_argument("--model_arch", type=str, default=default_cfg.model_arch, help="timm backbone architecture")
     parser.add_argument("--log_model", action="store_true", help="log model to wandb")
     parser.add_argument("--log_preds", action="store_true", help="log model predictions to wandb")
     args = vars(parser.parse_args())
@@ -82,7 +82,8 @@ class ClassificationTrainer:
         train_dataloader (torch.utils.data.DataLoader): A PyTorch DataLoader for the training set
         valid_dataloader (torch.utils.data.DataLoader): A PyTorch DataLoader for the validation set
         model (torch.nn.Module): A PyTorch model
-        metrics (list): A list of metrics to be used for training and validation, we are using torcheval.metrics
+        metrics (list): A list of metrics to be used for training and validation, 
+            we are using torcheval.metrics
         device (str): The device to be used for training, either "cpu" or "cuda"
     """
     def __init__(
@@ -101,13 +102,13 @@ class ClassificationTrainer:
         loss_func = nn.BCEWithLogitsLoss()
         return loss_func(x.squeeze(), y.squeeze().float())
 
-    def compile(self, epochs=5, lr=2e-3, wd=0.01):
+    def compile(self, epochs=5, learning_rate=2e-3, weight_decay=0.01):
         "Keras style compile method"
         self.epochs = epochs
-        self.optim = AdamW(self.model.parameters(), lr=lr, weight_decay=wd)
+        self.optim = AdamW(self.model.parameters(), learning_rate=learning_rate, weight_decay=weight_decay)
         self.schedule = OneCycleLR(
             self.optim,
-            max_lr=lr,
+            max_lr=learning_rate,
             pct_start=0.1,
             total_steps=epochs * len(self.train_dataloader),
         )
@@ -196,7 +197,7 @@ def train(cfg):
             processed_dataset_dir,
             image_column=cfg.image_column,
             target_column=cfg.target_column,
-            transform=tfms["train"],
+            transform=transforms["train"],
         )
 
         valid_ds = ImageDataset(
@@ -204,19 +205,19 @@ def train(cfg):
             processed_dataset_dir,
             image_column=cfg.image_column,
             target_column=cfg.target_column,
-            transform=tfms["valid"],
+            transform=transforms["valid"],
         )
 
         # Define training and validation dataloaders
         train_dataloader = DataLoader(
-            train_ds, batch_size=cfg.bs, shuffle=True, num_workers=4
+            train_ds, batch_size=cfg.batch_size, shuffle=True, num_workers=4
         )
         valid_dataloader = DataLoader(
-            valid_ds, batch_size=cfg.bs, shuffle=False, num_workers=4
+            valid_ds, batch_size=cfg.batch_size, shuffle=False, num_workers=4
         )
 
         # Create the model using timm library. We will use a pretrained model.
-        model = timm.create_model(cfg.arch, pretrained=True, num_classes=1)
+        model = timm.create_model(cfg.model_arch, pretrained=True, num_classes=1)
 
         # Define the trainer object
         trainer = ClassificationTrainer(
@@ -227,12 +228,12 @@ def train(cfg):
             device="cuda",
         )
         # Setup the optimizer and loss function
-        trainer.compile(epochs=cfg.epochs, lr=cfg.lr, wd=cfg.wd)
+        trainer.compile(epochs=cfg.epochs, learning_rate=cfg.learning_rate, weight_decay=cfg.weight_decay)
 
         # Fit the model
         trainer.fit(log_preds=cfg.log_preds)
         if cfg.log_model:
-            save_model(trainer.model, cfg.arch)
+            save_model(trainer.model, cfg.model_arch)
 
 if __name__ == "__main__":
     parse_args(default_cfg)

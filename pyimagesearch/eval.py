@@ -25,22 +25,16 @@ from utils import (
 
 # define the default configuration parameters for the experiment
 default_cfg = SimpleNamespace(
-    img_size=256,
-    bs=16,
+    image_size=256,
+    batch_size=16,
     seed=42,
-    epochs=2,
-    lr=2e-3,
-    wd=1e-5,
-    arch="resnet18",
-    log_model=True,
-    log_preds=False,
+    model_artifact_name="wandb_course/model-registry/Lemon Mold Detector:candidate",
     # these are params that are not being changed
     image_column="file_name",
     target_column="mold",
     PROJECT_NAME=params.PROJECT_NAME,
     ENTITY=params.ENTITY,
     PROCESSED_DATA_AT=params.DATA_AT,
-    model_artifact_name="wandb_course/model-registry/Lemon Mold Detector:candidate",
 )
 
 
@@ -65,7 +59,7 @@ def main(cfg):
 
     # define the image data transformations, same as the ones used during training
     test_transforms = val_transforms = [
-        T.Resize(cfg.img_size),
+        T.Resize(cfg.image_size),
         T.ToTensor(),
     ]
     val_dataset = ImageDataset(
@@ -85,10 +79,10 @@ def main(cfg):
     )
 
     test_dataloader = DataLoader(
-        val_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
+        val_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
     )
     valid_dataloader = DataLoader(
-        test_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
+        test_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
     )
 
     # load the model from the model registry
