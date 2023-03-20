@@ -77,11 +77,11 @@ def main(cfg):
         processed_dataset_dir,
         image_column=cfg.image_column,
         target_column=cfg.target_column,
-        transform=val_transforms,
+        transform=test_transforms,
     )
 
     test_dataloader = DataLoader(
-        test_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
+        val_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
     )
     valid_dataloader = DataLoader(
         test_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
