@@ -1,9 +1,7 @@
 import argparse
 from types import SimpleNamespace
 from fastprogress import progress_bar
-
 import timm
-
 import wandb
 import torch
 import torch.nn as nn
@@ -11,7 +9,6 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import OneCycleLR
 from torch.utils.data import DataLoader
 import torchvision.transforms as T
-
 from torcheval.metrics import (
     Mean,
     BinaryAccuracy,
@@ -19,7 +16,6 @@ from torcheval.metrics import (
     BinaryRecall,
     BinaryF1Score,
 )
-
 from utils import (
     get_data,
     ImageDataset,
@@ -31,32 +27,32 @@ from utils import (
 )
 import params
 
-
+# Set the default configuration parameters for the experiment
 default_cfg = SimpleNamespace(
-    img_size=256,
-    bs=16,
-    seed=42,
-    epochs=10,
-    lr=2e-3,
-    wd=1e-5,
-    arch="convnext_tiny",
-    log_model=False,
-    log_preds=False,
+    img_size=256,                          # Image size
+    bs=16,                                 # Batch size
+    seed=42,                               # Random seed
+    epochs=10,                             # Number of training epochs
+    lr=2e-3,                               # Learning rate
+    wd=1e-5,                               # Weight decay
+    arch="convnext_tiny",                  # Timm backbone architecture
+    log_model=False,                       # Whether or not to log the model to Wandb
+    log_preds=False,                       # Whether or not to log the model predictions to Wandb
     # these are params that are not being changed
-    image_column="file_name",
-    target_column="mold",
-    PROJECT_NAME=params.PROJECT_NAME,
-    ENTITY=params.ENTITY,
-    PROCESSED_DATA_AT=params.DATA_AT,
+    image_column="file_name",              # The name of the column containing the image file names
+    target_column="mold",                  # The name of the column containing the target variable
+    PROJECT_NAME=params.PROJECT_NAME,      # The name of the Wandb project
+    ENTITY=params.ENTITY,                  # The Wandb username or organization name
+    PROCESSED_DATA_AT=params.DATA_AT,      # The path to the directory containing the preprocessed data
 )
 
+# Define the image data transformations
 tfms = {
     "train": [T.Resize(default_cfg.img_size), T.ToTensor(), T.RandomHorizontalFlip()],
     "valid": [T.Resize(default_cfg.img_size), T.ToTensor()],
 }
 
-
-# optional
+# Override the default configuration parameters with any command-line arguments
 def parse_args(default_cfg):
     "Overriding default argments"
     parser = argparse.ArgumentParser(description="Process hyper-parameters")
@@ -75,8 +71,11 @@ def parse_args(default_cfg):
     for k, v in args.items():
         setattr(default_cfg, k, v)
 
-
+# Define the ClassificationTrainer class for training the model
 class ClassificationTrainer:
+    """
+    A class for training a classification model
+    """
     def __init__(
         self, train_dataloader, valid_dataloader, model, metrics, device="cuda"
     ):
@@ -105,6 +104,7 @@ class ClassificationTrainer:
         )
 
     def reset_metrics(self):
+        "Reset the metrics after each epoch"
         self.loss.reset()
         for m in self.train_metrics:
             m.reset()
@@ -112,6 +112,7 @@ class ClassificationTrainer:
             m.reset()
 
     def train_step(self, loss):
+        "Perform a single training step"
         self.optim.zero_grad()
         loss.backward()
         self.optim.step()
@@ -119,6 +120,7 @@ class ClassificationTrainer:
         return loss
 
     def one_epoch(self, train=True):
+        "Perform a single epoch of training or validation"
         if train:
             self.model.train()
             dl = self.train_dataloader
@@ -148,14 +150,18 @@ class ClassificationTrainer:
         return torch.cat(preds, dim=0), self.loss.compute()
 
     def print_metrics(self, epoch, train_loss, val_loss):
+        "Print the metrics after each epoch"
         print(f"Epoch {epoch+1}/{self.epochs} - train_loss: {train_loss.item():2.3f} - val_loss: {val_loss.item():2.3f}")
-    
-    def fit(self, log_preds=False):      
+
+    # Fit the model
+    def fit(self, log_preds=False):
+        "Fit the model for the specified number of epochs"
         for epoch in progress_bar(range(self.epochs), total=self.epochs, leave=True):
+            # train epoch
             _, train_loss = self.one_epoch(train=True)
             wandb.log({f"train_{snake_case(m)}": m.compute() for m in self.train_metrics})
-                            
-            ## validation
+
+            ## validation epoch
             val_preds, val_loss = self.one_epoch(train=False)
             wandb.log({f"valid_{snake_case(m)}": m.compute() for m in self.valid_metrics}, commit=False)
             wandb.log({"valid_loss": val_loss.item()}, commit=False)
@@ -164,8 +170,9 @@ class ClassificationTrainer:
             if log_preds:
                 log_model_preds(self.valid_dataloader, val_preds)
 
-
+# Train the model with the specified configurations
 def train(cfg):
+    "Train the model"
     with wandb.init(
         project=cfg.PROJECT_NAME, entity=cfg.ENTITY, job_type="training", config=cfg
     ):
@@ -174,6 +181,7 @@ def train(cfg):
         cfg = wandb.config
         df, processed_dataset_dir = get_data(cfg.PROCESSED_DATA_AT)
 
+        # Create training and validation datasets
         train_ds = ImageDataset(
             df[~df.valid],
             processed_dataset_dir,
@@ -190,6 +198,7 @@ def train(cfg):
             transform=tfms["valid"],
         )
 
+        # Define training and validation dataloaders
         train_dataloader = DataLoader(
             train_ds, batch_size=cfg.bs, shuffle=True, num_workers=4
         )
@@ -197,8 +206,10 @@ def train(cfg):
             valid_ds, batch_size=cfg.bs, shuffle=False, num_workers=4
         )
 
+        # Create the model
         model = timm.create_model(cfg.arch, pretrained=False, num_classes=1)
 
+        # Define the trainer object
         trainer = ClassificationTrainer(
             train_dataloader,
             valid_dataloader,
@@ -206,12 +217,13 @@ def train(cfg):
             metrics=[BinaryAccuracy, BinaryPrecision, BinaryRecall, BinaryF1Score],
             device="cuda",
         )
+        # Setup the optimizer and loss function
         trainer.compile(epochs=cfg.epochs, lr=cfg.lr, wd=cfg.wd)
 
+        # Fit the model
         trainer.fit(log_preds=cfg.log_preds)
         if cfg.log_model:
             save_model(trainer.model, cfg.arch)
-
 
 if __name__ == "__main__":
     parse_args(default_cfg)
