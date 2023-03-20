@@ -8,14 +8,13 @@ from PIL import Image
 import torchvision.transforms as T
 import pandas as pd
 
-VAL_DATA_AT = "fastai/fmnist_pt/validation_data:latest"
-
-
 def to_snake_case(name):
+    "Converts CamelCase to snake_case"
     return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
 
 
 def get_class_name_in_snake_case(obj):
+    "Get the class name of `obj` in snake_case"
     class_name = obj.__class__.__name__
     return to_snake_case(class_name)
 
@@ -41,6 +40,7 @@ def set_seed(s, reproducible=False):
 
 
 def to_device(t, device):
+    "Move `t` to `device`"
     if isinstance(t, (tuple, list)):
         return [_t.to(device) for _t in t]
     elif isinstance(t, torch.Tensor):
@@ -50,7 +50,15 @@ def to_device(t, device):
     
 
 def get_data(PROCESSED_DATA_AT, eval=False):
-    "Get/Download the datasets"
+    """
+    Get/Download the datasets from wandb artifacts
+    Args:
+        PROCESSED_DATA_AT (str): wandb artifact name
+        eval (bool, optional): If True, returns test and validation datasets. Defaults to False.
+    Returns:
+        df (pandas.DataFrame): DataFrame containing image filenames and labels.
+        processed_dataset_dir (Path): Directory containing the images.
+    """
     processed_data_at = wandb.use_artifact(PROCESSED_DATA_AT)
     processed_dataset_dir = Path(processed_data_at.download())
     df = pd.read_csv(processed_dataset_dir / "data_split.csv")
@@ -91,6 +99,7 @@ class ImageDataset:
         return len(self.dataframe)
 
     def loc(self, idx):
+        "Get the image and label at `idx`"
         idx_of_image_column = self.dataframe.columns.get_loc(self.image_column)
         idx_of_target_column = self.dataframe.columns.get_loc(self.target_column)
         x = self.dataframe.iloc[idx, idx_of_image_column]
@@ -112,10 +121,18 @@ class ImageDataset:
 
 
 def model_size(module):
+    "Get the size of the model in MBs"
     return sum(p.numel() for p in module.parameters() if p.requires_grad)
 
 
 def log_model_preds(test_dl, preds, n=5, th=0.5):
+    """Log the predictions of the model to wandb as a table
+    Args:
+        test_dl (DataLoader): DataLoader for the test dataset.
+        preds (Tensor): Model predictions.
+        n (int, optional): Number of samples to log. Defaults to 5.
+        th (float, optional): Threshold for the predictions. Defaults to 0.5.
+    """
     wandb_table = wandb.Table(columns=["images", "predictions", "groudn_truth"])
 
     preds = preds[:n]
@@ -128,7 +145,11 @@ def log_model_preds(test_dl, preds, n=5, th=0.5):
 
 
 def save_model(model, model_name):
-    "Save the model to wandb"
+    """Save the model to wandb as an artifact
+    Args:
+        model (nn.Module): Model to save.
+        model_name (str): Name of the model.
+    """
     model_name = f"{wandb.run.id}_{model_name}"
     models_folder = Path("models")
     if not models_folder.exists():
@@ -143,8 +164,13 @@ def first(iterable, default=None):
     return next(filter(None, iterable), default)
 
 def load_model(model_artifact_name, eval=True):
-    "Load the model from wandb"
-    
+    """Load the model from wandb artifacts
+    Args:
+        model_artifact_name (str): Name of the model artifact.
+        eval (bool, optional): If True, sets the model to eval mode. Defaults to True.
+    Returns:
+        model (nn.Module): Loaded model.
+    """
     artifact = wandb.use_artifact(model_artifact_name, type="model")
     model_path = Path(artifact.download()).absolute()
 
