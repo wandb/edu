@@ -1,27 +1,23 @@
 from types import SimpleNamespace
-import wandb
+
 import torch
 import torch.nn as nn
 import torchvision.transforms as T
-from torch.utils.data import DataLoader
 from fastprogress import progress_bar
+from torch.utils.data import DataLoader
 from torcheval.metrics import (
-    Mean,
     BinaryAccuracy,
+    BinaryF1Score,
     BinaryPrecision,
     BinaryRecall,
-    BinaryF1Score,
+    Mean,
 )
 
 import params
-from utils import (
-    get_data,
-    set_seed,
-    ImageDataset,
-    load_model,
-    to_device,
-    get_class_name_in_snake_case as snake_case,
-)
+import wandb
+from utils import ImageDataset
+from utils import get_class_name_in_snake_case as snake_case
+from utils import get_data, load_model, set_seed, to_device
 
 default_cfg = SimpleNamespace(
     img_size=256,

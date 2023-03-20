@@ -1,36 +1,27 @@
 import argparse
 from types import SimpleNamespace
-from fastprogress import progress_bar
 
 import timm
-
-import wandb
 import torch
 import torch.nn as nn
+import torchvision.transforms as T
+from fastprogress import progress_bar
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import OneCycleLR
 from torch.utils.data import DataLoader
-import torchvision.transforms as T
-
 from torcheval.metrics import (
-    Mean,
     BinaryAccuracy,
+    BinaryF1Score,
     BinaryPrecision,
     BinaryRecall,
-    BinaryF1Score,
+    Mean,
 )
 
-from utils import (
-    get_data,
-    ImageDataset,
-    set_seed,
-    to_device,
-    save_model,
-    log_model_preds,
-    get_class_name_in_snake_case as snake_case,
-)
 import params
-
+import wandb
+from utils import ImageDataset
+from utils import get_class_name_in_snake_case as snake_case
+from utils import get_data, log_model_preds, save_model, set_seed, to_device
 
 default_cfg = SimpleNamespace(
     img_size=256,
@@ -60,15 +51,30 @@ tfms = {
 def parse_args(default_cfg):
     "Overriding default argments"
     parser = argparse.ArgumentParser(description="Process hyper-parameters")
-    parser.add_argument("--img_size", type=int, default=default_cfg.img_size, help="image size")
+    parser.add_argument(
+        "--img_size", type=int, default=default_cfg.img_size, help="image size"
+    )
     parser.add_argument("--bs", type=int, default=default_cfg.bs, help="batch size")
-    parser.add_argument("--seed", type=int, default=default_cfg.seed, help="random seed")
-    parser.add_argument("--epochs",type=int,default=default_cfg.epochs, help="number of training epochs")
-    parser.add_argument("--lr", type=float, default=default_cfg.lr, help="learning rate")
+    parser.add_argument(
+        "--seed", type=int, default=default_cfg.seed, help="random seed"
+    )
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        default=default_cfg.epochs,
+        help="number of training epochs",
+    )
+    parser.add_argument(
+        "--lr", type=float, default=default_cfg.lr, help="learning rate"
+    )
     parser.add_argument("--wd", type=float, default=default_cfg.wd, help="weight decay")
-    parser.add_argument("--arch", type=str, default=default_cfg.arch, help="timm backbone architecture")
+    parser.add_argument(
+        "--arch", type=str, default=default_cfg.arch, help="timm backbone architecture"
+    )
     parser.add_argument("--log_model", action="store_true", help="log model to wandb")
-    parser.add_argument("--log_preds", action="store_true", help="log model predictions to wandb")
+    parser.add_argument(
+        "--log_preds", action="store_true", help="log model predictions to wandb"
+    )
     args = vars(parser.parse_args())
 
     # update config with parsed args
@@ -138,8 +144,12 @@ class ClassificationTrainer:
                     self.train_step(loss)
                     for m in self.train_metrics:
                         m.update(preds_b, labels.long())
-                    wandb.log({"train_loss": loss.item(),
-                               "learning_rate": self.schedule.get_last_lr()[0]})
+                    wandb.log(
+                        {
+                            "train_loss": loss.item(),
+                            "learning_rate": self.schedule.get_last_lr()[0],
+                        }
+                    )
                 else:
                     for m in self.valid_metrics:
                         m.update(preds_b, labels.long())
@@ -148,16 +158,23 @@ class ClassificationTrainer:
         return torch.cat(preds, dim=0), self.loss.compute()
 
     def print_metrics(self, epoch, train_loss, val_loss):
-        print(f"Epoch {epoch+1}/{self.epochs} - train_loss: {train_loss.item():2.3f} - val_loss: {val_loss.item():2.3f}")
-    
-    def fit(self, log_preds=False):      
+        print(
+            f"Epoch {epoch+1}/{self.epochs} - train_loss: {train_loss.item():2.3f} - val_loss: {val_loss.item():2.3f}"
+        )
+
+    def fit(self, log_preds=False):
         for epoch in progress_bar(range(self.epochs), total=self.epochs, leave=True):
             _, train_loss = self.one_epoch(train=True)
-            wandb.log({f"train_{snake_case(m)}": m.compute() for m in self.train_metrics})
-                            
+            wandb.log(
+                {f"train_{snake_case(m)}": m.compute() for m in self.train_metrics}
+            )
+
             ## validation
             val_preds, val_loss = self.one_epoch(train=False)
-            wandb.log({f"valid_{snake_case(m)}": m.compute() for m in self.valid_metrics}, commit=False)
+            wandb.log(
+                {f"valid_{snake_case(m)}": m.compute() for m in self.valid_metrics},
+                commit=False,
+            )
             wandb.log({"valid_loss": val_loss.item()}, commit=False)
             self.print_metrics(epoch, train_loss, val_loss)
             self.reset_metrics()
