@@ -74,7 +74,16 @@ def parse_args(default_cfg):
 # Define the ClassificationTrainer class for training the model
 class ClassificationTrainer:
     """
-    A class for training a classification model
+    A class for training a classification model. It is used to train a model 
+    on a training set and validate it on a validation set. This class is
+    inspired by the Keras API.
+
+    Args:
+        train_dataloader (torch.utils.data.DataLoader): A PyTorch DataLoader for the training set
+        valid_dataloader (torch.utils.data.DataLoader): A PyTorch DataLoader for the validation set
+        model (torch.nn.Module): A PyTorch model
+        metrics (list): A list of metrics to be used for training and validation, we are using torcheval.metrics
+        device (str): The device to be used for training, either "cpu" or "cuda"
     """
     def __init__(
         self, train_dataloader, valid_dataloader, model, metrics, device="cuda"
@@ -206,8 +215,8 @@ def train(cfg):
             valid_ds, batch_size=cfg.bs, shuffle=False, num_workers=4
         )
 
-        # Create the model
-        model = timm.create_model(cfg.arch, pretrained=False, num_classes=1)
+        # Create the model using timm library. We will use a pretrained model.
+        model = timm.create_model(cfg.arch, pretrained=True, num_classes=1)
 
         # Define the trainer object
         trainer = ClassificationTrainer(
