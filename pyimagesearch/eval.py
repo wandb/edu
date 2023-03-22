@@ -19,27 +19,23 @@ from utils import ImageDataset
 from utils import get_class_name_in_snake_case as snake_case
 from utils import get_data, load_model, set_seed, to_device
 
+# define the default configuration parameters for the experiment
 default_cfg = SimpleNamespace(
-    img_size=256,
-    bs=16,
+    image_size=256,
+    batch_size=16,
     seed=42,
-    epochs=2,
-    lr=2e-3,
-    wd=1e-5,
-    arch="resnet18",
-    log_model=True,
-    log_preds=False,
+    model_artifact_name="wandb_course/model-registry/Lemon Mold Detector:candidate",
     # these are params that are not being changed
     image_column="file_name",
     target_column="mold",
     PROJECT_NAME=params.PROJECT_NAME,
     ENTITY=params.ENTITY,
     PROCESSED_DATA_AT=params.DATA_AT,
-    model_artifact_name="wandb_course/model-registry/Lemon Mold Detector:candidate",
 )
 
 
 def main(cfg):
+    "Main evaluation loop"
     set_seed(cfg.seed)
 
     run = wandb.init(
@@ -51,13 +47,15 @@ def main(cfg):
 
     wandb.config.update(cfg)
 
+    # load the data
     df, processed_dataset_dir = get_data(cfg.PROCESSED_DATA_AT, eval=True)
 
     test_data = df[df["test"] == True]
     val_data = df[df["test"] == False]
 
+    # define the image data transformations, same as the ones used during training
     test_transforms = val_transforms = [
-        T.Resize(cfg.img_size),
+        T.Resize(cfg.image_size),
         T.ToTensor(),
     ]
     val_dataset = ImageDataset(
@@ -73,17 +71,20 @@ def main(cfg):
         processed_dataset_dir,
         image_column=cfg.image_column,
         target_column=cfg.target_column,
-        transform=val_transforms,
+        transform=test_transforms,
     )
 
     test_dataloader = DataLoader(
-        test_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
+        val_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
     )
     valid_dataloader = DataLoader(
-        test_dataset, batch_size=cfg.bs, shuffle=False, num_workers=4
+        test_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
     )
+
+    # load the model from the model registry
     model = load_model(cfg.model_artifact_name)
 
+    # move the model to the GPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -102,6 +103,7 @@ def main(cfg):
             BinaryF1Score(device=device),
         ]
 
+        # loop over the data and compute the loss and metrics
         for b in progress_bar(loader, leave=True, total=len(loader)):
             images, labels = to_device(b, device)
             outputs = model(images).squeeze()
@@ -112,9 +114,11 @@ def main(cfg):
 
         return loss, metrics
 
+    # evaluate the model on the validation and test sets
     valid_loss, valid_metrics = evaluate(valid_dataloader)
     test_loss, test_metrics = evaluate(test_dataloader)
 
+    # log the validation and test metrics to wandb
     def log_summary(loss, metrics, suffix="valid"):
         wandb.summary[f"{suffix}_loss"] = loss
         for m in metrics:
