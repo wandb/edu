@@ -1,11 +1,12 @@
-from pycocotools.coco import COCO
-import skimage.io as io
-import numpy as np
-import pandas as pd
 import os
 
-import wandb
+import numpy as np
+import pandas as pd
+import skimage.io as io
+from pycocotools.coco import COCO
+
 import params
+import wandb
 
 
 # we define some helper functions to load the annotations and labels

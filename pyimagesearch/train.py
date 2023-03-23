@@ -5,16 +5,18 @@ import timm
 import wandb
 import torch
 import torch.nn as nn
+import torchvision.transforms as T
+from fastprogress import progress_bar
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import OneCycleLR
 from torch.utils.data import DataLoader
 import torchvision.transforms as T
 from torcheval.metrics import (
-    Mean,
     BinaryAccuracy,
+    BinaryF1Score,
     BinaryPrecision,
     BinaryRecall,
-    BinaryF1Score,
+    Mean,
 )
 from utils import (
     get_data,
@@ -64,7 +66,9 @@ def parse_args(default_cfg):
     parser.add_argument("--weight_decay", type=float, default=default_cfg.weight_decay, help="weight decay")
     parser.add_argument("--model_arch", type=str, default=default_cfg.model_arch, help="timm backbone architecture")
     parser.add_argument("--log_model", action="store_true", help="log model to wandb")
-    parser.add_argument("--log_preds", action="store_true", help="log model predictions to wandb")
+    parser.add_argument(
+        "--log_preds", action="store_true", help="log model predictions to wandb"
+    )
     args = vars(parser.parse_args())
 
     # update config with parsed args
@@ -150,8 +154,12 @@ class ClassificationTrainer:
                     self.train_step(loss)
                     for m in self.train_metrics:
                         m.update(preds_b, labels.long())
-                    wandb.log({"train_loss": loss.item(),
-                               "learning_rate": self.schedule.get_last_lr()[0]})
+                    wandb.log(
+                        {
+                            "train_loss": loss.item(),
+                            "learning_rate": self.schedule.get_last_lr()[0],
+                        }
+                    )
                 else:
                     for m in self.valid_metrics:
                         m.update(preds_b, labels.long())
@@ -173,7 +181,10 @@ class ClassificationTrainer:
 
             ## validation epoch
             val_preds, val_loss = self.one_epoch(train=False)
-            wandb.log({f"valid_{snake_case(m)}": m.compute() for m in self.valid_metrics}, commit=False)
+            wandb.log(
+                {f"valid_{snake_case(m)}": m.compute() for m in self.valid_metrics},
+                commit=False,
+            )
             wandb.log({"valid_loss": val_loss.item()}, commit=False)
             self.print_metrics(epoch, train_loss, val_loss)
             self.reset_metrics()

@@ -1,12 +1,18 @@
-import re, wandb, torch, random, os
+import os
+import random
+import re
 from pathlib import Path
 from types import SimpleNamespace
-import timm
+
 import numpy as np
+import pandas as pd
+import timm
+import torch
+import torchvision.transforms as T
 from fastprogress import progress_bar
 from PIL import Image
-import torchvision.transforms as T
-import pandas as pd
+
+import wandb
 
 def to_snake_case(name):
     "Converts CamelCase to snake_case"
@@ -47,7 +53,7 @@ def to_device(t, device):
         return t.to(device)
     else:
         raise ("Not a Tensor or list of Tensors")
-    
+
 
 def get_data(PROCESSED_DATA_AT, eval=False):
     """
@@ -62,8 +68,8 @@ def get_data(PROCESSED_DATA_AT, eval=False):
     processed_data_at = wandb.use_artifact(PROCESSED_DATA_AT)
     processed_dataset_dir = Path(processed_data_at.download())
     df = pd.read_csv(processed_dataset_dir / "data_split.csv")
-    if eval: # for eval we need test and validation datasets only
-        df = df[df.stage != "train"].reset_index(drop=True)  
+    if eval:  # for eval we need test and validation datasets only
+        df = df[df.stage != "train"].reset_index(drop=True)
         df["test"] = df.stage == "test"
     else:
         df = df[df.stage != "test"].reset_index(drop=True)
@@ -159,9 +165,11 @@ def save_model(model, model_name):
     at.add_file(f"models/{model_name}.pth")
     wandb.log_artifact(at)
 
+
 def first(iterable, default=None):
     "Returns first element of `iterable` that is not None"
     return next(filter(None, iterable), default)
+
 
 def load_model(model_artifact_name, eval=True):
     """Load the model from wandb artifacts
@@ -177,9 +185,9 @@ def load_model(model_artifact_name, eval=True):
     # recover model info from the registry
     producer_run = artifact.logged_by()
     model_config = SimpleNamespace(
-        img_size = producer_run.config["img_size"],
-        bs = producer_run.config["bs"],
-        arch = producer_run.config["arch"],
+        img_size=producer_run.config["img_size"],
+        bs=producer_run.config["bs"],
+        arch=producer_run.config["arch"],
     )
 
     model_weights = torch.load(first(model_path.glob("*.pth")))  # get first file

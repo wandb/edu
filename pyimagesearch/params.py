@@ -1,7 +1,10 @@
-# W&B params
-PROJECT_NAME = "pyimagesearch"
-ENTITY = "wandb_course"
+# W&B parameters
+PROJECT_NAME = "wandb_course"
+ENTITY = "pyimagesearch"
 
-# Params for the dataset
+# parameters for the dataset
+RAW_DATA_FOLDER = "lemon-dataset"
+IMAGES_FOLDER = "images"
 ANNOTATIONS_FILE = "annotations/instances_default.json"
-DATA_AT = "wandb_course/pyimagesearch/lemon_data:v0"
+ARTIFACT_NAME = "lemon_data"
+DATA_AT = f"{ENTITY}/{PROJECT_NAME}/{ARTIFACT_NAME}:v0"
