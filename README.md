@@ -13,6 +13,8 @@ but may be useful on their own.
 
 ## 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/mlops-001)
 
+## 🤖 [Learn CI/CD for Machine Learning (GitOps) →](https://github.com/hamelsmu/wandb-cicd)
+
 ## ⚡ [Learn deep learning with PyTorch Lightning →](https://github.com/wandb/edu/tree/main/lightning)
 
 ## 🥕 [Learn deep learning with Keras →](https://github.com/wandb/edu/tree/main/keras)

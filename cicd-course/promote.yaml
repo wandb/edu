@@ -1,0 +1,56 @@
+name: promote
+on: issue_comment
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  deployments: write
+
+jobs:
+  ghapi-exercise:
+    if: (github.event.issue.pull_request != null) && contains(github.event.comment.body, '/deploy')
+    runs-on: ubuntu-latest
+    steps:        
+
+    - name: Get repo contents
+      uses: actions/checkout@v3
+
+    - name: install dependencies
+      run: pip install ghapi wandb
+
+    - name: Parse value from the command
+      id: get-runid-value
+      shell: python
+      run: |
+        import re, os
+        comment = os.getenv('PR_COMMENT', '')
+        match = re.search('/deploy[\s+](\S+)', comment)
+
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          if match:
+            print(f'VAL_FOUND=true', file=f)
+            print(f'RUN_ID={match.group(1)}', file=f)
+          else:
+            print(f'VAL_FOUND=false', file=f)
+      env:
+        PR_COMMENT: ${{ github.event.comment.body }}
+
+    - name: Promote model to the registry
+      if: steps.get-runid-value.outputs.VAL_FOUND == 'true'
+      id: wandb-promote
+      run: python ./client/promote_model.py
+      env:
+        WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        WANDB_RUN_ID: "${{ steps.get-runid-value.outputs.RUN_ID }}"
+        WANDB_RUN_PATH: "hamelsmu/cicd_demo/"
+        WANDB_REGISTRY_PATH: "av-team/model-registry/BDD Semantic Segmentation"
+        
+    - name: Create a deployment
+      if: steps.wandb-promote.outcome == 'success' 
+      run: python ./client/deploy.py
+      env:
+        REPO: "${{ github.repository }}"
+        WANDB_RUN_ID: "${{ steps.get-runid-value.outputs.RUN_ID }}"
+        PR_NUM: "${{ github.issue.number }}"
+        REGISTRY_URL: "${{ steps.wandb-promote.outputs.REGISTRY_URL }}"
