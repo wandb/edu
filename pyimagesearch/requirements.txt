@@ -6,3 +6,4 @@ pycocotools==2.0.6
 timm==0.6.12
 fastprogress==1.0.3
 torcheval==0.0.6
+torch>=1.10.0
