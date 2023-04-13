@@ -1,6 +1,8 @@
 # W&B parameters
 PROJECT_NAME = "wandb_course"
 ENTITY = "pyimagesearch"
+# ENTITY = None
+
 
 # parameters for the dataset
 RAW_DATA_FOLDER = "lemon-dataset"

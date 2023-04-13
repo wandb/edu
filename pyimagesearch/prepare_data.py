@@ -9,7 +9,7 @@ import params
 import wandb
 
 
-def prepaer_dataset():
+def prepare_dataset():
     # start with a new wandb run
     run = wandb.init(
         project=params.PROJECT_NAME, entity=params.ENTITY, job_type="data_prep"
@@ -66,4 +66,4 @@ def prepaer_dataset():
 
 
 if __name__=="__main__":
-    prepaer_dataset()
+    prepare_dataset()

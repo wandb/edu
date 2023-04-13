@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -73,29 +74,27 @@ def make_row(img, dataset_folder):
 
 
 if __name__ == "__main__":
+    dataset_folder = Path(params.RAW_DATA_FOLDER)
+
+    # we will read the COCO object using the pycoco library,
+    # this is a standard format for object detection/segmentation.
+    coco = COCO(os.path.join(dataset_folder, params.ANNOTATIONS_FILE))
+
+    # get categories
+    cats = coco.loadCats(coco.getCatIds())
+    catIds = coco.getCatIds()
+
+    # get image ids
+    imgIds = coco.getImgIds()
+    imgs = coco.loadImgs(imgIds)
+    
     with wandb.init(
         project=params.PROJECT_NAME, entity=params.ENTITY, job_type="EDA"
-    ) as run:
-        # download the dataset artifact
-        data_artifact = run.use_artifact(params.DATA_AT, type="dataset")
-        artifact_dir = data_artifact.download()
-
-        # we will read the COCO object using the pycoco library,
-        # this is a standard format for object detection/segmentation.
-        coco = COCO(os.path.join(artifact_dir, params.ANNOTATIONS_FILE))
-
-        # get categories
-        cats = coco.loadCats(coco.getCatIds())
-        catIds = coco.getCatIds()
-
-        # get image ids
-        imgIds = coco.getImgIds()
-        imgs = coco.loadImgs(imgIds)
-
+        ) as run:
         # Let's log the dataset as a Table, it takes around 5 minutes depending on your connection.
         imgs = imgs[0:5]  # uncomment to log a sample only
         df = pd.DataFrame(
-            data=[make_row(img, artifact_dir) for img in imgs],
+            data=[make_row(img, dataset_folder) for img in imgs],
             columns="imgs,ids,n1,n2,n3,n4,file_name,is_mold".split(","),
         )
         run.log({"table_coco_sample": wandb.Table(dataframe=df)})
