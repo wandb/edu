@@ -109,7 +109,7 @@ class ClassificationTrainer:
     def compile(self, epochs=5, learning_rate=2e-3, weight_decay=0.01):
         "Keras style compile method"
         self.epochs = epochs
-        self.optim = AdamW(self.model.parameters(), learning_rate=learning_rate, weight_decay=weight_decay)
+        self.optim = AdamW(self.model.parameters(), lr=learning_rate, weight_decay=weight_decay)
         self.schedule = OneCycleLR(
             self.optim,
             max_lr=learning_rate,
@@ -229,7 +229,7 @@ def train(cfg):
 
         # Create the model using timm library. We will use a pretrained model.
         model = timm.create_model(cfg.model_arch, pretrained=True, num_classes=1)
-
+        
         # Define the trainer object
         trainer = ClassificationTrainer(
             train_dataloader,
