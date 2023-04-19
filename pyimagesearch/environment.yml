@@ -1,0 +1,21 @@
+## Conda Environment file
+name: pt
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - pytorch>=1.12.0
+  - torchvision>=0.12.0
+  - pytorch-cuda==11.7
+  - pandas>=1.3
+  - sckit-learn>=1.0
+  - pycocotools==2.0.6
+  - wandb>=14.0
+  - timm>=0.6.12
+  - scikit-image
+  - matplotlib
+  - scikit-learn
+  pip:
+    - fastprogress
+    - torcheval
