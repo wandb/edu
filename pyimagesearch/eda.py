@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import skimage.io as io
 from pycocotools.coco import COCO
+from fastprogress import progress_bar
 
 import params
 import wandb
@@ -92,9 +93,9 @@ if __name__ == "__main__":
         project=params.PROJECT_NAME, entity=params.ENTITY, job_type="EDA"
         ) as run:
         # Let's log the dataset as a Table, it takes around 5 minutes depending on your connection.
-        imgs = imgs[0:5]  # uncomment to log a sample only
+        # imgs = imgs[0:5]  # uncomment to log a sample only
         df = pd.DataFrame(
-            data=[make_row(img, dataset_folder) for img in imgs],
+            data=[make_row(img, dataset_folder) for img in progress_bar(imgs)],
             columns="imgs,ids,n1,n2,n3,n4,file_name,is_mold".split(","),
         )
         run.log({"table_coco_sample": wandb.Table(dataframe=df)})
