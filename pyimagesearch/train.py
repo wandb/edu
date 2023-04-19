@@ -4,9 +4,7 @@ from fastprogress import progress_bar
 import timm
 import wandb
 import torch
-import torch.nn as nn
-import torchvision.transforms as T
-from fastprogress import progress_bar
+from torch import nn
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import OneCycleLR
 from torch.utils.data import DataLoader
@@ -37,7 +35,7 @@ default_cfg = SimpleNamespace(
     epochs=10,                             # Number of training epochs
     learning_rate=2e-3,                    # Learning rate
     weight_decay=1e-5,                     # Weight decay
-    model_arch="convnext_tiny",            # Timm backbone architecture
+    model_arch="resnet18",                 # Timm backbone architecture
     log_model=False,                       # Whether or not to log the model to Wandb
     log_preds=False,                       # Whether or not to log the model predictions to Wandb
     # these are params that are not being changed
@@ -188,8 +186,8 @@ class ClassificationTrainer:
             wandb.log({"valid_loss": val_loss.item()}, commit=False)
             self.print_metrics(epoch, train_loss, val_loss)
             self.reset_metrics()
-            if log_preds:
-                log_model_preds(self.valid_dataloader, val_preds)
+        if log_preds:
+            log_model_preds(self.valid_dataloader, val_preds)
 
 # Train the model with the specified configurations
 def train(cfg):
@@ -221,7 +219,7 @@ def train(cfg):
 
         # Define training and validation dataloaders
         train_dataloader = DataLoader(
-            train_ds, batch_size=cfg.batch_size, shuffle=True, num_workers=4
+            train_ds, batch_size=cfg.batch_size, shuffle=True, pin_memory=True, num_workers=6
         )
         valid_dataloader = DataLoader(
             valid_ds, batch_size=cfg.batch_size, shuffle=False, num_workers=4
@@ -229,7 +227,7 @@ def train(cfg):
 
         # Create the model using timm library. We will use a pretrained model.
         model = timm.create_model(cfg.model_arch, pretrained=True, num_classes=1)
-        
+
         # Define the trainer object
         trainer = ClassificationTrainer(
             train_dataloader,
