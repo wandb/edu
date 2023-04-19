@@ -131,12 +131,12 @@ def model_size(module):
     return sum(p.numel() for p in module.parameters() if p.requires_grad)
 
 
-def log_model_preds(test_dl, preds, n=5, th=0.5):
+def log_model_preds(test_dl, preds, n=-1, th=0.5):
     """Log the predictions of the model to wandb as a table
     Args:
         test_dl (DataLoader): DataLoader for the test dataset.
         preds (Tensor): Model predictions.
-        n (int, optional): Number of samples to log. Defaults to 5.
+        n (int, optional): Number of samples to log. Defaults to -1 (log all preds).
         th (float, optional): Threshold for the predictions. Defaults to 0.5.
     """
     wandb_table = wandb.Table(columns=["images", "predictions", "groudn_truth"])
@@ -150,19 +150,19 @@ def log_model_preds(test_dl, preds, n=5, th=0.5):
     wandb.log({"predictions": wandb_table})
 
 
-def save_model(model, model_name):
+def save_model(model, model_name, models_folder="models"):
     """Save the model to wandb as an artifact
     Args:
         model (nn.Module): Model to save.
         model_name (str): Name of the model.
+        models_folder (str, optional): Folder to save the model. Defaults to "models".
     """
     model_name = f"{wandb.run.id}_{model_name}"
-    models_folder = Path("models")
-    if not models_folder.exists():
-        models_folder.mkdir()
-    torch.save(model.state_dict(), models_folder / f"{model_name}.pth")
+    file_name = Path(f"{models_folder}/{model_name}.pth")
+    file_name.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(model.state_dict(), file_name)
     at = wandb.Artifact(model_name, type="model")
-    at.add_file(f"models/{model_name}.pth")
+    at.add_file(file_name)
     wandb.log_artifact(at)
 
 
