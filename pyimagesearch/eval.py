@@ -24,7 +24,7 @@ default_cfg = SimpleNamespace(
     image_size=256,
     batch_size=16,
     seed=42,
-    model_artifact_name="wandb_course/model-registry/Lemon Mold Detector:candidate",
+    model_artifact_name="pyimagesearch/model-registry/Lemon Detector:staging",
     # these are params that are not being changed
     image_column="file_name",
     target_column="mold",
@@ -75,10 +75,10 @@ def main(cfg):
     )
 
     test_dataloader = DataLoader(
-        val_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
+        test_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
     )
     valid_dataloader = DataLoader(
-        test_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
+        val_dataset, batch_size=cfg.batch_size, shuffle=False, num_workers=4
     )
 
     # load the model from the model registry

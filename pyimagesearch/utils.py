@@ -185,13 +185,13 @@ def load_model(model_artifact_name, eval=True):
     # recover model info from the registry
     producer_run = artifact.logged_by()
     model_config = SimpleNamespace(
-        img_size=producer_run.config["img_size"],
-        bs=producer_run.config["bs"],
-        arch=producer_run.config["arch"],
+        image_size=producer_run.config["image_size"],
+        batch_size=producer_run.config["batch_size"],
+        model_arch=producer_run.config["model_arch"],
     )
 
     model_weights = torch.load(first(model_path.glob("*.pth")))  # get first file
-    model = timm.create_model(model_config.arch, pretrained=False, num_classes=1)
+    model = timm.create_model(model_config.model_arch, pretrained=False, num_classes=1)
     model.load_state_dict(model_weights)
     if eval:
         model.eval()
