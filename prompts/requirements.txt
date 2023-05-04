@@ -1,0 +1,5 @@
+openai 
+google-search-results
+jupyterlab
+pyarrow==10.0.1
+snowflake-connector-python
