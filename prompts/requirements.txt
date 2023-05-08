@@ -3,3 +3,6 @@ google-search-results
 jupyterlab
 pyarrow==10.0.1
 snowflake-connector-python
+langchain==0.0.158
+wandb==0.15.2
+sqlalchemy==2.0.12
