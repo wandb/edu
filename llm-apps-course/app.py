@@ -3,38 +3,12 @@
 import streamlit as st
 from streamlit_chat import message
 
-from langchain.chains import ConversationChain
-from langchain.llms import OpenAI
-
-from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
-
 from wandb.integration.langchain import WandbTracer
-import wandb
 
 from config import default_config, wandb_config
-from ingest import DocumentStore
+from chain import load_chain
 
-def load_artifacts(config):
-    vector_store_artifact = wandb.use_artifact(config.vector_store_artifact, type="search_index")
-    vector_store_artifact_dir = vector_store_artifact.download()
-    return vector_store_artifact_dir
-
-def load_vector_store(store_dir):
-    document_store = DocumentStore.load_from_disk(store_dir)
-    return document_store
-
-def load_chain():
-    """Logic for loading the chain you want to use should go here."""
-    vector_store_artifact_dir = load_artifacts(default_config)
-    vector_store = load_vector_store(vector_store_artifact_dir)
-    retriever = vector_store.as_retriever()
-    qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=retriever)
-    return qa
-
-wandb.init(project="llmapps")
-
-chain = load_chain()
+chain = load_chain(default_config)
 
 # From here down is all the StreamLit UI.
 st.set_page_config(page_title="LangChain Demo", page_icon=":robot:")
@@ -48,7 +22,7 @@ if "past" not in st.session_state:
 
 
 def get_text():
-    input_text = st.text_input("You: ", "How can I share my W&B report with team members?", key="input")
+    input_text = st.text_input("You: ", "How do I share a W&B report with team members?", key="input")
     return input_text
 
 user_input = get_text()
