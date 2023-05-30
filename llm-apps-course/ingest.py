@@ -139,7 +139,7 @@ def get_parser():
         help="The number of tokens to overlap between document chunks",
     )
     parser.add_argument(
-        "--vector_store_path",
+        "--vector_store",
         type=str,
         default="vector_store",
         help="The directory to save or load the Chroma db to/from",
