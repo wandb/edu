@@ -2,23 +2,21 @@ import argparse
 import logging
 import os
 import pathlib
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
 import langchain
-import pandas as pd
 import wandb
-from langchain.vectorstores import Chroma
 from langchain.cache import SQLiteCache
 from langchain.docstore.document import Document
 from langchain.document_loaders import UnstructuredMarkdownLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import MarkdownTextSplitter
-from tqdm import tqdm
-
+from langchain.vectorstores import Chroma
 
 langchain.llm_cache = SQLiteCache(database_path="langchain.db")
 
 logger = logging.getLogger(__name__)
+
 
 def load_documents(data_dir: str) -> List[Document]:
     """Load documents from a directory of markdown files
@@ -30,13 +28,16 @@ def load_documents(data_dir: str) -> List[Document]:
         List[Document]: A list of documents
     """
     md_files = list(map(str, pathlib.Path(data_dir).glob("*.md")))
-    documents = [UnstructuredMarkdownLoader(file_path=file_path).load()[0] for file_path in md_files]
+    documents = [
+        UnstructuredMarkdownLoader(file_path=file_path).load()[0]
+        for file_path in md_files
+    ]
     return documents
 
+
 def chunk_documents(
-    documents: List[Document],
-    chunk_size: int = 500,
-    chunk_overlap=0) -> List[Document]:
+    documents: List[Document], chunk_size: int = 500, chunk_overlap=0
+) -> List[Document]:
     """Split documents into chunks
 
     Args:
@@ -47,12 +48,17 @@ def chunk_documents(
     Returns:
         List[Document]: A list of chunked documents.
     """
-    markdown_text_splitter = MarkdownTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    markdown_text_splitter = MarkdownTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap
+    )
     split_documents = markdown_text_splitter.split_documents(documents)
     return split_documents
 
+
 def create_vector_store(
-    documents, vector_store_path: str="./vector_store",) -> Chroma:
+    documents,
+    vector_store_path: str = "./vector_store",
+) -> Chroma:
     """Create a ChromaDB vector store from a list of documents
 
     Args:
@@ -66,10 +72,12 @@ def create_vector_store(
     embedding_function = OpenAIEmbeddings(openai_api_key=api_key)
     vector_store = Chroma.from_documents(
         documents=documents,
-        embedding=embedding_function, 
-        persist_directory=vector_store_path, )
+        embedding=embedding_function,
+        persist_directory=vector_store_path,
+    )
     vector_store.persist()
     return vector_store
+
 
 def log_dataset(documents: List[Document], run: "wandb.run"):
     """Log a dataset to wandb
@@ -82,10 +90,11 @@ def log_dataset(documents: List[Document], run: "wandb.run"):
     with document_artifact.new_file("documents.json") as f:
         for document in documents:
             f.write(document.json() + "\n")
-            
+
     run.log_artifact(document_artifact)
-    
-def log_index(vector_store_dir:str, run: "wandb.run"):
+
+
+def log_index(vector_store_dir: str, run: "wandb.run"):
     """Log a vector store to wandb
 
     Args:
@@ -95,28 +104,29 @@ def log_index(vector_store_dir:str, run: "wandb.run"):
     index_artifact = wandb.Artifact(name="vector_store", type="search_index")
     index_artifact.add_dir(vector_store_dir)
     run.log_artifact(index_artifact)
-    
+
 
 def ingest_data(
-    docs_dir:str,
-    chunk_size:int,
-    chunk_overlap:int,
-    vector_store_path:str,
+    docs_dir: str,
+    chunk_size: int,
+    chunk_overlap: int,
+    vector_store_path: str,
 ) -> Tuple[List[Document], Chroma]:
     """Ingest a directory of markdown files into a vector store
 
     Args:
-        docs_dir (str): 
-        chunk_size (int): 
-        chunk_overlap (int): 
-        vector_store_path (str): 
+        docs_dir (str):
+        chunk_size (int):
+        chunk_overlap (int):
+        vector_store_path (str):
 
-    
+
     """
     documents = load_documents(docs_dir)
     split_documents = chunk_documents(documents, chunk_size, chunk_overlap)
     vector_store = create_vector_store(split_documents, vector_store_path)
     return split_documents, vector_store
+
 
 def get_parser():
     parser = argparse.ArgumentParser()
@@ -144,7 +154,7 @@ def get_parser():
         default="vector_store",
         help="The directory to save or load the Chroma db to/from",
     )
-        
+
     parser.add_argument(
         "--wandb_project",
         default="llmapps",
@@ -158,11 +168,12 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
     run = wandb.init(project=args.wandb_project, config=args)
-    documents, vector_store = ingest_data(docs_dir=args.docs_dir, 
-                               chunk_size=args.chunk_size,
-                               chunk_overlap=args.chunk_overlap,
-                               vector_store_path=args.vector_store_path, 
-                               )
+    documents, vector_store = ingest_data(
+        docs_dir=args.docs_dir,
+        chunk_size=args.chunk_size,
+        chunk_overlap=args.chunk_overlap,
+        vector_store_path=args.vector_store_path,
+    )
     log_dataset(documents, run)
     log_index(args.vector_store_path, run)
     run.finish()
