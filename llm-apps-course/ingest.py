@@ -1,3 +1,4 @@
+"""Ingest a directory of documentation files into a vector store and store the relevant artifacts in Weights & Biases"""
 import argparse
 import json
 import logging

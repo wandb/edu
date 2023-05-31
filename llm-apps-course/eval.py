@@ -1,3 +1,4 @@
+"""Evaluate a ConversationalRetrievalChain on a dataset of questions and answers."""
 import os
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,7 +16,13 @@ from tqdm import tqdm
 from wandb.integration.langchain import WandbTracer
 
 
-def load_eval_dataset(config: SimpleNamespace):
+def load_eval_dataset(config: SimpleNamespace) -> pd.DataFrame:
+    """Load a dataset of questions and answers from a Weights & Biases artifact
+    Args:
+        config (SimpleNamespace): A config object
+    Returns:
+        pd.DataFrame: A dataframe of questions and answers
+    """
     # we will load data from a wandb Table  artifact
     artifact = wandb.use_artifact(config.eval_artifact)
     # download artifact
@@ -27,7 +34,14 @@ def load_eval_dataset(config: SimpleNamespace):
 
 def generate_answers(
     eval_dataset: pd.DataFrame, qa_chain: ConversationalRetrievalChain
-):
+) -> pd.DataFrame:
+    """Generate answers for a dataset of questions and answers
+    Args:
+        eval_dataset (pd.DataFrame): A dataframe of questions and answers
+        qa_chain (ConversationalRetrievalChain): A ConversationalRetrievalChain object
+    Returns:
+        pd.DataFrame: A dataframe of questions, answers, and model answers
+    """
     answers = []
     for query in tqdm(eval_dataset["question"], total=len(eval_dataset)):
         answer = delayed(
@@ -40,7 +54,16 @@ def generate_answers(
     return eval_dataset
 
 
-def evaluate_answers(eval_dataset: pd.DataFrame, config: SimpleNamespace):
+def evaluate_answers(
+    eval_dataset: pd.DataFrame, config: SimpleNamespace
+) -> pd.DataFrame:
+    """Evaluate a dataset of questions, answers, and model answers
+    Args:
+        eval_dataset (pd.DataFrame): A dataframe of questions, answers, and model answers
+        config (SimpleNamespace): A config object
+    Returns:
+        pd.DataFrame: A dataframe of questions, answers, model answers, and model scores
+    """
     eval_prompt = load_eval_prompt()
     llm = ChatOpenAI(
         model_name=config.eval_model,
@@ -69,7 +92,11 @@ def evaluate_answers(eval_dataset: pd.DataFrame, config: SimpleNamespace):
     return eval_dataset
 
 
-def log_results(eval_dataset: pd.DataFrame):
+def log_results(eval_dataset: pd.DataFrame) -> None:
+    """Log evaluation results to a Weights & Biases Artifact
+    Args:
+        eval_dataset (pd.DataFrame): A dataframe of questions, answers, model answers, and model scores
+    """
     model_accuracy = len(eval_dataset[eval_dataset["model_score"] == "CORRECT"]) / len(
         eval_dataset
     )

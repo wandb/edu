@@ -1,3 +1,4 @@
+"""Configuration for the LLM Apps Course"""
 from types import SimpleNamespace
 
 TEAM = None

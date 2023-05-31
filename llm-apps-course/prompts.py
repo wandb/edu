@@ -1,3 +1,4 @@
+"""Prompts for the chatbot and evaluation."""
 import json
 import logging
 import pathlib

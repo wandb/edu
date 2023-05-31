@@ -1,5 +1,6 @@
+"""This module contains functions for loading a ConversationalRetrievalChain"""
+
 import logging
-from types import SimpleNamespace
 
 import wandb
 from langchain.chains import ConversationalRetrievalChain
@@ -16,6 +17,7 @@ def load_vector_store(wandb_run: wandb.run, openai_api_key: str) -> Chroma:
     """Load a vector store from a Weights & Biases artifact
     Args:
         run (wandb.run): An active Weights & Biases run
+        openai_api_key (str): The OpenAI API key to use for embedding
     Returns:
         Chroma: A chroma vector store object
     """
@@ -34,10 +36,12 @@ def load_vector_store(wandb_run: wandb.run, openai_api_key: str) -> Chroma:
 
 def load_chain(wandb_run: wandb.run, vector_store: Chroma, openai_api_key: str):
     """Load a ConversationalQA chain from a config and a vector store
-
     Args:
-        config (SimpleNamespace): A config object
-
+        wandb_run (wandb.run): An active Weights & Biases run
+        vector_store (Chroma): A Chroma vector store object
+        openai_api_key (str): The OpenAI API key to use for embedding
+    Returns:
+        ConversationalRetrievalChain: A ConversationalRetrievalChain object
     """
     retriever = vector_store.as_retriever()
     llm = ChatOpenAI(
@@ -66,6 +70,15 @@ def get_answer(
     question: str,
     chat_history: list[tuple[str, str]],
 ):
+    """Get an answer from a ConversationalRetrievalChain
+    Args:
+        chain (ConversationalRetrievalChain): A ConversationalRetrievalChain object
+        callback (WandbTracer): A WandbTracer callback object
+        question (str): The question to ask
+        chat_history (list[tuple[str, str]]): A list of tuples of (question, answer)
+    Returns:
+        str: The answer to the question
+    """
     result = chain(
         inputs={"question": question, "chat_history": chat_history},
         callbacks=[callback],
