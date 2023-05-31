@@ -1,250 +1,149 @@
+"""Ingest a directory of documentation files into a vector store and store the relevant artifacts in Weights & Biases"""
 import argparse
 import json
 import logging
 import os
 import pathlib
-from typing import Dict, List, Union, Optional
+from typing import List, Tuple
 
 import langchain
-import pandas as pd
-import tiktoken
 import wandb
-from langchain import LLMChain
-from langchain.vectorstores import Chroma
 from langchain.cache import SQLiteCache
-from langchain.chains import HypotheticalDocumentEmbedder
-from langchain.chains.base import Chain
-from langchain.chat_models import ChatOpenAI
 from langchain.docstore.document import Document
 from langchain.document_loaders import UnstructuredMarkdownLoader
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.embeddings.base import Embeddings
-from langchain.prompts import ChatPromptTemplate
-from langchain.text_splitter import (
-    MarkdownTextSplitter,
-    TokenTextSplitter,
-)
-from tqdm import tqdm
-from prompts import load_hyde_prompt
+from langchain.text_splitter import MarkdownTextSplitter
+from langchain.vectorstores import Chroma
 
 langchain.llm_cache = SQLiteCache(database_path="langchain.db")
 
 logger = logging.getLogger(__name__)
 
-def find_md_files(directory: str = "docs_sample") -> List[Document]:
-    md_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".md"):
-                file_path = os.path.join(root, file)
-                with open(file_path, "r") as f:
-                    md_files.append(Document(page_content=f.read(), metadata={"source": file_path}))
-    return md_files
 
-class DocumentationDatasetLoader:
-    """Loads the documentation dataset
-    Usage:
-    ```
-    loader = DocumentationDatasetLoader()
-    documents = loader.load()
-    # save to disk
-    loader.save_to_disk(path)
-    # load from disk
-    loader.load_from_disk(path)
-    ```
+def load_documents(data_dir: str) -> List[Document]:
+    """Load documents from a directory of markdown files
+
+    Args:
+        data_dir (str): The directory containing the markdown files
+
+    Returns:
+        List[Document]: A list of documents
     """
-
-    def __init__(
-        self,
-        documentation_dir: str = "docs_sample",
-        chunk_size: int = 512,
-        chunk_overlap: int = 0,
-        encoding_name: str = "cl100k_base",
-    ):
-        """
-        :param documentation_dir: The directory containing the documentation from wandb/docodile
-        :param chunk_size: The size of the chunks to split the text into using the `TokenTextSplitter`
-        :param chunk_overlap: The amount of overlap between chunks of text using the `TokenTextSplitter`
-        :param encoding_name: The name of the encoding to use when splitting the text using the `TokenTextSplitter`
-        """
-        self.documentation_dir = documentation_dir
-        self.encoding_name = encoding_name
-        self.documents = []
-        self.md_text_splitter = MarkdownTextSplitter()
-        self.token_splitter = TokenTextSplitter(
-            encoding_name=encoding_name,
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
-            allowed_special={"<|endoftext|>"},
-        )
+    md_files = list(map(str, pathlib.Path(data_dir).glob("*.md")))
+    documents = [
+        UnstructuredMarkdownLoader(file_path=file_path).load()[0]
+        for file_path in md_files
+    ]
+    return documents
 
 
-    def load_documentation_documents(self, docs_dir: str) -> List[Document]:
-        """
-        Loads the documentation documents from the specified repository
-        :param docs_dir: The directory containing the documentation
-        :return: A list of `Document` objects
-        """
-        documents = find_md_files(directory=docs_dir)
-        document_sections = self.md_text_splitter.split_documents(documents)
-        document_sections = self.token_splitter.split_documents(document_sections)
+def chunk_documents(
+    documents: List[Document], chunk_size: int = 500, chunk_overlap=0
+) -> List[Document]:
+    """Split documents into chunks
 
-        return document_sections
+    Args:
+        documents (List[Document]): A list of documents to split into chunks
+        chunk_size (int, optional): The size of each chunk. Defaults to 500.
+        chunk_overlap (int, optional): The number of tokens to overlap between chunks. Defaults to 0.
 
-    def load(self) -> List[Document]:
-        """
-        Loads the documentation
-        :return: A list of `Document` objects
-        """
-        self.documents = []
-        if self.documentation_dir and os.path.exists(self.documentation_dir):
-            self.documents.extend(
-                self.load_documentation_documents(docs_dir=self.documentation_dir)
-            )
-        else:
-            logger.warning(
-                f"Documentation directory {self.documentation_dir} does not exist. Not loading documentation."
-            )
-        print(f"Loaded {len(self.documents)} documents")
-        return self.documents
-
-    def save_to_disk(self, path: str) -> None:
-        """
-        Saves the documents to disk as a jsonl file
-        :param path: The path to save the documents to
-        """
-        with open(path, "w") as f:
-            for document in self.documents:
-                line = json.dumps(
-                    {
-                        "page_content": document.page_content,
-                        "metadata": document.metadata,
-                    }
-                )
-                f.write(line + "\n")
-
-    @classmethod
-    def load_from_disk(cls, path: str) -> "DocumentationDatasetLoader":
-        """
-        Loads the jsonl documents from disk into a `DocumentationDatasetLoader`
-        :param path: The path to the jsonl file containing the documents
-        :return: A `DocumentationDatasetLoader` object
-        """
-        loader = cls()
-        with open(path, "r") as f:
-            for line in f:
-                document = json.loads(line)
-                loader.documents.append(Document(**document))
-        return loader
-
-
-class DocumentStore:
+    Returns:
+        List[Document]: A list of chunked documents.
     """
-    A class for storing and retrieving documents using Chroma and OpenAI embeddings
+    markdown_text_splitter = MarkdownTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap
+    )
+    split_documents = markdown_text_splitter.split_documents(documents)
+    return split_documents
+
+
+def create_vector_store(
+    documents,
+    vector_store_path: str = "./vector_store",
+) -> Chroma:
+    """Create a ChromaDB vector store from a list of documents
+
+    Args:
+        documents (_type_): A list of documents to add to the vector store
+        vector_store_path (str, optional): The path to the vector store. Defaults to "./vector_store".
+
+    Returns:
+        Chroma: A ChromaDB vector store containing the documents.
     """
+    api_key = os.environ.get("OPENAI_API_KEY", None)
+    embedding_function = OpenAIEmbeddings(openai_api_key=api_key)
+    vector_store = Chroma.from_documents(
+        documents=documents,
+        embedding=embedding_function,
+        persist_directory=vector_store_path,
+    )
+    vector_store.persist()
+    return vector_store
 
-    base_embeddings = OpenAIEmbeddings()
 
-    def __init__(
-        self,
-        documents: List[Document],
-        use_hyde: bool = True,
-        hyde_prompt: Optional[Union[ChatPromptTemplate, str]] = None,
-        temperature: float = 0.7,
-        path: str = "data/index",
-    ):
-        """
-        :param documents: List of documents to store in the document store
-        :param use_hyde: Whether to use the hypothetical document embeddings when embedding documents
-        :param hyde_prompt: The prompt to use for the hypothetical document embeddings
-        :param temperature: The temperature to use for the hypothetical document embeddings
-        """
-        self.documents = documents
-        self.use_hyde = use_hyde
-        self.hyde_prompt = hyde_prompt
-        self._embeddings = None
-        self._db_store = None
-        self.temperature = temperature
-        self.path = path
+def log_dataset(documents: List[Document], run: "wandb.run"):
+    """Log a dataset to wandb
 
-    def embeddings(self) -> Union[Chain, Embeddings]:
-        """
-        Returns the embeddings to use for the document store
-        :return:
-        """
-        if self._embeddings is None:
-            if self.use_hyde:
-                if isinstance(self.hyde_prompt, ChatPromptTemplate):
-                    prompt = self.hyde_prompt
-                elif isinstance(self.hyde_prompt, str) and os.path.isfile(
-                    self.hyde_prompt
-                ):
-                    prompt = load_hyde_prompt(self.hyde_prompt)
-                else:
-                    prompt = load_hyde_prompt()
-                self._embeddings = HypotheticalDocumentEmbedder(
-                    llm_chain=LLMChain(
-                        llm=ChatOpenAI(temperature=self.temperature), prompt=prompt
-                    ),
-                    base_embeddings=self.base_embeddings,
-                )
-            else:
-                self._embeddings = self.base_embeddings
-        return self._embeddings
+    Args:
+        documents (List[Document]): A list of documents to log to a wandb artifact
+        run (wandb.run): The wandb run to log the artifact to.
+    """
+    document_artifact = wandb.Artifact(name="documentation_dataset", type="dataset")
+    with document_artifact.new_file("documents.json") as f:
+        for document in documents:
+            f.write(document.json() + "\n")
 
-    def create_index(
-        self,
-    ) -> Chroma:
-        """
-        Creates a Chroma index from documents
-        :return: A `Chroma` object
-        """
+    run.log_artifact(document_artifact)
 
-        self._db_store = Chroma.from_documents(
-            self.documents, embedding=self.embeddings(),
-            persist_directory=self.path,
-        )
-        return self._db_store
 
-    @property
-    def vector_store(self) -> Chroma:
-        """
-        Returns the Chroma index
-        :return: A `Chroma` object
-        """
-        if self._db_store is None:
-            self.create_index()
-        return self._db_store
+def log_index(vector_store_dir: str, run: "wandb.run"):
+    """Log a vector store to wandb
 
-    def save_to_disk(self) -> None:
-        """
-        Saves the Chroma index to disk
-        :param path: The directory to save the Chroma index to
-        """
-        self.vector_store.persist()
+    Args:
+        vector_store_dir (str): The directory containing the vector store to log
+        run (wandb.run): The wandb run to log the artifact to.
+    """
+    index_artifact = wandb.Artifact(name="vector_store", type="search_index")
+    index_artifact.add_dir(vector_store_dir)
+    run.log_artifact(index_artifact)
 
-    @classmethod
-    def load_from_disk(
-        cls,
-        path: str,
-        use_hyde: bool = True,
-        hyde_prompt: Optional[Union[ChatPromptTemplate, str]] = None,
-        temperature: float = 0.7,
-    ) -> "DocumentStore":
-        """
-        Loads the `DocumentStore` from disk
-        :param path: The directory the Chroma index
-        :param use_hyde: Whether to use the hypothetical document embeddings when embedding documents
-        :param hyde_prompt: The prompt to use for the hypothetical document embeddings
-        :param temperature: The temperature to use for the hypothetical document embeddings
-        :return: A `DocumentStore` object
-        """
-        cls.use_hyde = use_hyde
-        cls.hyde_prompt = hyde_prompt
-        cls.temperature = temperature
-        cls._embeddings = None
-        cls._db_store = Chroma(persist_directory=path, embedding_function=cls.embeddings(cls))
-        return cls._db_store
+
+def log_prompt(prompt: dict, run: "wandb.run"):
+    """Log a prompt to wandb
+
+    Args:
+        prompt (str): The prompt to log
+        run (wandb.run): The wandb run to log the artifact to.
+    """
+    prompt_artifact = wandb.Artifact(name="chat_prompt", type="prompt")
+    with prompt_artifact.new_file("prompt.json") as f:
+        f.write(json.dumps(prompt))
+    run.log_artifact(prompt_artifact)
+
+
+def ingest_data(
+    docs_dir: str,
+    chunk_size: int,
+    chunk_overlap: int,
+    vector_store_path: str,
+) -> Tuple[List[Document], Chroma]:
+    """Ingest a directory of markdown files into a vector store
+
+    Args:
+        docs_dir (str):
+        chunk_size (int):
+        chunk_overlap (int):
+        vector_store_path (str):
+
+
+    """
+    # load the documents
+    documents = load_documents(docs_dir)
+    # split the documents into chunks
+    split_documents = chunk_documents(documents, chunk_size, chunk_overlap)
+    # create document embeddings and store them in a vector store
+    vector_store = create_vector_store(split_documents, vector_store_path)
+    return split_documents, vector_store
 
 
 def get_parser():
@@ -256,33 +155,28 @@ def get_parser():
         help="The directory containing the wandb documentation",
     )
     parser.add_argument(
-        "--documents_file",
-        type=str,
-        default="data/documents.jsonl",
-        help="The path to save or load the documents to/from",
+        "--chunk_size",
+        type=int,
+        default=500,
+        help="The number of tokens to include in each document chunk",
+    )
+    parser.add_argument(
+        "--chunk_overlap",
+        type=int,
+        default=0,
+        help="The number of tokens to overlap between document chunks",
     )
     parser.add_argument(
         "--vector_store",
         type=str,
-        default="data/index",
+        default="./vector_store",
         help="The directory to save or load the Chroma db to/from",
     )
     parser.add_argument(
-        "--hyde_prompt",
-        type=str,
-        default=None,
-        help="The path to the hyde prompt to use",
-    )
-    parser.add_argument(
-        "--use_hyde",
-        action="store_true",
-        help="Whether to use the hypothetical document embeddings",
-    )
-    parser.add_argument(
-        "--temperature",
-        type=float,
-        default=0.3,
-        help="The temperature to use for the hypothetical document embeddings",
+        "--prompt_file",
+        type=pathlib.Path,
+        default="./chat_prompt.json",
+        help="The path to the chat prompt to use",
     )
     parser.add_argument(
         "--wandb_project",
@@ -290,6 +184,7 @@ def get_parser():
         type=str,
         help="The wandb project to use for storing artifacts",
     )
+
     return parser
 
 
@@ -297,45 +192,15 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
     run = wandb.init(project=args.wandb_project, config=args)
-
-    if not os.path.isfile(args.documents_file):
-        loader = DocumentationDatasetLoader(
-            documentation_dir=args.docs_dir,
-        )
-        documents = loader.load()
-        loader.save_to_disk(args.documents_file)
-    else:
-        loader = DocumentationDatasetLoader.load_from_disk(args.documents_file)
-        documents = loader.documents
-
-    documents_artifact = wandb.Artifact("docs_dataset", type="dataset")
-    documents_artifact.add_file(args.documents_file)
-    run.log_artifact(documents_artifact)
-    if not os.path.isdir(args.vector_store):
-        document_store = DocumentStore(
-            documents=documents,
-            use_hyde=args.use_hyde,
-            hyde_prompt=args.hyde_prompt,
-            temperature=args.temperature,
-            path=args.vector_store,
-        )
-        document_store.save_to_disk()
-    else:
-        document_store = DocumentStore.load_from_disk(
-            args.vector_store,
-            use_hyde=args.use_hyde,
-            hyde_prompt=args.hyde_prompt,
-            temperature=args.temperature,
-        )
-    index_artifact = wandb.Artifact("vector_store", type="search_index")
-    index_artifact.add_dir(args.vector_store)
-    run.log_artifact(index_artifact)
-
-    if args.hyde_prompt is not None and os.path.isfile(args.hyde_prompt):
-        hyde_prompt_artifact = wandb.Artifact("hyde_prompt", type="prompt")
-        hyde_prompt_artifact.add_file(args.hyde_prompt)
-        run.log_artifact(hyde_prompt_artifact)
-
+    documents, vector_store = ingest_data(
+        docs_dir=args.docs_dir,
+        chunk_size=args.chunk_size,
+        chunk_overlap=args.chunk_overlap,
+        vector_store_path=args.vector_store,
+    )
+    log_dataset(documents, run)
+    log_index(args.vector_store, run)
+    log_prompt(json.load(args.prompt_file.open("r")), run)
     run.finish()
 
 
