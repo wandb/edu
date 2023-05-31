@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 import pathlib
@@ -106,6 +107,19 @@ def log_index(vector_store_dir: str, run: "wandb.run"):
     run.log_artifact(index_artifact)
 
 
+def log_prompt(prompt: dict, run: "wandb.run"):
+    """Log a prompt to wandb
+
+    Args:
+        prompt (str): The prompt to log
+        run (wandb.run): The wandb run to log the artifact to.
+    """
+    prompt_artifact = wandb.Artifact(name="chat_prompt", type="prompt")
+    with prompt_artifact.new_file("prompt.json") as f:
+        f.write(json.dumps(prompt))
+    run.log_artifact(prompt_artifact)
+
+
 def ingest_data(
     docs_dir: str,
     chunk_size: int,
@@ -122,8 +136,11 @@ def ingest_data(
 
 
     """
+    # load the documents
     documents = load_documents(docs_dir)
+    # split the documents into chunks
     split_documents = chunk_documents(documents, chunk_size, chunk_overlap)
+    # create document embeddings and store them in a vector store
     vector_store = create_vector_store(split_documents, vector_store_path)
     return split_documents, vector_store
 
@@ -151,16 +168,22 @@ def get_parser():
     parser.add_argument(
         "--vector_store",
         type=str,
-        default="vector_store",
+        default="./vector_store",
         help="The directory to save or load the Chroma db to/from",
     )
-
+    parser.add_argument(
+        "--prompt_file",
+        type=pathlib.Path,
+        default="./chat_prompt.json",
+        help="The path to the chat prompt to use",
+    )
     parser.add_argument(
         "--wandb_project",
         default="llmapps",
         type=str,
         help="The wandb project to use for storing artifacts",
     )
+
     return parser
 
 
@@ -172,10 +195,11 @@ def main():
         docs_dir=args.docs_dir,
         chunk_size=args.chunk_size,
         chunk_overlap=args.chunk_overlap,
-        vector_store_path=args.vector_store_path,
+        vector_store_path=args.vector_store,
     )
     log_dataset(documents, run)
-    log_index(args.vector_store_path, run)
+    log_index(args.vector_store, run)
+    log_prompt(json.load(args.prompt_file.open("r")), run)
     run.finish()
 
 

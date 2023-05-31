@@ -1,40 +1,107 @@
-# SOURCE: https://github.com/hwchase17/langchain-streamlit-template/blob/master/main.py
+import os
+from types import SimpleNamespace
 
-import streamlit as st
-from streamlit_chat import message
-
+import gradio as gr
+import wandb
+from chain import get_answer, load_chain, load_vector_store
+from config import default_config
 from wandb.integration.langchain import WandbTracer
 
-from config import default_config, wandb_config
-from chain import load_chain
 
-chain = load_chain(default_config)
+class Chat:
+    def __init__(
+        self,
+        config: SimpleNamespace,
+    ):
+        self.config = config
+        self.wandb_run = wandb.init(
+            project=self.config.project,
+            entity=self.config.entity,
+            job_type=self.config.job_type,
+            config=self.config,
+        )
+        self.vector_store = None
+        self.chain = None
+        self.tracer = WandbTracer()
 
-# From here down is all the StreamLit UI.
-st.set_page_config(page_title="LangChain Demo", page_icon=":robot:")
-st.header("LangChain Demo")
+    def __call__(
+        self,
+        question: str,
+        history: list[tuple[str, str]] | None = None,
+        openai_api_key: str = None,
+    ):
+        if openai_api_key is not None:
+            openai_key = openai_api_key
+        elif os.environ["OPENAI_API_KEY"]:
+            openai_key = os.environ["OPENAI_API_KEY"]
+        else:
+            raise ValueError(
+                "Please provide your OpenAI API key as an argument or set the OPENAI_API_KEY environment variable"
+            )
 
-if "generated" not in st.session_state:
-    st.session_state["generated"] = []
+        if self.vector_store is None:
+            self.vector_store = load_vector_store(
+                wandb_run=self.wandb_run, openai_api_key=openai_key
+            )
+        if self.chain is None:
+            self.chain = load_chain(
+                self.wandb_run, self.vector_store, openai_api_key=openai_key
+            )
 
-if "past" not in st.session_state:
-    st.session_state["past"] = []
+        history = history or []
+        question = question.lower()
+        response = get_answer(
+            chain=self.chain,
+            callback=self.tracer,
+            question=question,
+            chat_history=history,
+        )
+        history.append((question, response))
+        return history, history
 
 
-def get_text():
-    input_text = st.text_input("You: ", "How do I share a W&B report with team members?", key="input")
-    return input_text
+with gr.Blocks() as demo:
+    gr.HTML(
+        """<div style="text-align: center; max-width: 700px; margin: 0 auto;">
+        <div
+        style="
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.75rem;
+        "
+        >
+        <h1 style="font-weight: 900; margin-bottom: 7px; margin-top: 5px;">
+            Wandb QandA Bot
+        </h1>
+        </div>
+        <p style="margin-bottom: 10px; font-size: 94%">
+        Hi, I'm a wandb documentaion Q and A bot, start by typing in your OpenAI API key, questions/issues you have related to wandb usage and then press enter.<br>
+        Built using <a href="https://langchain.readthedocs.io/en/latest/" target="_blank">LangChain</a> and <a href="https://github.com/gradio-app/gradio" target="_blank">Gradio Github repo</a>
+        </p>
+    </div>"""
+    )
+    with gr.Row():
+        question = gr.Textbox(
+            label="Type in your questions about wandb here and press Enter!",
+            placeholder="How do i log images with wandb ?",
+        )
+        openai_api_key = gr.Textbox(
+            type="password",
+            label="Enter your OpenAI API key here",
+        )
+    state = gr.State()
+    chatbot = gr.Chatbot()
+    question.submit(
+        Chat(
+            config=default_config,
+        ),
+        [question, state, openai_api_key],
+        [chatbot, state],
+    )
 
-user_input = get_text()
 
-if user_input:
-    output = chain.run(query=user_input, callbacks=[WandbTracer(wandb_config)])
-
-    st.session_state.past.append(user_input)
-    st.session_state.generated.append(output)
-
-if st.session_state["generated"]:
-
-    for i in range(len(st.session_state["generated"]) - 1, -1, -1):
-        message(st.session_state["generated"][i], key=str(i))
-        message(st.session_state["past"][i], is_user=True, key=str(i) + "_user")
+if __name__ == "__main__":
+    demo.queue().launch(
+        share=False, server_name="0.0.0.0", server_port=8885, show_error=True
+    )
