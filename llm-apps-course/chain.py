@@ -8,7 +8,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from prompts import load_chat_prompt
-from wandb.integration.langchain import WandbTracer
+
 
 logger = logging.getLogger(__name__)
 
@@ -66,14 +66,12 @@ def load_chain(wandb_run: wandb.run, vector_store: Chroma, openai_api_key: str):
 
 def get_answer(
     chain: ConversationalRetrievalChain,
-    callback: WandbTracer,
     question: str,
     chat_history: list[tuple[str, str]],
 ):
     """Get an answer from a ConversationalRetrievalChain
     Args:
         chain (ConversationalRetrievalChain): A ConversationalRetrievalChain object
-        callback (WandbTracer): A WandbTracer callback object
         question (str): The question to ask
         chat_history (list[tuple[str, str]]): A list of tuples of (question, answer)
     Returns:
@@ -81,7 +79,6 @@ def get_answer(
     """
     result = chain(
         inputs={"question": question, "chat_history": chat_history},
-        callbacks=[callback],
         return_only_outputs=True,
     )
     response = f"Answer:\t{result['answer']}"

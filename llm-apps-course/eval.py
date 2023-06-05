@@ -6,14 +6,13 @@ from types import SimpleNamespace
 import pandas as pd
 import wandb
 from chain import load_chain, load_vector_store
-from config import default_config, wandb_config
+from config import default_config
 from joblib import Parallel, cpu_count, delayed
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 from langchain.evaluation.qa import QAEvalChain
 from prompts import load_eval_prompt
 from tqdm import tqdm
-from wandb.integration.langchain import WandbTracer
 
 
 def load_eval_dataset(config: SimpleNamespace) -> pd.DataFrame:
@@ -44,11 +43,9 @@ def generate_answers(
     """
     answers = []
     for query in tqdm(eval_dataset["question"], total=len(eval_dataset)):
-        answer = delayed(
-            qa_chain.run(query=query, callbacks=[WandbTracer(wandb_config)])
-        )
-        answers.append(answer)
-    answers = Parallel(n_jobs=cpu_count() - 1, verbose=10)(answers)
+        result = qa_chain({"question": query, "chat_history": []})
+        answers.append(result['answer'])
+
     eval_dataset["model_answer"] = answers
     eval_dataset.to_csv("eval_with_answers.csv", index=False)
     return eval_dataset
@@ -109,7 +106,7 @@ def log_results(eval_dataset: pd.DataFrame) -> None:
 
 
 if __name__ == "__main__":
-    with wandb.init(project=default_config.project, job_type="eval") as run:
+    with wandb.init(project=default_config.project, config=default_config, job_type="eval") as run:
         eval_dataset = load_eval_dataset(default_config)
         vector_store = load_vector_store(run, os.environ["OPENAI_API_KEY"])
         qa_chain = load_chain(run, vector_store, os.environ["OPENAI_API_KEY"])

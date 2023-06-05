@@ -6,7 +6,6 @@ import gradio as gr
 import wandb
 from chain import get_answer, load_chain, load_vector_store
 from config import default_config
-from wandb.integration.langchain import WandbTracer
 
 
 class Chat:
@@ -29,7 +28,6 @@ class Chat:
         )
         self.vector_store = None
         self.chain = None
-        self.tracer = WandbTracer()
 
     def __call__(
         self,
@@ -67,7 +65,6 @@ class Chat:
         question = question.lower()
         response = get_answer(
             chain=self.chain,
-            callback=self.tracer,
             question=question,
             chat_history=history,
         )
