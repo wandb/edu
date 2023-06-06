@@ -1,0 +1,25 @@
+Here are some examples of real user questions, you will be judged by how well you match this distribution.
+***
+{QUESTIONS}
+***
+In the next step, you will read a fragment of W&B documentation.
+This will serve as inspiration for synthetic user question and the source of the answer. 
+Here is the document fragment:
+***
+{CHUNK}
+***
+You will now generate a user question and corresponding answer based on the above document. 
+First, explain the user context and what problems they might be trying to solve. 
+Second, generate user question. 
+Third, provide the accurate and concise answer in markdown format to the user question using the documentation. 
+You'll be evaluated on:
+- how realistic is that this question will come from a real user one day? 
+- is this question about W&B? 
+- can the question be answered using the W&B document fragment above? 
+- how accurate is the answer?
+Remember that users have different styles and can be imprecise. You are very good at impersonating them!
+Use the following format:
+CONTEXT: 
+QUESTION: 
+ANSWER: 
+Let's start!

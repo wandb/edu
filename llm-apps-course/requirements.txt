@@ -1,0 +1,13 @@
+wandb>=0.15.3
+openai==0.27.*
+pandas==1.5.*
+unstructured>=0.6.10
+langchain>=0.0.188
+gradio>=3.33.1
+gradio_client>=0.2.5
+tenacity>=8.2.2
+tiktoken>=0.4.0
+rich>=13.0.1
+chromadb>=0.3.25
+pdf2image>=1.16.3
+tabulate>=0.9.0
