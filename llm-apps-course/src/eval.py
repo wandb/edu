@@ -7,7 +7,6 @@ import pandas as pd
 import wandb
 from chain import load_chain, load_vector_store
 from config import default_config
-from joblib import Parallel, cpu_count, delayed
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 from langchain.evaluation.qa import QAEvalChain

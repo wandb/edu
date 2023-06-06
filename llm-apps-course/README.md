@@ -18,3 +18,9 @@ See how we develop a support automation bot for a software company, and build yo
 
 ### Experiment, evaluate, and deploy your solution
 Improve your LLM-powered app with structured experiments and evaluation. Deploy and monitor your application in production.
+
+## Running the code
+
+- Notebooks can be run on your local system or via Google Colab
+- To run the python scripts in `src` directory, setup a virtual environment (e.g. `conda`) and install `requirements.txt`
+- If you have questions, you can ask them in [Discord](wandb.me/discord) in the `#courses` channel
