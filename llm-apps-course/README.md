@@ -22,5 +22,5 @@ Improve your LLM-powered app with structured experiments and evaluation. Deploy 
 ## Running the code
 
 - Notebooks can be run on your local system or via Google Colab
-- To run the python scripts in `src` directory, setup a virtual environment (e.g. `conda`) and install `requirements.txt`
+- To run the python scripts in `src` directory, setup a virtual environment (e.g. `conda`) with `python<3.11` and install `requirements.txt`
 - If you have questions, you can ask them in [Discord](https://wandb.me/discord) in the `#courses` channel

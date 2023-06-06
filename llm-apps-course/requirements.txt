@@ -3,7 +3,8 @@ openai==0.27.*
 pandas==1.5.*
 unstructured>=0.6.10
 langchain>=0.0.188
-gradio==3.32.0
+gradio>=3.33.1
+gradio_client>=0.2.5
 tenacity>=8.2.2
 tiktoken>=0.4.0
 rich>=13.0.1
