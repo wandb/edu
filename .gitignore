@@ -7,6 +7,7 @@ model-dev-course/lesson1/artifacts/
 wandb101/cifar_net.pth
 wandb101/data/
 *.csv
+*.tar
 *.png
 *.DS_Store
 vector_store
