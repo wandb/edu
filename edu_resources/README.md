@@ -17,6 +17,7 @@ The resources below are targeted at educators or instructors who are teaching ma
 
 - Introduction to using Weights and Biases – [[Video]](https://www.youtube.com/watch?v=Se1HvbAM0O4) [[Slides]](https://docs.google.com/presentation/d/19Kh3EndlKfD_jGXqUaUiW_wsfn59PJY5KiRTQk3WkYA)
 
+- [Use W&B Reports to share your ML work with your class or lab colleagues](https://wandb.ai/wandb/wandb_example/reports/How-Many-Discoveries-Were-Lost-Because-They-Weren-t-Written-Down---VmlldzoxMjY3MDk5?utm_source=edu_landing_page&utm_medium=edu_landing_page&utm_campaign=edu_pb)
 - [Collaborative Consistency: Crafting Repeatable Results](https://docs.google.com/presentation/d/13Zbn7_EOKtdNvl9m6W-yZLSR3rSI9QAaQDb84jmuG04/edit?usp=sharing) slide deck – A W&B 101 slide deck introducing the 'how' and 'why' behind reproducible, collaborative ML and DL research; also learn about research groups like OpenAI, HarmonAI, and others who use W&B to power their research and explore their work on the W&B platform
 - [Weights & Biases Research and Academic homepage](https://wandb.ai/site/research?utm_source=edu_resources_github&utm_medium=repo&utm_campaign=q1_2023)
 - [Free GPU Credits and Cloud Credits for Academics, Researchers, and Students](https://wandb.ai/andrea0/guides/reports/Cloud-Computing-Resources-for-Education--VmlldzozMjA1MTAx?utm_source=edu_resources_github&utm_medium=repo&utm_campaign=q1_2023)
