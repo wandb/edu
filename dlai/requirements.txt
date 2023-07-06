@@ -5,3 +5,9 @@ pandas
 numpy
 wandb
 tqdm
+openai
+tenacity
+rich
+transformers
+datasets
+accelerate
