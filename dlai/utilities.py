@@ -1,5 +1,6 @@
 import os
 import random
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,7 +9,7 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 from matplotlib.animation import FuncAnimation, PillowWriter
 from PIL import Image
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from torchvision.utils import make_grid, save_image
 
 
@@ -334,8 +335,6 @@ class CustomDataset(Dataset):
             self.slabels = np.argmax(slabels, axis=1)
         else:
             self.slabels = slabels
-        print(f"sprite shape: {self.sprites.shape}")
-        print(f"labels shape: {self.slabels.shape}")
         self.transform = transform
         self.null_context = null_context
 
@@ -373,4 +372,18 @@ class CustomDataset(Dataset):
         train_dataset, test_dataset = torch.utils.data.random_split(self, [train_size, test_size])
         return train_dataset, test_dataset
 
+def get_dataloaders(data_dir, batch_size, slice_size=None, valid_pct=0.2):
+    "Get train/val dataloaders for classification on sprites dataset"
+    dataset = CustomDataset.from_np(Path(data_dir)/"sprites_1788_16x16.npy", 
+                                    Path(data_dir)/"sprite_labels_nc_1788_16x16.npy",
+                                    argmax=True)
 
+    if slice_size:
+        dataset = dataset.subset(slice_size)
+
+    train_ds, valid_ds = dataset.split(valid_pct)
+
+    train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=1)    
+    valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=False, num_workers=1)
+
+    return train_dl, valid_dl
