@@ -9,7 +9,7 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 from matplotlib.animation import FuncAnimation, PillowWriter
 from PIL import Image
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torchvision.utils import make_grid, save_image
 
 
