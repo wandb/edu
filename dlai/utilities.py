@@ -426,7 +426,9 @@ def setup_ddpm(beta1, beta2, timesteps, device):
     def sample_ddpm_context(nn_model, noises, context, save_rate=20):
         # array to keep track of generated steps for plotting
         intermediate = [] 
-        for i in tqdm(range(timesteps, 0, -1), leave=False):
+        for i in (pbar:=tqdm(range(timesteps, 0, -1), leave=False)):
+            pbar.set_description(f'sampling timestep {i:3d}')
+
             # reshape time tensor
             t = torch.tensor([i / timesteps])[:, None, None, None].to(noises.device)
 
@@ -466,8 +468,8 @@ def setup_ddim(beta1, beta2, timesteps, device):
         # array to keep track of generated steps for plotting
         intermediate = [] 
         step_size = timesteps // n
-        for i in tqdm(range(timesteps, 0, -step_size), leave=False):
-            print(f'sampling timestep {i:3d}', end='\r')
+        for i in (pbar:=tqdm(range(timesteps, 0, -step_size), leave=False)):
+            pbar.set_description(f'sampling timestep {i:3d}')
 
             # reshape time tensor
             t = torch.tensor([i / timesteps])[:, None, None, None].to(device)
