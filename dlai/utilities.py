@@ -7,6 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
+from tqdm.auto import tqdm
 from matplotlib.animation import FuncAnimation, PillowWriter
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
@@ -425,7 +426,7 @@ def setup_ddpm(beta1, beta2, timesteps, device):
     def sample_ddpm_context(nn_model, noises, context, save_rate=20):
         # array to keep track of generated steps for plotting
         intermediate = [] 
-        for i in range(timesteps, 0, -1):
+        for i in tqdm(range(timesteps, 0, -1), leave=False):
             # reshape time tensor
             t = torch.tensor([i / timesteps])[:, None, None, None].to(noises.device)
 
@@ -441,3 +442,41 @@ def setup_ddpm(beta1, beta2, timesteps, device):
         return noises.clip(-1, 1), intermediate
     
     return perturb_input, sample_ddpm_context
+
+
+def setup_ddim(beta1, beta2, timesteps, device):
+    # define sampling function for DDIM   
+    b_t = (beta2 - beta1) * torch.linspace(0, 1, timesteps + 1, device=device) + beta1
+    a_t = 1 - b_t
+    ab_t = torch.cumsum(a_t.log(), dim=0).exp()    
+    ab_t[0] = 1
+    # removes the noise using ddim
+    def denoise_ddim(x, t, t_prev, pred_noise):
+        ab = ab_t[t]
+        ab_prev = ab_t[t_prev]
+        
+        x0_pred = ab_prev.sqrt() / ab.sqrt() * (x - (1 - ab).sqrt() * pred_noise)
+        dir_xt = (1 - ab_prev).sqrt() * pred_noise
+
+        return x0_pred + dir_xt
+    
+    # fast sampling algorithm with context
+    @torch.no_grad()
+    def sample_ddim_context(nn_model, noises, context, n=25): 
+        # array to keep track of generated steps for plotting
+        intermediate = [] 
+        step_size = timesteps // n
+        for i in tqdm(range(timesteps, 0, -step_size), leave=False):
+            print(f'sampling timestep {i:3d}', end='\r')
+
+            # reshape time tensor
+            t = torch.tensor([i / timesteps])[:, None, None, None].to(device)
+
+            eps = nn_model(noises, t, c=context)    # predict noise e_(x_t,t)
+            noises = denoise_ddim(noises, i, i - step_size, eps)
+            intermediate.append(noises.detach().cpu().numpy())
+
+        intermediate = np.stack(intermediate)
+        return noises.clip(-1, 1), intermediate
+    
+    return sample_ddim_context
