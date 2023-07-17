@@ -1,4 +1,4 @@
-import os
+import os, sys
 import random
 from pathlib import Path
 
@@ -12,6 +12,15 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from torchvision.utils import make_grid, save_image
 
+
+def get_device():
+    "Pick GPU if cuda is available, mps if Mac, else CPU"
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    elif sys.platform == "darwin" and torch.backends.mps.is_available():
+        return torch.device("mps")
+    else:
+        return torch.device("cpu")
 
 def _fig_bounds(x):
     r = x//32
@@ -387,3 +396,48 @@ def get_dataloaders(data_dir, batch_size, slice_size=None, valid_pct=0.2):
     valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=False, num_workers=1)
 
     return train_dl, valid_dl
+
+
+## diffusion functions
+
+def setup_ddpm(beta1, beta2, timesteps, device):
+    # construct DDPM noise schedule and sampling functions
+    b_t = (beta2 - beta1) * torch.linspace(0, 1, timesteps + 1, device=device) + beta1
+    a_t = 1 - b_t
+    ab_t = torch.cumsum(a_t.log(), dim=0).exp()    
+    ab_t[0] = 1
+
+    # helper function: perturbs an image to a specified noise level
+    def perturb_input(x, t, noise):
+        return ab_t.sqrt()[t, None, None, None] * x + (1 - ab_t[t, None, None, None]) * noise
+
+    # helper function; removes the predicted noise (but adds some noise back in to avoid collapse)
+    def _denoise_add_noise(x, t, pred_noise, z=None):
+        if z is None:
+            z = torch.randn_like(x)
+        noise = b_t.sqrt()[t] * z
+        mean = (x - pred_noise * ((1 - a_t[t]) / (1 - ab_t[t]).sqrt())) / a_t[t].sqrt()
+        return mean + noise
+
+    # sample with context using standard algorithm
+    # we make a change to the original algorithm to allow for context explicitely (the noises)
+    @torch.no_grad()
+    def sample_ddpm_context(nn_model, noises, context, save_rate=20):
+        # array to keep track of generated steps for plotting
+        intermediate = [] 
+        for i in range(timesteps, 0, -1):
+            # reshape time tensor
+            t = torch.tensor([i / timesteps])[:, None, None, None].to(noises.device)
+
+            # sample some random noise to inject back in. For i = 1, don't add back in noise
+            z = torch.randn_like(noises) if i > 1 else 0
+
+            eps = nn_model(noises, t, c=context)    # predict noise e_(x_t,t, ctx)
+            noises = _denoise_add_noise(noises, i, eps, z)
+            if i % save_rate==0 or i==timesteps or i<8:
+                intermediate.append(noises.detach().cpu().numpy())
+
+        intermediate = np.stack(intermediate)
+        return noises.clip(-1, 1), intermediate
+    
+    return perturb_input, sample_ddpm_context
