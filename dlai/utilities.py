@@ -483,3 +483,7 @@ def setup_ddim(beta1, beta2, timesteps, device):
         return noises.clip(-1, 1), intermediate
     
     return sample_ddim_context
+
+def to_classes(ctx_vector):
+    classes = "hero,non-hero,food,spell,side-facing".split(",")
+    return [classes[i] for i in ctx_vector.argmax(dim=1)]
