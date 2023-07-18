@@ -349,9 +349,11 @@ class CustomDataset(Dataset):
         self.null_context = null_context
 
     @classmethod
-    def from_np(cls, sfilename, lfilename, transform=default_tfms, null_context=False, argmax=False):
-        sprites = np.load(sfilename)
-        slabels = np.load(lfilename)
+    def from_np(cls, 
+                path, 
+                sfilename="sprites_1788_16x16.npy", lfilename="sprite_labels_nc_1788_16x16.npy", transform=default_tfms, null_context=False, argmax=False):
+        sprites = np.load(Path(path)/sfilename)
+        slabels = np.load(Path(path)/lfilename)
         return cls(sprites, slabels, transform, null_context, argmax)
 
     # Return the number of images in the dataset
@@ -426,7 +428,8 @@ def setup_ddpm(beta1, beta2, timesteps, device):
     def sample_ddpm_context(nn_model, noises, context, save_rate=20):
         # array to keep track of generated steps for plotting
         intermediate = [] 
-        for i in (pbar:=tqdm(range(timesteps, 0, -1), leave=False)):
+        pbar = tqdm(range(timesteps, 0, -1), leave=False)
+        for i in pbar:
             pbar.set_description(f'sampling timestep {i:3d}')
 
             # reshape time tensor
@@ -468,7 +471,8 @@ def setup_ddim(beta1, beta2, timesteps, device):
         # array to keep track of generated steps for plotting
         intermediate = [] 
         step_size = timesteps // n
-        for i in (pbar:=tqdm(range(timesteps, 0, -step_size), leave=False)):
+        pbar=tqdm(range(timesteps, 0, -step_size), leave=False)
+        for i in pbar:
             pbar.set_description(f'sampling timestep {i:3d}')
 
             # reshape time tensor
