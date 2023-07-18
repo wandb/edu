@@ -386,10 +386,7 @@ class CustomDataset(Dataset):
 
 def get_dataloaders(data_dir, batch_size, slice_size=None, valid_pct=0.2):
     "Get train/val dataloaders for classification on sprites dataset"
-    dataset = CustomDataset.from_np(Path(data_dir)/"sprites_1788_16x16.npy", 
-                                    Path(data_dir)/"sprite_labels_nc_1788_16x16.npy",
-                                    argmax=True)
-
+    dataset = CustomDataset.from_np(Path(data_dir), argmax=True)
     if slice_size:
         dataset = dataset.subset(slice_size)
 
