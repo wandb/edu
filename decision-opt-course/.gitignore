@@ -2,3 +2,7 @@ data/
 .ipynb_checkpoints/
 wandb/
 artifacts/
+*.parquet
+*.pt
+*.pkl
+*tmp*
