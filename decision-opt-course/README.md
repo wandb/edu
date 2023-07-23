@@ -6,13 +6,6 @@ This repository contains materials for our [Machine Learning for Business Decisi
 
 Learn to optimize decision rules, translating machine learning predictions into actionable insights. Discover how to achieve practical value and business impact by measuring performance using business metrics, and deploy ML models successfully.
 
-- 1_profit_curves.ipynb: Notebook used in the first lesson
-- 2_theory.ipynb: Notebook showing the behavior of different loss functions
-- 2_bimbo.ipynb: Applying decision optimization for regression.
-- 3_dynamic_opt_data_prep.ipynb: This creates the saved models and artifacts used in `3_dynamic_decision_opt.ipynb`. This calls `./utils/modeling.py`
-- 3_dynamic_decision_opt.ipynb: This repository doesn't contain all of the saved model files. So run `3_dynamic_opt_data_prep.ipynb` before this.
-
-
 ## 🚀 [Enroll for free](https://www.wandb.courses/courses/decision-optimization)
 
 ## What you'll learn
@@ -30,3 +23,11 @@ Enhance your proficiency in selecting the most appropriate loss function for you
 
 - Notebooks can be run on your local system or via Google Colab
 - If you have questions, you can ask them in [Discord](https://wandb.me/discord) in the `#courses` channel
+
+## Notebooks
+
+- 1_profit_curves.ipynb: Notebook used in the first lesson
+- 2_theory.ipynb: Notebook showing the behavior of different loss functions
+- 2_bimbo.ipynb: Applying decision optimization for regression.
+- 3_dynamic_opt_data_prep.ipynb: This creates the saved models and artifacts used in `3_dynamic_decision_opt.ipynb`. This calls `./utils/modeling.py`
+- 3_dynamic_decision_opt.ipynb: This repository doesn't contain all of the saved model files. So run `3_dynamic_opt_data_prep.ipynb` before this.
