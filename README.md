@@ -11,6 +11,8 @@ organized by topic, linked below.
 These materials are intended for use with our in-person and webinar courses,
 but may be useful on their own.
 
+## 🖌️ [Learn to Evaluate and Debug Generative AI →](http://wandb.me/eval-debugging-gen-ai)
+
 ## 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/mlops-001)
 
 ## 🤖 [Learn CI/CD for Machine Learning (GitOps) →](https://github.com/hamelsmu/wandb-cicd)
