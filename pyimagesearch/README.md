@@ -1,5 +1,8 @@
 # W&B + PyImageSearch MLOps Course
 
+This repo contains the code for the course: https://pyimagesearch.mykajabi.com/offers/LQSsX59C
+
+
 1. Download the dataset.
 ```shell
 $ git clone -qq https://github.com/softwaremill/lemon-dataset.git
