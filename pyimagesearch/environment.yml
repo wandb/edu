@@ -1,0 +1,22 @@
+## Conda Environment file
+name: course
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python==3.10.10
+  - pytorch==1.13.1
+  - pytorch-cuda==11.7
+  - pycocotools==2.0.6
+  - timm==0.6.12
+  - pip==23.0.1
+  - pandas==2.0.0
+  - wandb==0.14.2
+  - torchvision==0.14.1
+  - scikit-image==0.19.3
+  - scikit-learn==1.2.1
+  - matplotlib
+  - pip:
+    - fastprogress
+    - torcheval

@@ -1,0 +1,23 @@
+program: train.py
+method: random
+entity: pyimagesearch
+project: wandb_course
+metric:
+  name: valid_binary_f1_score
+  goal: maximize
+parameters:
+  batch_size:
+    value: 16
+  image_size:
+    values: [256, 512]
+  model_arch:
+    values:
+      - 'resnet18'
+      - 'convnext_tiny'
+      - 'regnetx_004'
+  learning_rate:
+    distribution: 'log_uniform_values'
+    min: 1e-5
+    max: 1e-2
+  seed:
+    values: [1,2,3]
