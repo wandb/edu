@@ -1,6 +1,7 @@
 # W&B parameters
 PROJECT_NAME = "wandb_course"
-ENTITY = "pyimagesearch"
+ENTITY = "pyimagesearch"  # change this to you wandb username
+
 # ENTITY = None
 
 

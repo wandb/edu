@@ -1,3 +1,8 @@
+"""
+Made with love by tcapelle
+@wandbcode{pis_course}
+"""
+
 import argparse
 from types import SimpleNamespace
 from fastprogress import progress_bar

@@ -1,4 +1,8 @@
-# import the necessary packages
+"""
+Made with love by tcapelle
+@wandbcode{pis_course}
+"""
+
 import json
 from pathlib import Path
 
@@ -10,6 +14,10 @@ import wandb
 
 
 def prepare_dataset():
+    """
+    This function prepares the dataset for training and evaluation.
+    It splits the data into train, validation and test sets and logs the data split to W&B.
+    """
     # start with a new wandb run
     run = wandb.init(
         project=params.PROJECT_NAME, entity=params.ENTITY, job_type="data_prep"

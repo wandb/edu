@@ -1,3 +1,8 @@
+"""
+Made with love by tcapelle
+@wandbcode{pis_course}
+"""
+
 from types import SimpleNamespace
 
 import torch
@@ -19,6 +24,8 @@ from utils import ImageDataset
 from utils import get_class_name_in_snake_case as snake_case
 from utils import get_data, load_model, set_seed, to_device
 
+
+
 # define the default configuration parameters for the experiment
 default_cfg = SimpleNamespace(
     image_size=256,
@@ -35,7 +42,9 @@ default_cfg = SimpleNamespace(
 
 
 def main(cfg):
-    "Main evaluation loop"
+    """Main evaluation loop. This function evaluates the model on the validation and test sets.
+    It logs the results to W&B.
+    """
     set_seed(cfg.seed)
 
     run = wandb.init(

@@ -6,6 +6,12 @@ $ git clone -qq https://github.com/softwaremill/lemon-dataset.git
 $ unzip -q lemon-dataset/data/lemon-dataset.zip
 ```
 
+1.5 Open the `params.py` file and change the wandb parameters to your own project.
+```python
+PROJECT_NAME = "wandb_course"
+ENTITY = "pyimagesearch"  # just set this to your username
+```
+
 2. Run `python prepare_data.py` to prepare the dataset as an artifact and upload it to W&B.
 
 3. Run `python eda.py` to do Exploratory Data Analysis on the dataset. We also upload the wandb Table from our analysis to W&B.
