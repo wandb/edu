@@ -1,7 +1,5 @@
 <img src="https://i.imgur.com/gb6B4ig.png" width="400" alt="Weights & Biases" />
 
-# WANDB201
-
 This repository contains materials for our [Weights & Biases 201: Model Registry](https://www.wandb.courses/courses/201-model-registry) course. 
 
 ## What you'll learn
