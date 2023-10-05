@@ -2,29 +2,21 @@
 
 # WANDB201
 
-
-
-==================================== This is a Copy!! ========================
-
-This repository contains materials for our [Building LLM-Powered Applications](https://www.wandb.courses/courses/building-llm-powered-apps) course. 
-
-Learn how to build LLM-powered applications using LLM APIs, Langchain and W&B Prompts. This course will guide you through the entire process of designing, experimenting and evaluating LLM-based apps.
-
-## 🚀 [Enroll for free](https://www.wandb.courses/courses/building-llm-powered-apps)
+This repository contains materials for our [Weights & Biases 201: Model Registry](https://www.wandb.courses/courses/201-model-registry) course. 
 
 ## What you'll learn
 
-### Understand LLM-powered applications
-Learn the fundamentals of LLM-powered applications, including APIs, chains, agents and prompt engineering.
+### Learn to log to a centralized Model Registry
+Master the process of logging and managing models in a centralized registry, allowing for an organized and efficient model management workflow.
 
-### Build your own app
-See how we develop a support automation bot for a software company, and build your own app.
+### Master model managementp
+Gain hands-on experience in accessing, evaluating, and automating downstream processes of models, aiding in robust model deployment and monitoring.
 
-### Experiment, evaluate, and deploy your solution
-Improve your LLM-powered app with structured experiments and evaluation. Deploy and monitor your application in production.
+### Develop reporting techniques
+Learn to build dynamic, auto-updating reports showcasing model evaluation and automation processes, enabling clear communication with stakeholders.
 
 ## Running the code
-
 - Notebooks can be run on your local system or via Google Colab
-- To run the python scripts in `src` directory, setup a virtual environment (e.g. `conda`) with `python<3.11` and install `requirements.txt`
 - If you have questions, you can ask them in [Discord](https://wandb.me/discord) in the `#courses` channel
+
+  ## 🚀 [Enroll for free](https://www.wandb.courses/courses/201-model-registry)
