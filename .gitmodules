@@ -1,0 +1,3 @@
+[submodule "llm-training-course/neurips-llm-efficiency-challenge"]
+	path = llm-training-course/neurips-llm-efficiency-challenge
+	url = https://github.com/ayulockin/neurips-llm-efficiency-challenge
