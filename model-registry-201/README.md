@@ -5,9 +5,9 @@ This repository contains materials for our [Weights & Biases 201: Model Registry
 ## What you'll learn
 
 ### Learn to log to a centralized Model Registry
-Master the process of logging and managing models in a centralized registry, allowing for an organized and efficient model management workflow.
+Master the process of logging and managing models in a centralized model registry, allowing for an organized and efficient model management workflow.
 
-### Master model managementp
+### Master model management
 Gain hands-on experience in accessing, evaluating, and automating downstream processes of models, aiding in robust model deployment and monitoring.
 
 ### Develop reporting techniques
