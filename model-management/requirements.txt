@@ -1,0 +1,10 @@
+wandb
+scipy
+transformers
+peft
+tenacity
+accelerate
+datasets
+evaluate
+trl
+pandas

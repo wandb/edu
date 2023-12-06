@@ -1,0 +1,4 @@
+wandb/
+artifacts/
+output/
+scratch*

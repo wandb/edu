@@ -1,0 +1,19 @@
+# You can run this by doing
+# docker un
+# Use an official PyTorch runtime as a parent image
+FROM pytorch/pytorch:latest
+
+# setup workdir
+USER root
+WORKDIR /root/src
+RUN mkdir -p /root/src
+COPY . /root/src/
+
+# Install any needed packages specified in requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements.txt
+
+# install our lib
+RUN python -m pip install .
+
+# Entry Point
+ENTRYPOINT ["python", "inference.py"]
