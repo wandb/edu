@@ -36,6 +36,7 @@ config = SimpleNamespace(
     max_steps=-1, 
     train=True,
     evaluate=True,
+    num_eval_samples=250,
     debug_data=False,
 )
 
@@ -144,7 +145,7 @@ def main(config):
     if config.evaluate:    
         _map_func = lambda row: {"text": create_alpaca_prompt(row)}
         test_dataset = eval_dataset.map(_map_func) # no answers
-        wandb_callback = LLMSampleCB(trainer, test_dataset, num_samples=10, max_new_tokens=256)
+        wandb_callback = LLMSampleCB(trainer, test_dataset, num_samples=config.num_eval_samples, max_new_tokens=256)
         trainer.add_callback(wandb_callback)
         trainer.evaluate()
 
