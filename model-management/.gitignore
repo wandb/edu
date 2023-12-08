@@ -2,3 +2,4 @@ wandb/
 artifacts/
 output/
 scratch*
+secrets

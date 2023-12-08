@@ -1,7 +1,7 @@
 # You can run this by doing
 # docker un
 # Use an official PyTorch runtime as a parent image
-FROM debian:12
+FROM python:3.11-slim-bookworm
 
 # setup workdir
 USER root
@@ -11,9 +11,6 @@ COPY . /root/src/
 
 # Install any needed packages specified in requirements.txt
 RUN python -m pip install --no-cache-dir -r requirements_eval.txt
-
-# install our lib
-RUN python -m pip install .
 
 # Entry Point
 ENTRYPOINT ["python", "eval.py"]
