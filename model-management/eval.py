@@ -128,6 +128,8 @@ if __name__ == "__main__":
     # create a run to have lineage
     wandb.init(project=WANDB_PROJECT, entity=WANDB_ENTITY, job_type="eval", tags=["gpt-4"], config=config)
     
+    # override whatever train args we may need
+    config = wandb.config
     gpt35_df = download_table(**BASELINE_MODEL)
     ft_results_df = download_table(**FT_MODEL_PREDS_AT)
 
