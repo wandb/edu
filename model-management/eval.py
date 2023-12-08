@@ -9,8 +9,8 @@ import pandas as pd
 from mini_llm.utils import parse_args
 from mini_llm.openai import completion_with_backoff
 
-WANDB_PROJECT = "alpaca_ft"
-WANDB_ENTITY = "capecape"
+WANDB_PROJECT = "tinyllama"
+WANDB_ENTITY = "reviewco"
 
 FT_MODEL_PREDS_AT = dict( # Our Tiny Llama Model
     table_at='reviewco/tinyllama/run-cn0wuoij-sample_predictions:v0',
