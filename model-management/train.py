@@ -65,6 +65,7 @@ def get_train_args(config, output_dir = "./output/"):
         # eval_steps=config.eval_steps,
         evaluation_strategy="no",
         # logging strategies
+        report_to="wandb",
         logging_strategy="steps",
         logging_steps=1,
         save_strategy="no",
@@ -115,6 +116,9 @@ def main(config):
                config=config)
     train_dataset, eval_dataset = get_alpaca_ds(config.dataset_at)
     
+    # inject wandb params into config
+    wandb.config = config
+
     # override whatever train args we may need
     training_args = get_train_args(config)
     trainer = SFTTrainer(
