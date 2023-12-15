@@ -1,5 +1,4 @@
 import wandb
-
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -11,15 +10,10 @@ from mini_llm.openai import completion_with_backoff
 
 WANDB_PROJECT = "tinyllama"
 WANDB_ENTITY = "reviewco"
-
-FT_MODEL_PREDS_AT = dict( # Our Tiny Llama Model
-    table_at='reviewco/tinyllama/run-cn0wuoij-sample_predictions:v0',
-    table_name="sample_predictions",
-)
-BASELINE_MODEL = dict( # Mistral Model Baseline to compare
-    table_at='reviewco/tinyllama/run-sgjky2yu-sample_predictions:v0',  
-    table_name='sample_predictions',
-)
+WANDB_MODEL = "reviewco/model-registry/Small-Instruct-LLM"
+TABLE_NAME = "sample_predictions"
+BASELINE_ARTIFACT = "reviewco/tinyllama/baseline_predictions:latest"
+ALIAS_EVAL = "candidate"
 
 
 config = SimpleNamespace(
@@ -29,16 +23,30 @@ config = SimpleNamespace(
                      "You have to pick the best one and give a reason why.\n"
                      "The reponse should follow the instructions and use the provided context if there is some\n"
                      "If both answers are equivalent, pick the value 0"),
-    model_names=["tinyllama", "mistral"],
+    model_names=["ft_model", "gpt35"],
     num_samples=-1,
     out_dir="./output",
+    wandb_model = WANDB_MODEL,
+    table_name = TABLE_NAME,
+    baseline_artifact = BASELINE_ARTIFACT,
+    alias_eval = ALIAS_EVAL,
 )
 
+def download_table_from_model(alias, table_name="sample_predictions"):                  
+    # Fetch the artifact (model) using the model URL and alias
+    artifact = wandb.use_artifact(f"{WANDB_MODEL}:{alias}", type="model")
+    # Get the producer run ID from the artifact
+    producer_run_id = artifact.logged_by().id
+    # Retrieve the specific table ('sample_predictions') from the run
+    table_artifact = wandb.use_artifact(f"run-{producer_run_id}-{table_name}:v0")
+    # Download the table artifact
+    table = table_artifact.get(table_name)
+    # Convert the table to a pandas dataframe
+    df = pd.DataFrame(data=table.data, columns=table.columns)
+    return df
 
-
-def download_table(table_at, table_name):
-    artifact = wandb.use_artifact(table_at, type='run_table')
-    artifact_dir = artifact.download()
+def download_table_from_artifact(artifact, table_name="sample_predictions"):
+    artifact = wandb.use_artifact(artifact, type='predictions')
     table = artifact.get(table_name)
     df = pd.DataFrame(data=table.data, columns=table.columns)
     return df
@@ -128,15 +136,19 @@ if __name__ == "__main__":
     # create a run to have lineage
     wandb.init(project=WANDB_PROJECT, entity=WANDB_ENTITY, job_type="eval", tags=["gpt-4"], config=config)
     
-    # override whatever train args we may need
     config = wandb.config
-    gpt35_df = download_table(**BASELINE_MODEL)
-    ft_results_df = download_table(**FT_MODEL_PREDS_AT)
+    # let's make sure we log exactly which model is the baseline and which is being evaluated against it
+    eval_model = wandb.use_artifact(f'{config.wandb_model}:{config.alias_eval}', type="model")
+    eval_model_path = f"{config.wandb_model}:{eval_model.version}"
+
+    baseline_df = download_table_from_artifact(config.baseline_artifact)
+    eval_df = download_table_from_model(config.alias_eval)
 
     # merge both
     merged_df = pd.merge(
-        ft_results_df[["prompt", "generation"]], 
-        gpt35_df[["prompt", "generation"]], on="prompt", suffixes=config.model_names,
+        eval_df[["prompt", "generation"]], 
+        baseline_df[["prompt", "generation"]], on="prompt", suffixes=config.model_names,
+        how='inner'
     )
     model1_name, model2_name = (f"generation{s}" for s in config.model_names)
     gpt_results = judge(merged_df.iloc[:config.num_samples], model1_name, model2_name)
@@ -147,7 +159,7 @@ if __name__ == "__main__":
     results_df["agree"] = results_df.apply(agree_check, axis=1)
 
     final_results = results_df[results_df.agree]
-    print(f"The judge agrees on: {len(final_results)} / {len(ft_results_df)}")
+    print(f"The judge agrees on: {len(final_results)} / {len(eval_df)}")
     
     # Let's log those also:
     disagree_df = results_df[~results_df.agree]
@@ -160,6 +172,14 @@ if __name__ == "__main__":
     print(final_results["choice_name"].value_counts())
     print("###########################")
 
+    # calculate a single metric as percentage of eval model preference over baseline
+    final_results["ft_pref"] = final_results["choice"] == 1
+    ft_pref = final_results["ft_pref"].mean()
+    print(f"Candidate model preference: {ft_pref}")
+    wandb.log({"eval_pref":ft_pref,
+               "eval_model":eval_model_path,
+    })
+
     final_results.to_csv(out_dir/"gpt4_eval.csv")
     gpt4_table = wandb.Table(dataframe=final_results)
     wandb.log({"gpt4_eval":gpt4_table})   
@@ -171,4 +191,3 @@ if __name__ == "__main__":
     disagree_df.to_csv(out_dir/"gpt4_eval_disagree.csv")
     gpt4_eval_disagree_table  = wandb.Table(dataframe=disagree_df)
     wandb.log({"gpt4_eval_disagree":gpt4_eval_disagree_table})
-
