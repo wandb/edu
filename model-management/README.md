@@ -32,7 +32,7 @@ wandb job create --project tinyllama --entity reviewco --name eval image eval:v0
 
 Head on to [Launch]() and create a new Docker queue in your entity. This will give you the command to start a launch agent that you can trigger on your local machine (same one where you built the docker image). Don't forget to setup OPENAI_API_KEY on that machine and pass info to the queue to pick it up:
 
-![Alt text](image.png)
+![Launch Queue Configuration](image.png)
 
 ### Create Automation
 
