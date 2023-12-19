@@ -3,3 +3,4 @@
 ./models/
 ./llm_recipes.egg-info/
 ./nbs/
+./output/

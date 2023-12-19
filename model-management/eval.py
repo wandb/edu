@@ -23,7 +23,7 @@ config = SimpleNamespace(
                      "You have to pick the best one and give a reason why.\n"
                      "The reponse should follow the instructions and use the provided context if there is some\n"
                      "If both answers are equivalent, pick the value 0"),
-    model_names=["ft_model", "gpt35"],
+    model_names=["candidate", "baseline"],
     num_samples=-1,
     out_dir="./output",
     wandb_model = WANDB_MODEL,
@@ -172,11 +172,12 @@ if __name__ == "__main__":
     print(final_results["choice_name"].value_counts())
     print("###########################")
 
-    # calculate a single metric as percentage of eval model preference over baseline
-    final_results["ft_pref"] = final_results["choice"] == 1
-    ft_pref = final_results["ft_pref"].mean()
-    print(f"Candidate model preference: {ft_pref}")
-    wandb.log({"eval_pref":ft_pref,
+    # calculate a single metric as percentage where eval model is better than baseline
+    num_candidate = len(final_results[final_results["choice_name"] == "candidate"])
+    num_baseline = len(final_results[final_results["choice_name"] == "baseline"])
+    candidate_is_better_perc = num_candidate / (num_candidate + num_baseline)
+    print(f"Eval model is better than baseline in {candidate_is_better_perc:.2%} of cases")
+    wandb.log({"eval_is_better":candidate_is_better_perc,
                "eval_model":eval_model_path,
     })
 
