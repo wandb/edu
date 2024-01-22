@@ -1,10 +1,16 @@
-# Introduction
+<img src="https://i.imgur.com/gb6B4ig.png" width="400" alt="Weights & Biases" />
 
-This section includes a list of notebooks that walk you through some simple concepts in Instructor. We start small and then work our way up to more complex and tricky implementations using the library.
+# LLM Engineering: Steering Language Models
 
-## Overview
+This repository contains materials for our [LLM Engineering: Steering Language Models](https://www.wandb.courses/courses/steering-language-models) course. 
 
-Currently we have the following notebooks avaliable
+Improve your LLM engineering skills with Jason Liu, an LLM charmer and the author of Instructor library. Learn everything about structured output handling, function calling, complex validations with Pydantic and more in this short and helpful course!
+
+## 🚀 [Enroll for free](https://www.wandb.courses/courses/steering-language-models)
+
+## What you'll learn
+
+In this course you'll experiment with a list of notebooks that walk you through some simple concepts in Instructor. We start small and then work our way up to more complex and tricky implementations using the library.
 
 1. `Introduction` - This is a quick walkthrough some of the benefits of Pydantic and how the Instructor Library integrates nicely with Pydantic with `instructor.patch()`
 
