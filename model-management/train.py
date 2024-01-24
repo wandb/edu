@@ -117,7 +117,7 @@ def main(config):
     train_dataset, eval_dataset = get_alpaca_ds(config.dataset_at)
     
     # inject wandb params into config
-    wandb.config = config
+    config = wandb.config
 
     # override whatever train args we may need
     training_args = get_train_args(config)
