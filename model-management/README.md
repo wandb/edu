@@ -1,6 +1,16 @@
-# Model Management Course
+# Enterprise Model Management Course
 
-TODO
+This course on enterprise model management, led by Hamel Husain, covers the fundamentals of model management using the Weights & Biases Model Registry. You will learn how to use the Model Registry, leverage webhooks and triggers for workflow automation, and explore real-life examples of integrating the registry with external machine learning systems. You'll then apply this knowledge in an end-to-end case study focused on training and evaluating LLMs.
+
+Sign up for free at [W&B Coursees](https://www.wandb.courses/courses/enterprise-model-management)
+
+## W&B Model Registry
+
+Explore [W&B docs](https://docs.wandb.ai/guides/model_registry) and log your first model using `log_model_demo.ipynb` notebook. 
+
+## Webhooks
+
+
 
 ## Training
 
