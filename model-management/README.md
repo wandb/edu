@@ -10,11 +10,15 @@ Explore [W&B docs](https://docs.wandb.ai/guides/model_registry) and log your fir
 
 ## Webhooks
 
-
+We can use webhooks to trigger external applications based on events in W&B Model Registry. After watching the course lessons, you can practice by following [Hamel's example](https://github.com/hamelsmu/wandb-modal-webhook).
 
 ## Training
 
-TODO
+Let's fine-tune some LLM's! You can experiment with different hyperparameter values or datasets. Check out our [Training & Finetuning LLMs](https://www.wandb.courses/courses/training-fine-tuning-LLMs) course if you'd like to learn more!
+
+```
+python train.py --lr 1e-4
+```
 
 ## Evaluation
 
