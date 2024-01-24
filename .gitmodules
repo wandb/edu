@@ -1,3 +1,6 @@
 [submodule "llm-training-course/neurips-llm-efficiency-challenge"]
 	path = llm-training-course/neurips-llm-efficiency-challenge
 	url = https://github.com/ayulockin/neurips-llm-efficiency-challenge
+[submodule "model-management/wandb-modal-webhook"]
+	path = model-management/wandb-modal-webhook
+	url = https://github.com/hamelsmu/wandb-modal-webhook.git
