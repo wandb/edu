@@ -1,0 +1,19 @@
+# You can run this by doing
+# docker un
+# Use an official PyTorch runtime as a parent image
+FROM python:3.11-slim-bookworm
+
+# setup workdir
+USER root
+WORKDIR /root/src
+RUN mkdir -p /root/src
+COPY . /root/src/
+
+# Install gcc and python3-dev
+RUN apt-get update && apt-get install -y gcc python3-dev
+
+# Install any needed packages specified in requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements_eval.txt
+
+# Entry Point
+ENTRYPOINT ["python", "eval.py"]

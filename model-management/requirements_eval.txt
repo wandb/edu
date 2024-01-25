@@ -1,0 +1,6 @@
+wandb>=0.15
+pandas
+instructor
+openai>=1.1.0
+tenacity
+tqdm
