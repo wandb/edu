@@ -16,10 +16,10 @@ import wandb
 # Configuration for the evaluation script
 config = SimpleNamespace(
     openai_model = "gpt-4-0613",
-    system_prompt = ("You will be presented with a choice of baseline and a candidate response for an instruction\n"
+    system_prompt = ("You will be presented with a choice of Model A and Model B response for an instruction.\n"
                      "The reponse should follow the instructions and use the provided context if there is some.\n"
-                     "Think which response is better and provide the reason why.\n"
-                     "Answer with your choice: baseline, candidate, or equivalent."),
+                     "Think step by step which response is better and provide the reason why.\n"
+                     "Answer with your choice: A, B, or equivalent."),
     model_names=["baseline", "candidate"],
     num_samples=-1,
     out_dir="./output",
@@ -33,8 +33,8 @@ config = SimpleNamespace(
 
 # Pydantic model for structured response from GPT-4
 class Choice(BaseModel):
-    reason: str = Field(description="Reason why the choice was made")
-    choice: Literal["baseline", "candidate", "equivalent"]
+    chain_of_thought: str = Field(description="Think step by step to decide if A or B is better response, or equivalent.")
+    choice: Literal["A", "B", "equivalent"]
 
 # Evaluator class that runs the evaluation
 class Evaluator:
@@ -54,7 +54,7 @@ class Evaluator:
         shuffled_gen1, choice1 = answers[0]
         shuffled_gen2, choice2 = answers[1]
 
-        message = "{instruction}\nbaseline:\n{gen1}\ncandidate:\n{gen2}".format(instruction=instruction, gen1=shuffled_gen1, gen2=shuffled_gen2)
+        message = "{instruction}\nModel A:\n{gen1}\nModel B:\n{gen2}".format(instruction=instruction, gen1=shuffled_gen1, gen2=shuffled_gen2)
 
         response = await self.client.chat.completions.create(
             model=self.config.openai_model,
@@ -65,16 +65,16 @@ class Evaluator:
         )
 
         # Adjust the choice based on the shuffle
-        if response.choice == "baseline":
+        if response.choice == "A":
             response.choice = choice1
-        elif response.choice == "candidate":
+        elif response.choice == "B":
             response.choice = choice2
         elif response.choice == "equivalent":
             response.choice = 0
         else:
             raise ValueError(f"Unexpected choice: {response.choice}")
 
-        return instruction, gen1, gen2, response.choice, response.reason
+        return instruction, gen1, gen2, response.choice, response.chain_of_thought
 
     async def judge(self, merged_df):
         gpt4_results = await asyncio.gather(
