@@ -59,3 +59,7 @@ Before creating the automation, try launching your job manually from the Jobs pa
 5. Select destination project and pick the Launch queue you created
 6. Choose a name for your automation and save it - you can now add it by adding the chosen alias (e.g. "candidate") to a model version in model registry
 
+## Conclusions
+
+We hope this course provided you with knowledge and inspiration to build your own model management system and tooling. If you have any doubts how do this with W&B Model Registry, reach out to us at [support@wandb.com](mailto:support@wandb.com). 
+
