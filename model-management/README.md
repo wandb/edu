@@ -22,7 +22,7 @@ python train.py --lr 1e-4
 
 ## Evaluation
 
-We are going to use model-based evaluation (**LLM as a judge**) to compare new model checkpoint performance to a baseline. We save our baseline results to a W&B artifact with `save_baseline_to_artifact.py` script. 
+We are going to use model-based evaluation (**LLM as a judge**) to compare new model checkpoint performance to a baseline.
 
 To perform evaluation automatically based on model registry alias, we will convert our `eval.py` script to a *W&B Launch Job*. 
 
@@ -31,7 +31,7 @@ To perform evaluation automatically based on model registry alias, we will conve
 First, let's create a Docker image called `eval` with the docker build command:
 
 ```
-docker build -f ./Dockerfile.eval -t eval:v0 .
+docker build -f ./Dockerfile.eval -t evaluate:v0 .
 ```
 
 ### Create a Launch Job
@@ -39,7 +39,7 @@ docker build -f ./Dockerfile.eval -t eval:v0 .
 We'll create a launch job with the W&B CLI with the following code snippet:
 
 ```
-wandb job create --project tinyllama --entity reviewco --name eval image eval:v0
+wandb job create --project tinyllama --entity reviewco --name eval image evaluate:v0
 ```
 
 ### Create a Launch Queue

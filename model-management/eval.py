@@ -27,8 +27,8 @@ config = SimpleNamespace(
     wandb_entity='reviewco',
     wandb_model='reviewco/model-registry/Small-Instruct-LLM',
     table_name='sample_predictions',
-    baseline_artifact='reviewco/tinyllama/baseline_predictions:latest',
     alias_eval='candidate',
+    alias_baseline='baseline',
 )
 
 # Pydantic model for structured response from GPT-4
@@ -90,12 +90,6 @@ def download_table_from_model(wandb_model, alias, table_name="sample_predictions
     df = pd.DataFrame(data=table.data, columns=table.columns)
     return df
 
-def download_table_from_artifact(artifact, table_name="sample_predictions"):
-    artifact = wandb.use_artifact(artifact, type='predictions')
-    table = artifact.get(table_name)
-    df = pd.DataFrame(data=table.data, columns=table.columns)
-    return df
-
 if __name__ == "__main__":
     parse_args(config)
     out_dir = Path(config.out_dir)
@@ -104,12 +98,20 @@ if __name__ == "__main__":
     wandb.init(project=config.wandb_project, entity=config.wandb_entity, job_type="eval", config=config)
     config = wandb.config
 
+    # This code will add lineage to the evaluation results, let's store the model paths in the config
     eval_model = wandb.use_artifact(f'{config.wandb_model}:{config.alias_eval}', type="model")
     eval_model_path = f"{config.wandb_model}:{eval_model.version}"
+    baseline_model = wandb.use_artifact(f'{config.wandb_model}:{config.alias_baseline}', type="model")
+    baseline_model_path = f"{config.wandb_model}:{baseline_model.version}"
+
+    wandb.config.update({
+        "eval_model_path": eval_model_path,
+        "baseline_model_path": baseline_model_path,
+    })
 
     # Download and merge the baseline and evaluation dataframes
-    baseline_df = download_table_from_artifact(config.baseline_artifact)
     eval_df = download_table_from_model(config.wandb_model, config.alias_eval)
+    baseline_df = download_table_from_model(config.wandb_model, config.alias_baseline)
     merged_df = pd.merge(
         baseline_df[["prompt", "generation"]], 
         eval_df[["prompt", "generation"]], on="prompt", suffixes=config.model_names,
@@ -126,11 +128,9 @@ if __name__ == "__main__":
     # Calculate the preference score
     candidate_preference_score = np.mean(results_df["choice"].values)
     print(f"The candidate preference score on a scale from -1 to 1 is: {candidate_preference_score:.2f}")
-    wandb.log({"candidate_preference_score":candidate_preference_score,
-               "eval_model":eval_model_path,
-    })
+    wandb.log({"candidate_preference_score":candidate_preference_score})
 
     # Save the results and log them to Weights & Biases
     results_df.to_csv(out_dir/"gpt4_eval.csv")
     gpt4_table = wandb.Table(dataframe=results_df)
-    wandb.log({"gpt4_eval":gpt4_table})   
+    wandb.log({"gpt4_eval":gpt4_table})
