@@ -11,16 +11,32 @@ organized by topic, linked below.
 These materials are intended for use with online courses,
 but may be useful on their own.
 
-## 🖌️ [Enterprise Model Management →](https://www.wandb.courses/courses/enterprise-model-management)
+## LLMs
+### (NEW!) 🛠️ [LLM Engineering: Structured Output →](https://www.wandb.courses/courses/steering-language-models)
 
-## 🖌️ [Learn to Evaluate and Debug Generative AI →](http://wandb.me/eval-debugging-gen-ai)
+### 🎵 [Training and Fine-Tuning LLMs with MosaicML →](https://www.wandb.courses/courses/training-fine-tuning-LLMs)
 
-## 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/mlops-001)
+### 🎮 [Building LLM Powered Apps →](https://www.wandb.courses/courses/building-llm-powered-apps)
 
-## 🤖 [Learn CI/CD for Machine Learning (GitOps) →](https://github.com/hamelsmu/wandb-cicd)
+### 🖌️ [Learn to Evaluate and Debug Generative AI →](http://wandb.me/eval-debugging-gen-ai)
 
-## 🏫 [Resources for Educators, Teaching Assistants, and Students →](https://github.com/wandb/edu/tree/main/edu_resources/)
+## MLOps
+### (NEW!) 🧞‍♂️ [Enterprise Model Management →](https://www.wandb.courses/courses/enterprise-model-management)
 
+### 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/mlops-001)
+
+### 🤖 [Learn CI/CD for Machine Learning (GitOps) →](https://github.com/hamelsmu/wandb-cicd)
+
+### 🤖 [Data Validation in Production ML Pipelines →](https://www.wandb.courses/courses/data-validation-for-machine-learning)
+
+### 🤖 [Machine Learning for Business Decision Optimization →](https://www.wandb.courses/courses/decision-optimization)
+
+
+## Teach Weights & Biases at work or university
+### 🏫 [Resources for Educators, Teaching Assistants, and Students →](https://github.com/wandb/edu/tree/main/edu_resources/)
+
+
+## Math
 ## 🧮 [Get a refresher on the math you need for ML →](https://github.com/wandb/edu/tree/main/math-for-ml)
 
 
