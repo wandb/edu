@@ -1,3 +1,8 @@
+"""
+Made with love by W&B
+@wandbcode{emm_course}
+"""
+
 import asyncio
 import random
 from pathlib import Path

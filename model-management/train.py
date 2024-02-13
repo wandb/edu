@@ -1,3 +1,8 @@
+"""
+Made with love by W&B
+@wandbcode{emm_course}
+"""
+
 import os
 from types import SimpleNamespace
 
