@@ -1,5 +1,3 @@
-import os
-
 import torch
 import wandb
 from tqdm.auto import tqdm
@@ -50,10 +48,6 @@ def main():
     config.dice_loss_apply_sigmoid = True
     config.inference_roi_size = (240, 240, 160)
     config.validation_intervals = 1
-    config.checkpoint_dir = "./checkpoints"
-
-    # Create checkpoint directory
-    os.makedirs(config.checkpoint_dir, exist_ok=True)
 
     set_determinism(seed=config.seed)
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -271,15 +265,6 @@ def main():
                 metric_values_enhanced_tumor.append(metric_batch[2].item())
                 dice_metric.reset()
                 dice_metric_batch.reset()
-
-                # Log and versison model checkpoints using W&B artifacts.
-                checkpoint_path = os.path.join(config.checkpoint_dir, "model.pth")
-                torch.save(model.state_dict(), checkpoint_path)
-                wandb.log_model(
-                    checkpoint_path,
-                    name=f"{wandb.run.id}-checkpoint",
-                    aliases=[f"epoch_{epoch}"],
-                )
 
                 # Log validation metrics to W&B dashboard.
                 wandb.log(
