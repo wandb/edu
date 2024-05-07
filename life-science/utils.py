@@ -1,4 +1,5 @@
 import torch
+from monai.inferers import sliding_window_inference
 from monai.transforms import MapTransform
 
 
@@ -23,10 +24,25 @@ class ConvertToMultiChannelBasedOnBratsClassesd(MapTransform):
             # merge labels 1, 2 and 3 to construct Whole Tumor
             result.append(
                 torch.logical_or(
-                    torch.logical_or(data_dict[key] == 2, data_dict[key] == 3), data_dict[key] == 1
+                    torch.logical_or(data_dict[key] == 2, data_dict[key] == 3),
+                    data_dict[key] == 1,
                 )
             )
             # label 2 is Enhancing Tumor
             result.append(data_dict[key] == 2)
             data_dict[key] = torch.stack(result, axis=0).float()
         return data_dict
+
+
+def inference(model, input, roi_size):
+    def _compute(input):
+        return sliding_window_inference(
+            inputs=input,
+            roi_size=roi_size,
+            sw_batch_size=1,
+            predictor=model,
+            overlap=0.5,
+        )
+
+    with torch.cuda.amp.autocast():
+        return _compute(input)
