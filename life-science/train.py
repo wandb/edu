@@ -42,7 +42,7 @@ def main():
     config.model_blocks_up = [1, 1, 1]
     config.model_in_channels = 4
     config.model_out_channels = 3
-    config.max_train_epochs = 3
+    config.max_train_epochs = 5
     config.dice_loss_squared_prediction = True
     config.dice_loss_target_onehot = False
     config.dice_loss_apply_sigmoid = True
@@ -250,7 +250,7 @@ def main():
                         val_data["image"].to(device),
                         val_data["label"].to(device),
                     )
-                    val_outputs = inference(model, val_inputs)
+                    val_outputs = inference(model, val_inputs, config.roi_size)
                     val_outputs = [
                         postprocessing_transforms(i)
                         for i in decollate_batch(val_outputs)
