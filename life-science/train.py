@@ -28,11 +28,7 @@ from utils import ConvertToMultiChannelBasedOnBratsClassesd, inference
 
 
 def main():
-    wandb.init(
-        project="brain-tumor-segmentation",
-        entity="lifesciences",
-        job_type="train_baseline",
-    )
+    wandb.init(project="brain-tumor-segmentation", entity="lifesciences")
     config = wandb.config
     
     # Manually setting the values of the configs unaffected by the sweep
