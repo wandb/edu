@@ -1,6 +1,8 @@
-import torch
 from monai.inferers import sliding_window_inference
 from monai.transforms import MapTransform
+
+import torch
+import wandb
 
 
 class ConvertToMultiChannelBasedOnBratsClassesd(MapTransform):
@@ -46,3 +48,13 @@ def inference(model, input, roi_size):
 
     with torch.cuda.amp.autocast():
         return _compute(input)
+
+
+def get_best_config_from_sweep(
+    entity: str, project: str, sweep_id: str, metric: str = "validation/mean_dice"
+):
+    api = wandb.Api()
+    sweep = api.sweep(f"{entity}/{project}/{sweep_id}")
+    runs = sorted(sweep.runs, key=lambda run: run.summary.get(metric, 0), reverse=True)
+    best_run = runs[0]
+    return best_run.config
