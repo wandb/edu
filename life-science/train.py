@@ -34,6 +34,8 @@ def main():
         job_type="train_baseline",
     )
     config = wandb.config
+    
+    # Manually setting the values of the configs unaffected by the sweep
     config.seed = 0
     config.roi_size = [224, 224, 144]
     config.num_workers = 4
@@ -48,6 +50,15 @@ def main():
     config.dice_loss_apply_sigmoid = True
     config.inference_roi_size = (240, 240, 160)
     config.validation_intervals = 1
+    
+    # We are not setting the values of the following configs as their values
+    # will be determined the sweep
+    #   - config.model_dropout_prob = 0.2
+    #   - config.model_init_filters = 16
+    #   - config.initial_learning_rate = 1e-4
+    #   - config.dice_loss_smoothen_denominator = 1e-5
+    #   - config.dice_loss_smoothen_numerator = 0
+    #   - config.weight_decay = 1e-5
 
     set_determinism(seed=config.seed)
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
