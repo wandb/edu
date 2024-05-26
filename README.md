@@ -21,7 +21,7 @@ but may be useful on their own.
 ### 🖌️ [Learn to Evaluate and Debug Generative AI →](http://wandb.me/eval-debugging-gen-ai)
 
 ## MLOps
-### (NEW!) 🧞‍♂️ [Enterprise Model Management →](https://www.wandb.courses/courses/enterprise-model-management)
+### (NEW!) 🧞‍♂️ [Model CI/CD →](https://www.wandb.courses/courses/enterprise-model-management)
 
 ### 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/mlops-001)
 
