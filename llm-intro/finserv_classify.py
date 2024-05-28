@@ -119,7 +119,10 @@ class DetermineHallucinationModel(Model):
             response_format={"type": "json_object"},
         )
         model_output = response.choices[0].message.content
-        return json.loads(model_output)
+        try:
+            return json.loads(model_output)
+        except Exception:
+            return {}
 
 
 # We define four scoring functions to compare our model predictions with a ground truth label.
@@ -127,11 +130,11 @@ class DetermineHallucinationModel(Model):
 def name_score(model_output: dict, labeled_actuals: dict) -> dict:
     correct = True
     for label in labeled_actuals["company_name"]:
-        if isinstance(model_output["company_name"], list):
+        if isinstance(model_output.get("company_name"), list):
             modelOutput = " ".join(str(item) for item in model_output["company_name"])
             correct = correct and label.lower() in modelOutput.lower()
         else:
-            correct = correct and label.lower() in model_output["company_name"].lower()
+            correct = correct and label.lower() in model_output.get("company_name", "").lower()
     return {"correct": correct}
 
 
@@ -139,12 +142,12 @@ def name_score(model_output: dict, labeled_actuals: dict) -> dict:
 def ticker_score(model_output: dict, labeled_actuals: dict) -> dict:
     correct = True
     for label in labeled_actuals["company_ticker"]:
-        if isinstance(model_output["company_ticker"], list):
+        if isinstance(model_output.get("company_ticker"), list):
             modelOutput = " ".join(str(item) for item in model_output["company_ticker"])
             correct = correct and label.lower() in modelOutput.lower()
         else:
             correct = (
-                correct and label.lower() in model_output["company_ticker"].lower()
+                correct and label.lower() in model_output.get("company_ticker", "").lower()
             )
     return {"correct": correct}
 
@@ -152,7 +155,7 @@ def ticker_score(model_output: dict, labeled_actuals: dict) -> dict:
 @weave.op()
 def sentiment_score(model_output: dict, labeled_actuals: dict) -> dict:
     return {
-        "correct": model_output["document_sentiment"].lower()
+        "correct": model_output.get("document_sentiment", "").lower()
         == labeled_actuals["document_sentiment"].lower()
     }
 
@@ -162,7 +165,7 @@ def hallucination_score(model_output: dict) -> dict:
     hallucination_calculation_model = DetermineHallucinationModel(
         system_message="You are in charge of determining if the text submitted is the result of LLM hallucination or not. Your task is to respond with a JSON dictionary including a single hallucanation score. The hallucination score should be a float from 0 to 100, where 100 is more likely and 0 is less likely that the text is hallucination or not."
     )
-    return hallucination_calculation_model.predict(model_output["summary"])
+    return hallucination_calculation_model.predict(model_output.get("summary", ""))
 
 
 @weave.op()
