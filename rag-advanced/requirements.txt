@@ -1,0 +1,12 @@
+beautifulsoup4>=4.12.3
+blingfire>=0.1.8
+cohere>=5.5.8
+markdown-it-py>=3.0.0
+numpy>=1.26.4
+pandas>=2.2.2
+pymdown-extensions>=10.8.1
+python-dotenv>=1.0.1
+scipy>=1.14.0
+tiktoken>=0.7.0
+wandb>=0.17.3
+weave>=0.50.6
