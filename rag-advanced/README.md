@@ -1,6 +1,10 @@
 # Advanced RAG IRL
 
-This repository contains the code for the Advanced RAG IRL course.
+This repository contains the code for the [Advanced RAG IRL course](https://www.wandb.courses/courses/rag-in-production).
+
+# Course Overview
+
+- [] TODO: Add course overview
 
 ## Setup and Installation
 
