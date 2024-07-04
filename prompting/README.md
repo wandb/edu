@@ -13,11 +13,11 @@ Learn to integrate LLMs effectively into your applications, leverage prompts to 
 
 ## What you'll learn
 
-### Craft effective prompts using system messages, context injection, and output indicators to control LLM behavior
+- Craft effective prompts using system messages, context injection, and output indicators to control LLM behavior
 
-### Understand advanced prompting techniques like zero-shot, few-shot, and chain-of-thought to solve complex tasks
+- Understand advanced prompting techniques like zero-shot, few-shot, and chain-of-thought to solve complex tasks
 
-### Build a functional LLM application with dynamic user inputs and structured outputs for real-world use cases
+- Build a functional LLM application with dynamic user inputs and structured outputs for real-world use cases
 
 
 ## Running the code
