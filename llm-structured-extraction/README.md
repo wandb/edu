@@ -1,8 +1,8 @@
 <img src="https://i.imgur.com/gb6B4ig.png" width="400" alt="Weights & Biases" />
 
-# LLM Engineering: Steering Language Models
+# LLM Engineering: Structured Outputs
 
-This repository contains materials for our [LLM Engineering: Steering Language Models](https://www.wandb.courses/courses/steering-language-models) course. 
+This repository contains materials for our [LLM Engineering: Structured Outputs](https://www.wandb.courses/courses/steering-language-models) course. 
 
 Improve your LLM engineering skills with Jason Liu, an LLM charmer and the author of Instructor library. Learn everything about structured output handling, function calling, complex validations with Pydantic and more in this short and helpful course!
 
