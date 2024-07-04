@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wandb/wandb/508982e50e82c54cbf0dd464a9959fee0e1740ad/.github/wb-logo-lightbg.png#gh-light-mode-only" width="600" alt="Weights & Biases"/>
+  <img src="https://raw.githubusercontent.com/wandb/wandb/508982e50e82c54cbf0dd464a9959fee0e1740ad/.github/wb-logo-darkbg.png#gh-dark-mode-only" width="600" alt="Weights & Biases"/>
+</p>
+
 # Model CI/CD Course (prev. Enterprise Model Management)
 
 This course on enterprise model management, led by Hamel Husain, covers the fundamentals of model management using the Weights & Biases Model Registry. You will learn how to use the Model Registry, leverage webhooks and triggers for workflow automation, and explore real-life examples of integrating the registry with external machine learning systems. You'll then apply this knowledge in an end-to-end case study focused on training and evaluating LLMs.
