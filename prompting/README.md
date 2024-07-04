@@ -7,7 +7,7 @@
 
 This repository contains materials for our [Developer's guide to LLM prompting](https://www.wandb.courses/courses/prompting) course. 
 
-Learn to integrate LLMs effectively into your applications, leverage prompts to create consistent and reproducible outputs from large language models, and customize LLMs for your use case. Discover the anatomy of prompts, explore advanced prompting techniques, and gain hands-on experience implementing a LLM for a text understanding use case.
+Learn how to integrate LLMs effectively into your applications, leverage prompts to create consistent and reproducible outputs from large language models, and customize LLMs for your use case. Discover the anatomy of prompts, explore advanced prompting techniques, and gain hands-on experience implementing a LLM for a text understanding use case.
 
 ## 🚀 [Enroll for free](https://www.wandb.courses/courses/prompting)
 
