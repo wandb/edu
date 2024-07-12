@@ -1,6 +1,16 @@
-import weave
+import json
+import os
+from typing import Any, Dict, List
+
+import cohere
 import numpy as np
-from typing import List, Dict, Any
+import weave
+from dotenv import load_dotenv
+from pydantic import BaseModel, field_validator
+
+from .utils import extract_json_from_markdown, make_cohere_api_call
+
+load_dotenv()
 
 
 @weave.op()
@@ -314,3 +324,151 @@ def compute_f1_score(
 
     f1_score = 2 * (precision * recall) / (precision + recall)
     return f1_score
+
+
+@weave.op()
+async def parse_and_validate_response(
+    response_text: str, num_contexts: int
+) -> Dict[str, Any]:
+    """Parse and validate the response text."""
+
+    class RelevanceScore(BaseModel):
+        id: int
+        relevance: int
+
+        @field_validator("relevance")
+        def check_relevance_range(cls, v):
+            if v not in [0, 1, 2]:
+                raise ValueError(f"Relevance must be 0, 1, or 2. Got {v}")
+            return v
+
+    class RelevanceResponse(BaseModel):
+        final_scores: List[RelevanceScore]
+
+        @field_validator("final_scores")
+        def check_unique_ids(cls, v, values, **kwargs):
+            ids = [score.id for score in v]
+            if len(ids) != len(set(ids)):
+                raise ValueError("IDs must be unique")
+            return v
+
+    cleaned_text = extract_json_from_markdown(response_text)
+    parsed_response = json.loads(cleaned_text)
+    validated_response = RelevanceResponse(**parsed_response)
+
+    if len(validated_response.final_scores) != num_contexts:
+        raise ValueError(
+            f"Expected {num_contexts} scores, but got {len(validated_response.final_scores)}"
+        )
+
+    return validated_response.model_dump()
+
+
+@weave.op()
+async def call_cohere_with_retry(
+    co_client: cohere.AsyncClient,
+    preamble: str,
+    chat_history: List[Dict[str, str]],
+    message: str,
+    num_contexts: int,
+    max_retries: int = 5,
+) -> Dict[str, Any]:
+    for attempt in range(max_retries):
+        response_text = ""
+        try:
+            response_text = await make_cohere_api_call(
+                co_client,
+                preamble,
+                chat_history,
+                message,
+                model="command-r-plus",
+                force_single_step=True,
+                temperature=0.0,
+                prompt_truncation="AUTO",
+                max_tokens=250,
+            )
+
+            return await parse_and_validate_response(response_text, num_contexts)
+        except Exception as e:
+            error_message = f"Your previous response resulted in an error: {str(e)}"
+
+            if attempt == max_retries - 1:
+                raise
+
+            chat_history.extend(
+                [
+                    {"role": "USER", "message": message},
+                    {"role": "CHATBOT", "message": response_text},
+                ]
+            )
+            message = f"{error_message}\nPlease provide a valid JSON response based on the previous context and error message. Ensure that:\n1. The number of scores matches the number of contexts ({num_contexts}).\n2. The IDs are unique.\n3. The relevance scores are 0, 1, or 2.\n4. The response is a valid JSON object, not wrapped in markdown code blocks."
+
+    raise Exception("Max retries reached without successful validation")
+
+
+@weave.op()
+async def evaluate_retrieval_with_llm(
+    question: str,
+    contexts: List[Dict[str, Any]],
+    prompt_file: str = "prompts/retrieval_eval.json",
+) -> Dict[str, Any]:
+    co_client = cohere.AsyncClient(api_key=os.environ["CO_API_KEY"])
+
+    # Load the prompt
+    messages = json.load(open(prompt_file))
+    preamble = messages[0]["message"]
+    chat_history = messages[1:]
+
+    # Prepare the message
+    message_template = """<question>
+    {question}
+    </question>
+    {context}
+    """
+    context = ""
+    for idx, doc in enumerate(contexts):
+        context += f"<doc_{idx}>\n{doc['text']}\n</doc_{idx}>\n"
+    message = message_template.format(question=question, context=context)
+
+    # Make the API call with retry logic
+    return await call_cohere_with_retry(
+        co_client, preamble, chat_history, message, len(contexts)
+    )
+
+
+@weave.op()
+def compute_rank_score(scores: List[int]) -> float:
+    rank_score = 0
+    for rank, result in enumerate(scores, 1):
+        if result == 2:
+            rank_score = 1 / rank
+            return rank_score
+    return rank_score
+
+
+@weave.op()
+async def llm_retrieval_scorer(
+    model_output: Dict[str, Any], question: str
+) -> Dict[str, float]:
+    scores = await evaluate_retrieval_with_llm(question, model_output)
+    relevance_scores = [item["relevance"] for item in scores["final_scores"]]
+    mean_relevance = sum(relevance_scores) / len(model_output)
+    rank_score = compute_rank_score(relevance_scores)
+    return {"relevance": mean_relevance, "relevance_rank_score": rank_score}
+
+
+IR_METRICS = [
+    compute_hit_rate,
+    compute_mrr,
+    compute_ndcg,
+    compute_map,
+    compute_precision,
+    compute_recall,
+    compute_f1_score,
+]
+
+LLM_METRICS = [
+    llm_retrieval_scorer,
+]
+
+ALL_METRICS = IR_METRICS + LLM_METRICS

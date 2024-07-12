@@ -1,12 +1,9 @@
 import weave
-from typing import Optional, Union
-from scripts.retriever import Retriever
-from scripts.response_generator import ResponseGenerator
 
 
-class RAGPipeline(weave.Model):
-    retriever: Union[weave.Model, Retriever] = None
-    response_generator: Union[weave.Model, ResponseGenerator] = None
+class SimpleRAGPipeline(weave.Model):
+    retriever: weave.Model = None
+    response_generator: weave.Model = None
     top_k: int = 5
 
     @weave.op()
