@@ -34,3 +34,46 @@ class SimpleResponseGenerator(weave.Model):
     @weave.op()
     def predict(self, query: str, context: List[Dict[str, any]]):
         return self.generate_response(query, context)
+
+
+class QueryEnhanedResponseGenerator(weave.Model):
+    model: str
+    prompt: str
+    client: cohere.AsyncClient = None
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.client = cohere.AsyncClient(api_key=os.environ["CO_API_KEY"])
+
+    @weave.op()
+    def generate_context(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
+        return [{"source": item["source"], "text": item["text"]} for item in context]
+
+    @weave.op()
+    async def generate_response(
+        self,
+        query: str,
+        context: List[Dict[str, any]],
+        language: str,
+        intents: List[str],
+    ) -> str:
+        contexts = self.generate_context(context)
+        response = await self.client.chat(
+            preamble=self.prompt.format(language=language, intents=intents),
+            message=query,
+            model=self.model,
+            documents=contexts,
+            temperature=0.1,
+            max_tokens=2000,
+        )
+        return response.text
+
+    @weave.op()
+    async def predict(
+        self,
+        query: str,
+        context: List[Dict[str, any]],
+        language: str,
+        intents: List[str],
+    ):
+        return await self.generate_response(query, context, language, intents)

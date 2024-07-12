@@ -1,0 +1,6 @@
+Answer to the user's question about W&B.
+Please respond to the user in the following language: {language}
+We have also identifed the following intents based on the user's query:
+{intents}
+Tailor your answer to addres the above intents. 
+Provide an helful and complete answer based only on the provided documents.
