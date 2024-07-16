@@ -5,39 +5,49 @@
 
 # Weights & Biases AI Academy
 
-This repository contains materials for learning AI as part of our **[W&B AI Academy](https://www.wandb.courses/pages/w-b-courses)**,
-organized by topic, linked below.
+Welcome to the W&B AI Academy! This repository contains materials for learning AI, organized by topic. These materials are designed to complement our online courses but can also be useful on their own.
 
-These materials are intended for use with online courses,
-but may be useful on their own.
+## 🤖 Large Language Models (LLMs)
 
-## LLMs
-### (NEW!) 🛠️ [LLM Engineering: Structured Output →](https://www.wandb.courses/courses/steering-language-models)
+| Course | Instructor | Description |
+|--------|------------|-------------|
+| 🆕 [Developer's guide to LLM prompting](https://www.wandb.courses/courses/steering-language-models) | - | Everything you need to get started with prompt engineering, from system prompts to model-specific strategies. |
+| 🆕 [RAG in production](https://www.wandb.courses/courses/rag-in-production) | - | Practical RAG techniques for engineers: production-ready solutions to optimize performance, cut costs, and enhance accuracy. |
+| [LLM Engineering: Structured Outputs](https://www.wandb.courses/courses/steering-language-models) | Jason Liu | Improve LLM engineering skills, learn about structured JSON output handling, function calling, and complex validations. |
+| [Building LLM-Powered Apps](https://www.wandb.courses/courses/building-llm-powered-apps) | - | Learn to build LLM-powered applications using LLM APIs, Langchain, and W&B LLM tooling. |
+| [Training and Fine-tuning LLMs](https://www.wandb.courses/courses/training-fine-tuning-LLMs) | Jonathan Frankle (MosaicML) | Explore LLM architecture, training techniques, and fine-tuning methods, including LoRA and RLHF. |
+| [Evaluate and Debug Generative AI](http://wandb.me/eval-debugging-gen-ai) | - | Practice evaluating and debugging Generative AI work using the W&B AI Developer Platform. |
 
-### 🎵 [Training and Fine-Tuning LLMs with MosaicML →](https://www.wandb.courses/courses/training-fine-tuning-LLMs)
+## 🚀 MLOps
 
-### 🎮 [Building LLM Powered Apps →](https://www.wandb.courses/courses/building-llm-powered-apps)
+| Course | Instructor | Description |
+|--------|------------|-------------|
+| 🆕 [Model CI/CD](https://www.wandb.courses/courses/enterprise-model-management) | - | Overcome model chaos, automate workflows, ensure governance, and streamline the end-to-end model lifecycle. |
+| [Effective MLOps: Model Development](https://github.com/wandb/edu/tree/main/mlops-001) | - | Learn to accelerate and scale model development, improve productivity, and ensure reproducibility. |
+| [CI/CD for Machine Learning (GitOps)](https://github.com/hamelsmu/wandb-cicd) | - | Streamline ML workflows using GitHub Actions and integrate W&B experiment tracking. |
+| [Data Validation in Production ML Pipelines](https://www.wandb.courses/courses/data-validation-for-machine-learning) | - | Build robust production ML pipelines, detect data drift, and manage data quality. |
+| [ML for Business Decision Optimization](https://www.wandb.courses/courses/decision-optimization) | - | Optimize business decisions and translate ML predictions into actionable insights. |
 
-### 🖌️ [Learn to Evaluate and Debug Generative AI →](http://wandb.me/eval-debugging-gen-ai)
+## 📊 W&B Tools
 
-## MLOps
-### (NEW!) 🧞‍♂️ [Model CI/CD →](https://www.wandb.courses/courses/enterprise-model-management)
+| Course | Instructor | Description |
+|--------|------------|-------------|
+| [W&B 101](https://www.wandb.courses/courses/wandb-101) | - | Introduction to W&B with a focus on experiment tracking, visualization, and optimization. |
+| [W&B 201: Model Registry](https://www.wandb.courses/courses/wandb-201-model-registry) | Ken Lee | Advanced model management using W&B for logging, registering, and managing ML models. |
 
-### 🚀 [Learn Effective MLOps: Model Development →](https://github.com/wandb/edu/tree/main/mlops-001)
+## 🌍 International Courses
 
-### 🤖 [Learn CI/CD for Machine Learning (GitOps) →](https://github.com/hamelsmu/wandb-cicd)
+| Course | Language | Description |
+|--------|----------|-------------|
+| [효율적인 MLOps: 모델 개발](https://www.wandb.courses/courses/effective-mlops-model-development-korean) | Korean | Comprehensive program on bringing ML models to life, optimizing performance, and preparing for primetime. |
+| [効果的なMLOps: モデル開発](https://www.wandb.courses/courses/effective-mlops-model-development-japanese) | Japanese | Learn to accelerate and scale model development, improve productivity, and ensure reproducibility. |
 
-### 🤖 [Data Validation in Production ML Pipelines →](https://www.wandb.courses/courses/data-validation-for-machine-learning)
+## 🏫 Resources for Educators
 
-### 🤖 [Machine Learning for Business Decision Optimization →](https://www.wandb.courses/courses/decision-optimization)
+- [Materials for Educators, TAs, and Students](https://github.com/wandb/edu/tree/main/edu_resources/)
 
+## 🧮 Math for ML
 
-## Teach Weights & Biases at work or university
-### 🏫 [Resources for Educators, Teaching Assistants, and Students →](https://github.com/wandb/edu/tree/main/edu_resources/)
+- [Math refresher for Machine Learning](https://github.com/wandb/edu/tree/main/math-for-ml)
 
-
-## Math
-## 🧮 [Get a refresher on the math you need for ML →](https://github.com/wandb/edu/tree/main/math-for-ml)
-
-
-
+For more information and to enroll in courses, visit the [W&B AI Academy website](https://wandb.courses).
