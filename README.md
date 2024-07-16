@@ -40,7 +40,7 @@ Welcome to the W&B AI Academy! This repository contains materials for learning A
 | Course | Language | Description |
 |--------|----------|-------------|
 | [효율적인 MLOps: 모델 개발](https://www.wandb.courses/courses/effective-mlops-model-development-ko) | Korean | Comprehensive program on bringing ML models to life, optimizing performance, and preparing for primetime. |
-| [効果的なMLOps: モデル開発](https://www.wandb.courses/courses/effective-mlops-model-development-japanese) | Japanese | Learn to accelerate and scale model development, improve productivity, and ensure reproducibility. |
+| [効果的なMLOps: モデル開発](https://www.wandb.courses/courses/effective-mlops-model-development-jp) | Japanese | Learn to accelerate and scale model development, improve productivity, and ensure reproducibility. |
 
 ## 🏫 Resources for Educators
 
