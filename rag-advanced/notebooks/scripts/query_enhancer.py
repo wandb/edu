@@ -44,12 +44,14 @@ async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
     class IntentPrediction(BaseModel):
         intents: List[Intent]
 
-        @field_validator("intents")
-        def check_unique_intents(cls, v):
-            intent_set = set(intent.intent for intent in v)
-            if len(intent_set) != len(v):
-                raise ValueError("Intents must be unique")
-            return v
+        # TODO: do we really need this validation?
+        # given I don't see this grounding in the system prompt!
+        # @field_validator("intents")
+        # def check_unique_intents(cls, v):
+        #     intent_set = set(intent.intent for intent in v)
+        #     if len(intent_set) != len(v):
+        #         raise ValueError("Intents must be unique")
+        #     return v
 
     cleaned_text = extract_json_from_markdown(response_text)
     parsed_response = json.loads(cleaned_text)
