@@ -243,7 +243,7 @@ NLP_METRICS = [
     compute_levenshtein,
     compute_rouge,
     compute_bleu,
-    compute_meteor,
+    # compute_meteor, # TODO: fix this metric
 ]
 
 LLM_METRICS = [

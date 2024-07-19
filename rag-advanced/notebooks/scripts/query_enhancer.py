@@ -140,7 +140,7 @@ class QueryEnhancer(weave.Model):
 
     @weave.op()
     async def __call__(self, query: str) -> str:
-        language = detect_language(query)["lang"]
+        language = detect_language(query.replace('\n', ' '))["lang"]
         search_queries = await self.generate_cohere_queries(query)
         intents = await self.get_intent_prediction(query)
         return {
