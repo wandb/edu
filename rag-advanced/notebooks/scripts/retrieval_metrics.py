@@ -92,9 +92,12 @@ def compute_mrr(
     mrr_score = 0
     for rank, result in enumerate(model_output, 1):
         if result["source"] in relevant_sources:
-            mrr_score = 1 / rank
-            break
-    return mrr_score
+            mrr_score += 1 / rank
+    
+    if mrr_score == 0:
+        return 0.0
+    else:
+        return mrr_score / len(model_output)
 
 
 # NDCG (Normalized Discounted Cumulative Gain)
