@@ -93,7 +93,7 @@ def compute_mrr(
     for rank, result in enumerate(model_output, 1):
         if result["source"] in relevant_sources:
             mrr_score += 1 / rank
-    
+
     if mrr_score == 0:
         return 0.0
     else:
@@ -112,51 +112,31 @@ def compute_ndcg(
         model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
-                - 'score': The cosine similarity score of the document to the query.
         contexts (List[Dict[str, Any]]): A list of dictionaries representing the relevant contexts.
             Each dictionary contains:
                 - 'source': A unique identifier for the relevant document.
+                - 'relevance': The relevance score of the document (0, 1, or 2).
 
     Returns:
         float: The NDCG score for the given query.
-
-    NDCG measures the ranking quality of the search results, taking into account the position of relevant documents.
-
-    NDCG Formula:
-    1. Calculate the Discounted Cumulative Gain (DCG):
-       \[ \text{DCG}_p = \sum_{i=1}^p \frac{2^{rel_i} - 1}{\log_2(i + 1)} \]
-       where \( rel_i \) is the relevance score of the document at position \( i \).
-
-    2. Calculate the Ideal Discounted Cumulative Gain (IDCG), which is the DCG of the ideal ranking:
-       \[ \text{IDCG}_p = \sum_{i=1}^p \frac{2^{rel_i} - 1}{\log_2(i + 1)} \]
-       where documents are sorted by their relevance scores in descending order.
-
-    3. Normalize the DCG by dividing it by the IDCG to get NDCG:
-       \[ \text{NDCG}_p = \frac{\text{DCG}_p}{\text{IDCG}_p} \]
-
-    This implementation uses continuous relevance scores.
     """
-    relevant_sources = {
-        context["source"] for context in contexts if context["relevance"] != 0
-    }
+    # Create a mapping of source to relevance
+    relevance_map = {context["source"]: context["relevance"] for context in contexts}
 
     dcg = 0.0
     idcg = 0.0
 
     # Calculate DCG
     for i, result in enumerate(model_output):
-        if result["source"] in relevant_sources:
-            dcg += (2 ** result["score"] - 1) / np.log2(
-                i + 2
-            )  # i+2 because log2 starts at 1 for i=0
-
-    # Sort the results by score to calculate IDCG
-    sorted_model_output = sorted(model_output, key=lambda x: x["score"], reverse=True)
+        rel = relevance_map.get(result["source"], 0)
+        dcg += (2**rel - 1) / np.log2(i + 2)
 
     # Calculate IDCG
-    for i, result in enumerate(sorted_model_output):
-        if result["source"] in relevant_sources:
-            idcg += (2 ** result["score"] - 1) / np.log2(i + 2)
+    sorted_relevances = sorted(
+        [context["relevance"] for context in contexts], reverse=True
+    )
+    for i, rel in enumerate(sorted_relevances):
+        idcg += (2**rel - 1) / np.log2(i + 2)
 
     # To avoid division by zero
     if idcg == 0:
