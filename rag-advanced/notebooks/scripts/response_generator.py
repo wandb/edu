@@ -8,34 +8,49 @@ import weave
 class SimpleResponseGenerator(weave.Model):
     model: str
     prompt: str
-    client: cohere.Client = None
+    client: cohere.ClientV2 = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.client = cohere.Client(api_key=os.environ["CO_API_KEY"])
+        self.client = cohere.ClientV2(
+            api_key=os.environ["CO_API_KEY"],
+            log_warning_experimental_features=True,
+        )
 
     @weave.op()
-    def generate_context(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
-        return [{"source": item["source"], "text": item["text"]} for item in context]
+    def generate_context_from_nodes(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
+        contexts = [{"source": item["source"], "text": item["text"]} for item in context]
+        return contexts
+    
+    def create_messages(self, query: str, context: List[Dict[str, any]]):
+        _contexts = self.generate_context_from_nodes(context)
+        contexts = [{'type': 'text', 'text': query}]
+        for context in _contexts:
+            contexts.append({'type': 'document', 'document': context})
+
+        messages = [
+            {"role": "system", "content": self.prompt},
+            {"role": "user", "content": contexts},
+        ]
+        return messages
 
     @weave.op()
     def generate_response(self, query: str, context: List[Dict[str, any]]) -> str:
-        contexts = self.generate_context(context)
+        messages = self.create_messages(query, context)
         response = self.client.chat(
-            preamble=self.prompt,
-            message=query,
+            messages=messages,
             model=self.model,
-            documents=contexts,
             temperature=0.1,
             max_tokens=2000,
         )
-        return response.text
+        return response.message.content[0].text
 
     @weave.op()
     def predict(self, query: str, context: List[Dict[str, any]]):
         return self.generate_response(query, context)
 
 
+#TODO: update to cohere v2
 class QueryEnhanedResponseGenerator(weave.Model):
     model: str
     prompt: str
@@ -47,7 +62,11 @@ class QueryEnhanedResponseGenerator(weave.Model):
 
     @weave.op()
     def generate_context(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
-        return [{"source": item["source"], "text": item["text"]} for item in context]
+        _contexts = [{"source": item["source"], "text": item["text"]} for item in context]
+        contexts = []
+        for context in _contexts:
+            contexts.append({"type": "document", "document": context})
+        return contexts
 
     @weave.op()
     async def generate_response(
