@@ -4,6 +4,11 @@ from typing import Dict, List
 import cohere
 import weave
 
+# Patch cohere to work with weave
+from weave.integrations.cohere import cohere_patcher
+
+cohere_patcher.attempt_patch()
+
 
 class SimpleResponseGenerator(weave.Model):
     model: str
@@ -14,19 +19,23 @@ class SimpleResponseGenerator(weave.Model):
         super().__init__(**kwargs)
         self.client = cohere.ClientV2(
             api_key=os.environ["CO_API_KEY"],
-            log_warning_experimental_features=True,
+            log_warning_experimental_features=False,
         )
 
     @weave.op()
-    def generate_context_from_nodes(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
-        contexts = [{"source": item["source"], "text": item["text"]} for item in context]
+    def generate_context_from_nodes(
+        self, context: List[Dict[str, any]]
+    ) -> List[Dict[str, any]]:
+        contexts = [
+            {"source": item["source"], "text": item["text"]} for item in context
+        ]
         return contexts
-    
+
     def create_messages(self, query: str, context: List[Dict[str, any]]):
         _contexts = self.generate_context_from_nodes(context)
-        contexts = [{'type': 'text', 'text': query}]
+        contexts = [{"type": "text", "text": query}]
         for context in _contexts:
-            contexts.append({'type': 'document', 'document': context})
+            contexts.append({"type": "document", "document": context})
 
         messages = [
             {"role": "system", "content": self.prompt},
@@ -50,7 +59,7 @@ class SimpleResponseGenerator(weave.Model):
         return self.generate_response(query, context)
 
 
-#TODO: update to cohere v2
+# TODO: update to cohere v2
 class QueryEnhanedResponseGenerator(weave.Model):
     model: str
     prompt: str
@@ -62,7 +71,9 @@ class QueryEnhanedResponseGenerator(weave.Model):
 
     @weave.op()
     def generate_context(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
-        _contexts = [{"source": item["source"], "text": item["text"]} for item in context]
+        _contexts = [
+            {"source": item["source"], "text": item["text"]} for item in context
+        ]
         contexts = []
         for context in _contexts:
             contexts.append({"type": "document", "document": context})
