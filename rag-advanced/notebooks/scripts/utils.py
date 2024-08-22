@@ -72,7 +72,7 @@ def get_special_tokens_set(tokenizer_url=TOKENIZERS["command-r"]):
 
 
 def tokenize_text(text: str, model: str = "command-r") -> List[str]:
-    co = cohere.Client(api_key=os.environ["CO_API_KEY"])
+    co = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
     return co.tokenize(text=text, model=model, offline=True)
 
 
