@@ -101,8 +101,8 @@ class DenseRetriever(weave.Model):
         for idx in top_k_indices:
             output.append(
                 {
-                    "source": self.data[idx]["metadata"]["source"],
-                    "text": self.data[idx]["cleaned_content"],
+                    "source": self.data.rows[idx]["metadata"]["source"],
+                    "text": self.data.rows[idx]["cleaned_content"],
                     "score": 1 - cosine_distances[idx],
                 }
             )

@@ -15,7 +15,7 @@ class CohereReranker(weave.Model):
 
     @weave.op()
     def rerank(self, query, docs, top_n=None):
-        client = cohere.Client(os.environ["CO_API_KEY"])
+        client = cohere.Client(os.environ["COHERE_API_KEY"])
         documents = [doc["text"] for doc in docs]
         response = client.rerank(
             model=self.model, query=query, documents=documents, top_n=top_n or len(docs)
@@ -34,7 +34,6 @@ class CohereReranker(weave.Model):
 
 
 class FusionRanker(weave.Model):
-
     @weave.op()
     def rerank(self, *docs: List[List[Dict[Any, Any]]], k=60):
 
