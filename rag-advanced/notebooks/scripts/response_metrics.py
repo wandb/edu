@@ -169,38 +169,32 @@ async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
 @weave.op()
 async def call_cohere_with_retry(
     co_client: cohere.AsyncClient,
-    preamble: str,
-    chat_history: List[Dict[str, str]],
-    message: str,
+    messages: List[Dict[str, str]],
     max_retries: int = 5,
 ) -> Dict[str, Any]:
     for attempt in range(max_retries):
         try:
             response_text = await make_cohere_api_call(
                 co_client,
-                preamble,
-                chat_history,
-                message,
+                messages,
                 model="command-r-plus",
-                force_single_step=True,
                 temperature=0.0,
-                prompt_truncation="AUTO",
                 max_tokens=250,
             )
             return await parse_and_validate_response(response_text)
         except Exception as e:
             error_message = f"Your previous response resulted in an error:\n{str(e)}"
+            error_message = f"{error_message}\nEnsure that:\n1. The 'final_score' is 0, 1, or 2.\n2. The 'decision' is either 'correct' or 'incorrect'.\n3. The 'reason' field is included.\n4. The response is a valid JSON object, not wrapped in markdown code blocks."
 
-        if attempt == max_retries - 1:
-            raise
+            if attempt == max_retries - 1:
+                raise
 
-        chat_history.extend(
-            [
-                {"role": "USER", "message": message},
-                {"role": "CHATBOT", "message": response_text},
-            ]
-        )
-        message = f"{error_message}\nEnsure that:\n1. The 'final_score' is 0, 1, or 2.\n2. The 'decision' is either 'correct' or 'incorrect'.\n3. The 'reason' field is included.\n4. The response is a valid JSON object, not wrapped in markdown code blocks."
+            messages.extend(
+                [
+                    {"role": "assistant", "content": response_text},
+                    {"role": "user", "content": error_message},
+                ]
+            )
 
     raise Exception("Max retries reached without successful validation")
 
@@ -212,16 +206,14 @@ async def evaluate_correctness_using_llm_judge(
     model_output: str,
     prompt_file: str = "prompts/correctness_eval.json",
 ) -> Dict[str, Any]:
-    co_client = cohere.AsyncClient(api_key=os.environ["COHERE_API_KEY"])
+    co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
     messages = json.load(open(prompt_file))
-    preamble = messages[0]["message"]
-    chat_history = []
     message_template = """<question>\n{question}\n</question><reference_answer>\n{reference_answer}\n</reference_answer>\n<generated_answer>\n{generated_answer}\n</generated_answer>"""
-    message = message_template.format(
-        question=question, reference_answer=answer, generated_answer=model_output
+    messages.append(
+        {"role": "user", "content": message_template.format(question=question, reference_answer=answer, generated_answer=model_output)}
     )
 
-    return await call_cohere_with_retry(co_client, preamble, chat_history, message)
+    return await call_cohere_with_retry(co_client, messages)
 
 
 @weave.op()
