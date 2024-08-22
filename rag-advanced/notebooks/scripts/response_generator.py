@@ -18,7 +18,7 @@ class SimpleResponseGenerator(weave.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.client = cohere.ClientV2(
-            api_key=os.environ["CO_API_KEY"],
+            api_key=os.environ["COHERE_API_KEY"],
             log_warning_experimental_features=False,
         )
 
