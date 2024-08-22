@@ -70,10 +70,8 @@ async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
 
 @weave.op()
 async def call_cohere_with_retry(
-    co_client: cohere.AsyncClient,
-    preamble: str,
-    chat_history: List[Dict[str, str]],
-    message: str,
+    co_client: cohere.AsyncClientV2,
+    messages: List[Dict[str, Any]],
     max_retries: int = 5,
 ) -> Dict[str, Any]:
     for attempt in range(max_retries):
@@ -81,30 +79,26 @@ async def call_cohere_with_retry(
         try:
             response_text = await make_cohere_api_call(
                 co_client,
-                preamble,
-                chat_history,
-                message,
+                messages,
                 model="command-r-plus",
-                force_single_step=True,
                 temperature=0.0,
-                prompt_truncation="AUTO",
                 max_tokens=1000,
             )
 
             return await parse_and_validate_response(response_text)
         except Exception as e:
             error_message = f"Your previous response resulted in an error: {str(e)}"
+            error_message = f"{error_message}\nPlease provide a valid JSON response based on the previous context and error message. Ensure that:\n1. The response is a valid JSON object with an 'intents' list.\n2. Each intent in the list has a valid 'intent' from the Labels enum and a 'reason'.\n3. The intents are unique.\n4. The response is not wrapped in markdown code blocks."
 
             if attempt == max_retries - 1:
                 raise
 
-            chat_history.extend(
+            messages.extend(
                 [
-                    {"role": "USER", "message": message},
-                    {"role": "CHATBOT", "message": response_text},
+                    {"role": "assistant", "content": response_text},
+                    {"role": "user", "content": error_message},
                 ]
             )
-            message = f"{error_message}\nPlease provide a valid JSON response based on the previous context and error message. Ensure that:\n1. The response is a valid JSON object with an 'intents' list.\n2. Each intent in the list has a valid 'intent' from the Labels enum and a 'reason'.\n3. The intents are unique.\n4. The response is not wrapped in markdown code blocks."
 
     raise Exception("Max retries reached without successful validation")
 
@@ -112,18 +106,21 @@ async def call_cohere_with_retry(
 class QueryEnhancer(weave.Model):
     @weave.op()
     async def generate_cohere_queries(self, query: str) -> List[str]:
-        co_client = cohere.AsyncClient(api_key=os.getenv("CO_API_KEY"))
-        search_gen_prompt = json.load(open("prompts/search_query.json", "r"))
+        co_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY"))
+        # load system prompt
+        messages = json.load(open("prompts/search_query.json", "r"))
+        # add user prompt (question)
+        messages.append(
+            {"role": "user", "content": f"## Question\n{query}"}
+        )
 
         response = await co_client.chat(
             model="command-r-plus",
-            preamble=search_gen_prompt[0]["message"],
-            message=f"## Question\n{query}",
             temperature=0.5,
-            # search_queries_only=True,
             max_tokens=500,
+            messages=messages,
         )
-        return response.text.splitlines()
+        return response.message.content[0].text.splitlines()
 
     @weave.op()
     async def get_intent_prediction(
@@ -131,14 +128,11 @@ class QueryEnhancer(weave.Model):
         question: str,
         prompt_file: str = "prompts/intent_prompt.json",
     ) -> List[Dict[str, Any]]:
-        co_client = cohere.AsyncClient(api_key=os.environ["CO_API_KEY"])
+        co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
         messages = json.load(open(prompt_file))
-        preamble = messages[0]["message"]
-        chat_history = []
-        message_template = """<question>\n{question}\n</question>\n"""
-        message = message_template.format(question=question)
+        messages.append({"role": "user", "content": f"<question>\n{question}\n</question>\n"})
 
-        return await call_cohere_with_retry(co_client, preamble, chat_history, message)
+        return await call_cohere_with_retry(co_client, messages)
 
     @weave.op()
     async def __call__(self, query: str) -> str:

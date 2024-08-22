@@ -44,19 +44,15 @@ def extract_json_from_markdown(text: str) -> str:
 
 @weave.op()
 async def make_cohere_api_call(
-    co_client: cohere.AsyncClient,
-    preamble: str,
-    chat_history: List[Dict[str, str]],
-    message: str,
+    co_client: cohere.AsyncClientV2,
+    messages: List[Dict[str, any]],
     **kwargs,
 ) -> str:
     response = await co_client.chat(
-        preamble=preamble,
-        chat_history=chat_history,
-        message=message,
+        messages=messages,
         **kwargs,
     )
-    return response.text
+    return response.message.content[0].text
 
 
 TOKENIZERS = {
