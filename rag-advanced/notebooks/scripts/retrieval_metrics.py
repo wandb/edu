@@ -350,9 +350,7 @@ async def parse_and_validate_response(
 @weave.op()
 async def call_cohere_with_retry(
     co_client: cohere.AsyncClient,
-    preamble: str,
-    chat_history: List[Dict[str, str]],
-    message: str,
+    messages: List[Dict[str, any]],
     num_contexts: int,
     max_retries: int = 5,
 ) -> Dict[str, Any]:
@@ -361,30 +359,25 @@ async def call_cohere_with_retry(
         try:
             response_text = await make_cohere_api_call(
                 co_client,
-                preamble,
-                chat_history,
-                message,
+                messages,
                 model="command-r-plus",
-                force_single_step=True,
                 temperature=0.0,
-                prompt_truncation="AUTO",
                 max_tokens=250,
             )
-
             return await parse_and_validate_response(response_text, num_contexts)
         except Exception as e:
             error_message = f"Your previous response resulted in an error: {str(e)}"
+            error_message = f"{error_message}\nPlease provide a valid JSON response based on the previous context and error message. Ensure that:\n1. The number of scores matches the number of contexts ({num_contexts}).\n2. The IDs are unique.\n3. The relevance scores are 0, 1, or 2.\n4. The response is a valid JSON object, not wrapped in markdown code blocks."
 
             if attempt == max_retries - 1:
                 raise
 
-            chat_history.extend(
+            messages.extend(
                 [
-                    {"role": "USER", "message": message},
-                    {"role": "CHATBOT", "message": response_text},
+                    {"role": "assistant", "content": response_text},
+                    {"role": "user", "content": error_message},
                 ]
             )
-            message = f"{error_message}\nPlease provide a valid JSON response based on the previous context and error message. Ensure that:\n1. The number of scores matches the number of contexts ({num_contexts}).\n2. The IDs are unique.\n3. The relevance scores are 0, 1, or 2.\n4. The response is a valid JSON object, not wrapped in markdown code blocks."
 
     raise Exception("Max retries reached without successful validation")
 
@@ -395,12 +388,10 @@ async def evaluate_retrieval_with_llm(
     contexts: List[Dict[str, Any]],
     prompt_file: str = "prompts/retrieval_eval.json",
 ) -> Dict[str, Any]:
-    co_client = cohere.AsyncClient(api_key=os.environ["COHERE_API_KEY"])
+    co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
 
     # Load the prompt
     messages = json.load(open(prompt_file))
-    preamble = messages[0]["message"]
-    chat_history = messages[1:]
 
     # Prepare the message
     message_template = """<question>
@@ -411,11 +402,14 @@ async def evaluate_retrieval_with_llm(
     context = ""
     for idx, doc in enumerate(contexts):
         context += f"<doc_{idx}>\n{doc['text']}\n</doc_{idx}>\n"
-    message = message_template.format(question=question, context=context)
+
+    messages.append(
+        {"role": "user", "content": message_template.format(question=question, context=context)}
+    )
 
     # Make the API call with retry logic
     return await call_cohere_with_retry(
-        co_client, preamble, chat_history, message, len(contexts)
+        co_client, messages, len(contexts)
     )
 
 
