@@ -23,7 +23,7 @@ class SimpleResponseGenerator(weave.Model):
         )
 
     @weave.op()
-    def generate_context_from_nodes(
+    def generate_context(
         self, context: List[Dict[str, any]]
     ) -> List[Dict[str, any]]:
         contexts = [
@@ -32,7 +32,7 @@ class SimpleResponseGenerator(weave.Model):
         return contexts
 
     def create_messages(self, query: str, context: List[Dict[str, any]]):
-        _contexts = self.generate_context_from_nodes(context)
+        _contexts = self.generate_context(context)
         contexts = [{"type": "text", "text": query}]
         for context in _contexts:
             contexts.append({"type": "document", "document": context})
@@ -67,17 +67,27 @@ class QueryEnhanedResponseGenerator(weave.Model):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.client = cohere.AsyncClient(api_key=os.environ["CO_API_KEY"])
+        self.client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
 
     @weave.op()
     def generate_context(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
-        _contexts = [
+        contexts = [
             {"source": item["source"], "text": item["text"]} for item in context
         ]
-        contexts = []
+
+        return contexts
+    
+    def create_messages(self, query: str, context: List[Dict[str, any]], language: str, intents: List[str]):
+        _contexts = self.generate_context(context)
+        contexts = [{"type": "text", "text": query}]
         for context in _contexts:
             contexts.append({"type": "document", "document": context})
-        return contexts
+
+        messages = [
+            {"role": "system", "content": self.prompt.format(language=language, intents=intents)},
+            {"role": "user", "content": contexts},
+        ]
+        return messages
 
     @weave.op()
     async def generate_response(
@@ -87,16 +97,14 @@ class QueryEnhanedResponseGenerator(weave.Model):
         language: str,
         intents: List[str],
     ) -> str:
-        contexts = self.generate_context(context)
+        messages = self.create_messages(query, context, language, intents)
         response = await self.client.chat(
-            preamble=self.prompt.format(language=language, intents=intents),
-            message=query,
+            messages=messages,
             model=self.model,
-            documents=contexts,
             temperature=0.1,
             max_tokens=2000,
         )
-        return response.text
+        return response.message.content[0].text
 
     @weave.op()
     async def predict(
