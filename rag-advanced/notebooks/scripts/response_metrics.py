@@ -172,6 +172,8 @@ async def call_cohere_with_retry(
     messages: List[Dict[str, str]],
     max_retries: int = 5,
 ) -> Dict[str, Any]:
+    response_text = ""
+
     for attempt in range(max_retries):
         try:
             response_text = await make_cohere_api_call(
