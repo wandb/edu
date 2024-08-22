@@ -1,11 +1,11 @@
 import os
 from typing import Dict, List
 
-import cohere
+import cohere # type: ignore
 import weave
 
 # Patch cohere to work with weave
-from weave.integrations.cohere import cohere_patcher
+from weave.integrations.cohere import cohere_patcher # type: ignore
 
 cohere_patcher.attempt_patch()
 

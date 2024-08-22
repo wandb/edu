@@ -395,7 +395,7 @@ async def evaluate_retrieval_with_llm(
     contexts: List[Dict[str, Any]],
     prompt_file: str = "prompts/retrieval_eval.json",
 ) -> Dict[str, Any]:
-    co_client = cohere.AsyncClient(api_key=os.environ["CO_API_KEY"])
+    co_client = cohere.AsyncClient(api_key=os.environ["COHERE_API_KEY"])
 
     # Load the prompt
     messages = json.load(open(prompt_file))

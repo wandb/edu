@@ -212,7 +212,7 @@ async def evaluate_correctness_using_llm_judge(
     model_output: str,
     prompt_file: str = "prompts/correctness_eval.json",
 ) -> Dict[str, Any]:
-    co_client = cohere.AsyncClient(api_key=os.environ["CO_API_KEY"])
+    co_client = cohere.AsyncClient(api_key=os.environ["COHERE_API_KEY"])
     messages = json.load(open(prompt_file))
     preamble = messages[0]["message"]
     chat_history = []
