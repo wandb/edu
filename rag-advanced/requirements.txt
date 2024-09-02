@@ -13,6 +13,4 @@ rouge>=1.0.1
 scikit-learn>=1.5.0
 scipy>=1.14.0
 tiktoken>=0.7.0
-wandb>=0.17.3
-weave>=0.50.6
 python-frontmatter>=1.1.0
