@@ -13,6 +13,7 @@ ranx>=0.3.19
 rouge>=1.0.1
 scikit-learn>=1.5.0
 bm25s>=0.1.10
+PyStemmer>=2.2.0.1
 scipy>=1.14.0
 tiktoken>=0.7.0
 python-frontmatter>=1.1.0
