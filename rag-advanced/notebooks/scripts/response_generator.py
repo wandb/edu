@@ -1,11 +1,10 @@
 import os
 from typing import Dict, List
 
-import cohere # type: ignore
+import cohere  # type: ignore
 import weave
 
-# Patch cohere to work with weave
-from weave.integrations.cohere import cohere_patcher # type: ignore
+from weave.integrations.cohere import cohere_patcher  # type: ignore
 
 cohere_patcher.attempt_patch()
 
@@ -23,23 +22,17 @@ class SimpleResponseGenerator(weave.Model):
         )
 
     @weave.op()
-    def generate_context(
-        self, context: List[Dict[str, any]]
-    ) -> List[Dict[str, any]]:
+    def generate_context(self, context: List[Dict[str, any]]) -> List[Dict[str, any]]:
         contexts = [
             {"source": item["source"], "text": item["text"]} for item in context
         ]
         return contexts
 
     def create_messages(self, query: str, context: List[Dict[str, any]]):
-        _contexts = self.generate_context(context)
-        contexts = [{"type": "text", "text": query}]
-        for context in _contexts:
-            contexts.append({"type": "document", "document": context})
-
+        documents = self.generate_context(context)
         messages = [
             {"role": "system", "content": self.prompt},
-            {"role": "user", "content": contexts},
+            {"role": "user", "content": query, "documents": documents},
         ]
         return messages
 
@@ -76,15 +69,24 @@ class QueryEnhanedResponseGenerator(weave.Model):
         ]
 
         return contexts
-    
-    def create_messages(self, query: str, context: List[Dict[str, any]], language: str, intents: List[str]):
+
+    def create_messages(
+        self,
+        query: str,
+        context: List[Dict[str, any]],
+        language: str,
+        intents: List[str],
+    ):
         _contexts = self.generate_context(context)
         contexts = [{"type": "text", "text": query}]
         for context in _contexts:
             contexts.append({"type": "document", "document": context})
 
         messages = [
-            {"role": "system", "content": self.prompt.format(language=language, intents=intents)},
+            {
+                "role": "system",
+                "content": self.prompt.format(language=language, intents=intents),
+            },
             {"role": "user", "content": contexts},
         ]
         return messages
