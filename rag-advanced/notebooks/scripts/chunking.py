@@ -3,8 +3,8 @@ from typing import Callable, List, Optional
 
 import numpy as np
 from blingfire import text_to_sentences
-from joblib import Parallel, delayed
 from sklearn.metrics.pairwise import cosine_distances
+from tqdm.notebook import tqdm
 
 from .embedding import sync_embed
 
@@ -58,7 +58,8 @@ class KamradtModifiedChunker:
     """
     A chunker that splits text into chunks of approximately a specified average size based on semantic similarity.
 
-    This implementation is adapted https://github.com/brandonstarxel/chunking_evaluation/blob/main/chunking_evaluation/chunking/kamradt_modified_chunker.py
+    This implementation is adapted from
+    https://github.com/brandonstarxel/chunking_evaluation/blob/main/chunking_evaluation/chunking/kamradt_modified_chunker.py
 
     """
 
@@ -214,9 +215,9 @@ def chunk_document(doc, chunk_size=CHUNK_SIZE):
 
 
 def chunk_documents(docs, chunk_size=CHUNK_SIZE):
-    # Use all available cores, you can adjust n_jobs as needed
-    chunked_data = Parallel(n_jobs=-1)(
-        delayed(chunk_document)(doc, chunk_size) for doc in docs
-    )
-    chunked_docs = [item for sublist in chunked_data for item in sublist]
+    chuker = partial(chunk_document, chunk_size=chunk_size)
+    chunked_data = map(chuker, docs)
+    chunked_docs = [
+        item for sublist in tqdm(chunked_data, total=len(docs)) for item in sublist
+    ]
     return chunked_docs

@@ -1,12 +1,14 @@
+from typing import Callable
+
 import bm25s
+import numpy as np
 import Stemmer
 import weave
 from scipy.spatial.distance import cdist
 from sklearn.feature_extraction.text import TfidfVectorizer
+
 from .embedding import sync_embed
 from .reranker import CohereReranker, FusionRanker
-from typing import Callable
-import numpy as np
 
 
 class TFIDFRetriever(weave.Model):
@@ -30,8 +32,8 @@ class TFIDFRetriever(weave.Model):
         for idx in top_k_indices:
             output.append(
                 {
-                    "source": self.data.rows[idx]["metadata"]["source"],
-                    "text": self.data.rows[idx]["cleaned_content"],
+                    "source": self.data[idx]["metadata"]["source"],
+                    "text": self.data[idx]["cleaned_content"],
                     "score": 1 - cosine_distances[idx],
                 }
             )
