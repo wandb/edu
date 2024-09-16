@@ -3,7 +3,6 @@ from typing import Dict, List
 
 import cohere  # type: ignore
 import weave
-
 from weave.integrations.cohere import cohere_patcher  # type: ignore
 
 cohere_patcher.attempt_patch()
