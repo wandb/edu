@@ -67,7 +67,6 @@ class QueryEnhanedResponseGenerator(weave.Model):
         contexts = [
             {"source": item["source"], "text": item["text"]} for item in context
         ]
-
         return contexts
 
     def create_messages(
@@ -77,17 +76,14 @@ class QueryEnhanedResponseGenerator(weave.Model):
         language: str,
         intents: List[str],
     ):
-        _contexts = self.generate_context(context)
-        contexts = [{"type": "text", "text": query}]
-        for context in _contexts:
-            contexts.append({"type": "document", "document": context})
+        documents = self.generate_context(context)
 
         messages = [
             {
                 "role": "system",
                 "content": self.prompt.format(language=language, intents=intents),
             },
-            {"role": "user", "content": contexts},
+            {"role": "user", "content": query, "documents": documents},
         ]
         return messages
 
