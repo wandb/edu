@@ -44,15 +44,6 @@ async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
     class IntentPrediction(BaseModel):
         intents: List[Intent]
 
-        # TODO: do we really need this validation?
-        # given I don't see this grounding in the system prompt!
-        # @field_validator("intents")
-        # def check_unique_intents(cls, v):
-        #     intent_set = set(intent.intent for intent in v)
-        #     if len(intent_set) != len(v):
-        #         raise ValueError("Intents must be unique")
-        #     return v
-
     cleaned_text = extract_json_from_markdown(response_text)
     parsed_response = json.loads(cleaned_text)
     validated_response = IntentPrediction(**parsed_response)
@@ -110,9 +101,7 @@ class QueryEnhancer(weave.Model):
         # load system prompt
         messages = json.load(open("prompts/search_query.json", "r"))
         # add user prompt (question)
-        messages.append(
-            {"role": "user", "content": f"## Question\n{query}"}
-        )
+        messages.append({"role": "user", "content": f"## Question\n{query}"})
 
         response = await co_client.chat(
             model="command-r-plus",
@@ -120,7 +109,8 @@ class QueryEnhancer(weave.Model):
             max_tokens=500,
             messages=messages,
         )
-        return response.message.content[0].text.splitlines()
+        search_queries = response.message.content[0].text.splitlines()
+        return list(filter(lambda x: x.strip(), search_queries))
 
     @weave.op()
     async def get_intent_prediction(
@@ -130,13 +120,15 @@ class QueryEnhancer(weave.Model):
     ) -> List[Dict[str, Any]]:
         co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
         messages = json.load(open(prompt_file))
-        messages.append({"role": "user", "content": f"<question>\n{question}\n</question>\n"})
+        messages.append(
+            {"role": "user", "content": f"<question>\n{question}\n</question>\n"}
+        )
 
         return await call_cohere_with_retry(co_client, messages)
 
     @weave.op()
     async def __call__(self, query: str) -> str:
-        language = detect_language(query.replace('\n', ' '))["lang"]
+        language = detect_language(query.replace("\n", " "))["lang"]
         search_queries = await self.generate_cohere_queries(query)
         intents = await self.get_intent_prediction(query)
         return {

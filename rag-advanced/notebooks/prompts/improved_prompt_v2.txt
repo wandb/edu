@@ -47,11 +47,11 @@ for epoch in range(num_epochs):
     loss = train_epoch()
     accuracy = evaluate_model()
     
-    wandb.log({
+    wandb.log({{
         "epoch": epoch,
         "loss": loss,
         "accuracy": accuracy
-    })
+    }})
 ```
 
 In this example, we're logging three metrics: the current epoch, the loss, and the accuracy [1]. You can log any number of metrics as key-value pairs in a dictionary.

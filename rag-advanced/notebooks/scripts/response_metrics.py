@@ -34,6 +34,8 @@ def normalize_text(text: str) -> str:
         str: The normalized text.
     """
     # Convert to lowercase
+    if text is None:
+        return "no output"
     text = text.lower()
     # Split on punctuation before removing it, ensuring numbers are not split
     text = re.sub(r"[^\w\s\d]", " ", text)
@@ -212,7 +214,14 @@ async def evaluate_correctness_using_llm_judge(
     messages = json.load(open(prompt_file))
     message_template = """<question>\n{question}\n</question><reference_answer>\n{reference_answer}\n</reference_answer>\n<generated_answer>\n{generated_answer}\n</generated_answer>"""
     messages.append(
-        {"role": "user", "content": message_template.format(question=question, reference_answer=answer, generated_answer=model_output)}
+        {
+            "role": "user",
+            "content": message_template.format(
+                question=question,
+                reference_answer=answer,
+                generated_answer=model_output,
+            ),
+        }
     )
 
     return await call_cohere_with_retry(co_client, messages)
