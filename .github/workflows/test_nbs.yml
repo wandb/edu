@@ -1,11 +1,11 @@
-name: Build and Test Locally
+name: Rag Course Test
 on: 
   workflow_dispatch: #allows repo admins to trigger this workflow from the Actions tab
     inputs:
       create_github_issue:
         type: boolean
         description: 'Create issues on failing notebooks'     
-        default: false
+        default: true
       notebooks_folder:
         type: choice
         description: 'folder of notebooks to test'
