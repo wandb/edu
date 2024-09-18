@@ -1,4 +1,5 @@
 wandb
+weave
 ipykernel
 jupyter
 instructor
@@ -7,3 +8,4 @@ pydantic
 graphviz
 spacy
 nltk
+pandas
