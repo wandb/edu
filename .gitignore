@@ -25,3 +25,6 @@ __pycache__/
 *$py.class
 
 .idea/
+
+# images for rag_advanced
+!rag-advanced/images/*.png
