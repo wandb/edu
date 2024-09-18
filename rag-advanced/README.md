@@ -1,10 +1,10 @@
-# Advanced RAG IRL
+# RAG++
 
-This repository contains the code for the [Advanced RAG IRL course](https://www.wandb.courses/courses/rag-in-production).
+This repository contains the code for the [Advanced RAG course](https://www.wandb.courses/courses/rag-in-production).
 
 # Course Overview
 
-- [] TODO: Add course overview
+Practical RAG techniques for engineers: learn production-ready solutions from industry experts to optimize performance, cut costs, and enhance the accuracy and relevance of your applications.
 
 ## Setup and Installation
 
