@@ -1,13 +1,34 @@
+"""
+This module contains the SimpleRAGPipeline and QueryEnhancedRAGPipeline classes for implementing RAG pipelines.
+"""
 import weave
 
 
 class SimpleRAGPipeline(weave.Model):
+    """
+    A simple RAG (Retrieval-Augmented Generation) pipeline.
+
+    Attributes:
+        retriever (weave.Model): The model used for retrieving relevant documents.
+        response_generator (weave.Model): The model used for generating responses.
+        top_k (int): The number of top documents to retrieve.
+    """
+
     retriever: weave.Model = None
     response_generator: weave.Model = None
     top_k: int = 5
 
     @weave.op()
     def predict(self, query: str):
+        """
+        Predicts a response based on the input query.
+
+        Args:
+            query (str): The input query string.
+
+        Returns:
+            The generated response based on the retrieved context.
+        """
         context = self.retriever.predict(query, self.top_k)
         return self.response_generator.predict(query, context)
 
@@ -43,6 +64,16 @@ INTENT_ACTIONS = {
 
 
 class QueryEnhancedRAGPipeline(weave.Model):
+    """
+    A Query-Enhanced Retrieval-Augmented Generation (RAG) pipeline.
+
+    Attributes:
+        query_enhancer (weave.Model): The model used for enhancing the input query.
+        retriever (weave.Model): The model used for retrieving relevant documents.
+        response_generator (weave.Model): The model used for generating responses.
+        top_k (int): The number of top documents to retrieve.
+    """
+
     query_enhancer: weave.Model = None
     retriever: weave.Model = None
     response_generator: weave.Model = None
@@ -50,6 +81,15 @@ class QueryEnhancedRAGPipeline(weave.Model):
 
     @weave.op()
     async def predict(self, query: str):
+        """
+        Predicts a response based on the enhanced input query.
+
+        Args:
+            query (str): The input query string.
+
+        Returns:
+            The generated response based on the retrieved context, language, and intent actions.
+        """
         # enhance the query
         enhanced_query = await self.query_enhancer.predict(query)
         user_query = enhanced_query["query"]
@@ -72,7 +112,6 @@ class QueryEnhancedRAGPipeline(weave.Model):
 
         language = enhanced_query["language"]
 
-        # run retrieval for multiple queries
         contexts = []
         if not avoid_retrieval:
             retriever_queries = enhanced_query["search_queries"]
@@ -81,7 +120,6 @@ class QueryEnhancedRAGPipeline(weave.Model):
                 context = self.retriever.predict(query, self.top_k)
                 contexts.append(context)
 
-        # deduplicate the contexts
         deduped = {}
         for context in contexts:
             for doc in context:

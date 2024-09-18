@@ -1,3 +1,7 @@
+"""
+This module contains functions and classes for splitting text into chunks based on sentence boundaries and semantic similarity.
+"""
+
 from functools import partial
 from typing import Callable, List, Optional
 
@@ -7,47 +11,58 @@ from sklearn.metrics.pairwise import cosine_distances
 from tqdm.notebook import tqdm
 
 from .embedding import sync_embed
+from .utils import length_function
 
 CHUNK_SIZE = 512
 
 
 def sentence_splitter(text: str) -> List[str]:
+    """
+    Splits the input text into sentences.
+
+    Args:
+        text (str): The input text to be split into sentences.
+
+    Returns:
+        List[str]: A list of sentences.
+    """
     return text_to_sentences(text).split("\n")
 
 
 def split_into_chunks(
     text: str, length_function: Callable[[str], int], max_tokens: int
 ) -> List[str]:
-    # Split the text into sentences
+    """
+    Splits the input text into chunks based on the specified maximum number of tokens.
+
+    Args:
+        text (str): The input text to be split into chunks.
+        length_function (Callable[[str], int]): A function that calculates the number of tokens in a given string.
+        max_tokens (int): The maximum number of tokens allowed in each chunk.
+
+    Returns:
+        List[str]: A list of text chunks.
+    """
     sentences = sentence_splitter(text)
 
-    # Get the number of tokens for each sentence
     n_tokens = [length_function("\n" + sentence) for sentence in sentences]
 
     chunks = []
     tokens_so_far = 0
     chunk = []
 
-    # Loop through the sentences and tokens joined together in a tuple
     for sentence, token in zip(sentences, n_tokens):
-        # If the number of tokens so far plus the number of tokens in the current sentence is greater
-        # than the max number of tokens, then add the chunk to the list of chunks and reset
-        # the chunk and tokens so far
         if tokens_so_far + token > max_tokens:
             chunks.append("\n".join(chunk))
             chunk = []
             tokens_so_far = 0
 
-        # If the number of tokens in the current sentence is greater than the max number of
-        # tokens, go to the next sentence
         if token > max_tokens:
             continue
 
-        # Otherwise, add the sentence to the chunk and add the number of tokens to the total
         chunk.append(sentence)
         tokens_so_far += token + 1
 
-    # Add any remaining chunk
     if chunk:
         chunks.append("\n".join(chunk))
 
@@ -60,7 +75,6 @@ class KamradtModifiedChunker:
 
     This implementation is adapted from
     https://github.com/brandonstarxel/chunking_evaluation/blob/main/chunking_evaluation/chunking/kamradt_modified_chunker.py
-
     """
 
     def __init__(
@@ -70,6 +84,15 @@ class KamradtModifiedChunker:
         embedding_function: Optional[Callable] = None,
         length_function: Optional[Callable] = None,
     ):
+        """
+        Initializes the KamradtModifiedChunker.
+
+        Args:
+            avg_chunk_size (int): The average size of each chunk.
+            min_chunk_size (int): The minimum size of each chunk.
+            embedding_function (Optional[Callable]): A function to compute embeddings for sentences.
+            length_function (Optional[Callable]): A function to compute the length of a sentence.
+        """
         self.splitter = partial(
             split_into_chunks,
             length_function=length_function,
@@ -86,6 +109,17 @@ class KamradtModifiedChunker:
         self.length_function = length_function
 
     def combine_sentences(self, sentences, buffer_size=1, sep="\n"):
+        """
+        Combines sentences with a buffer size.
+
+        Args:
+            sentences (list): List of sentences to combine.
+            buffer_size (int): The buffer size for combining sentences.
+            sep (str): The separator to use when combining sentences.
+
+        Returns:
+            list: List of sentences with combined sentences.
+        """
         n = len(sentences)
         for i in range(n):
             start = max(0, i - buffer_size)
@@ -98,8 +132,16 @@ class KamradtModifiedChunker:
         return sentences
 
     def calculate_cosine_distances(self, sentences):
+        """
+        Calculates cosine distances between combined sentences.
+
+        Args:
+            sentences (list): List of sentences with combined sentences.
+
+        Returns:
+            tuple: A tuple containing a list of distances and the updated sentences.
+        """
         if len(sentences) <= 1:
-            # Not enough sentences to calculate distances
             return [], sentences
 
         combined_sentences = [sentence["combined_sentence"] for sentence in sentences]
@@ -107,7 +149,6 @@ class KamradtModifiedChunker:
         embedding_matrix = np.array(embeddings)
 
         if embedding_matrix.shape[0] <= 1:
-            # Not enough embeddings to calculate distances
             return [], sentences
 
         distances = cosine_distances(
@@ -129,7 +170,6 @@ class KamradtModifiedChunker:
         Returns:
             list of str: The list of text chunks.
         """
-
         sentences_strips = self.splitter(text)
         if len(sentences_strips) <= 1:
             # Return the original text as a single chunk
@@ -149,14 +189,11 @@ class KamradtModifiedChunker:
         avg_chunk_size = self.avg_chunk_size
         number_of_cuts = total_tokens // avg_chunk_size
 
-        # Define threshold limits
         lower_limit = 0.0
         upper_limit = 1.0
 
-        # Convert distances to numpy array
         distances_np = np.array(distances)
 
-        # Binary search for threshold
         while upper_limit - lower_limit > 1e-6:
             threshold = (upper_limit + lower_limit) / 2.0
             num_points_above_threshold = np.sum(distances_np > threshold)
@@ -168,26 +205,19 @@ class KamradtModifiedChunker:
 
         indices_above_thresh = [i for i, x in enumerate(distances) if x > threshold]
 
-        # Initialize the start index
         start_index = 0
 
-        # Create a list to hold the grouped sentences
         chunks = []
 
-        # Iterate through the breakpoints to slice the sentences
         for index in indices_above_thresh:
-            # The end index is the current breakpoint
             end_index = index
 
-            # Slice the sentence_dicts from the current start index to the end index
             group = sentences[start_index : end_index + 1]
             combined_text = " ".join([d["sentence"] for d in group])
             chunks.append(combined_text)
 
-            # Update the start index for the next group
             start_index = index + 1
 
-        # The last group, if any sentences remain
         if start_index < len(sentences):
             combined_text = " ".join([d["sentence"] for d in sentences[start_index:]])
             chunks.append(combined_text)
@@ -196,7 +226,16 @@ class KamradtModifiedChunker:
 
 
 def chunk_document(doc, chunk_size=CHUNK_SIZE):
-    from scripts.utils import length_function
+    """
+    Chunks a single document into smaller pieces based on the specified chunk size.
+
+    Args:
+        doc (dict): The document to be chunked. It should contain 'parsed_content' and 'metadata'.
+        chunk_size (int): The desired size of each chunk. Defaults to CHUNK_SIZE.
+
+    Returns:
+        list: A list of dictionaries, each containing 'cleaned_content' and 'metadata' for each chunk.
+    """
 
     chunker = KamradtModifiedChunker(
         avg_chunk_size=chunk_size, length_function=length_function
@@ -215,6 +254,16 @@ def chunk_document(doc, chunk_size=CHUNK_SIZE):
 
 
 def chunk_documents(docs, chunk_size=CHUNK_SIZE):
+    """
+    Chunks a list of documents into smaller pieces based on the specified chunk size.
+
+    Args:
+        docs (list): A list of documents to be chunked. Each document should contain 'parsed_content' and 'metadata'.
+        chunk_size (int): The desired size of each chunk. Defaults to CHUNK_SIZE.
+
+    Returns:
+        list: A list of dictionaries, each containing 'cleaned_content' and 'metadata' for each chunk.
+    """
     chuker = partial(chunk_document, chunk_size=chunk_size)
     chunked_data = map(chuker, docs)
     chunked_docs = [

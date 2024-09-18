@@ -1,3 +1,6 @@
+"""
+This module contains operations for evaluating retrieval results using various metrics.
+"""
 import json
 import os
 from typing import Any, Dict, List
@@ -5,15 +8,12 @@ from typing import Any, Dict, List
 import cohere
 import numpy as np
 import weave
-from dotenv import load_dotenv
 from pydantic import BaseModel, field_validator
 
 from .utils import extract_json_from_markdown, make_cohere_api_call
 
-load_dotenv()
 
-
-@weave.op()
+@weave.op
 def compute_hit_rate(
     model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
@@ -33,12 +33,9 @@ def compute_hit_rate(
         float: The hit rate (precision).
 
     The hit rate (precision) measures the proportion of retrieved documents that are relevant.
-    It is calculated using the following formula:
 
-    \[ \text{Hit Rate (Precision)} = \frac{\text{Number of Relevant Documents Retrieved}}{\text{Total Number of Documents Retrieved}} \]
-
-    This metric is useful for assessing the accuracy of the retrieval system by determining the relevance of the retrieved documents.
-    ```
+    This metric is useful for assessing the accuracy of the retrieval system by determining the relevance of the
+    retrieved documents.
     """
     search_results = [doc["source"] for doc in model_output]
     relevant_sources = [
@@ -76,9 +73,6 @@ def compute_mrr(
         float: The MRR score for the given query.
 
     MRR measures the rank of the first relevant document in the result list.
-    It is calculated using the following formula:
-
-    \[ \text{MRR} = \frac{1}{\text{rank of first relevant document}} \]
 
     If no relevant document is found, MRR is 0.
 
@@ -100,7 +94,6 @@ def compute_mrr(
         return mrr_score / len(model_output)
 
 
-# NDCG (Normalized Discounted Cumulative Gain)
 @weave.op
 def compute_ndcg(
     model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
@@ -120,35 +113,29 @@ def compute_ndcg(
     Returns:
         float: The NDCG score for the given query.
     """
-    # Create a mapping of source to relevance
     relevance_map = {context["source"]: context["relevance"] for context in contexts}
 
     dcg = 0.0
     idcg = 0.0
 
-    # Calculate DCG
     for i, result in enumerate(model_output):
         rel = relevance_map.get(result["source"], 0)
         dcg += (2**rel - 1) / np.log2(i + 2)
 
-    # Calculate IDCG
     sorted_relevances = sorted(
         [context["relevance"] for context in contexts], reverse=True
     )
     for i, rel in enumerate(sorted_relevances):
         idcg += (2**rel - 1) / np.log2(i + 2)
 
-    # To avoid division by zero
     if idcg == 0:
         return 0.0
 
-    # Calculate nDCG
     ndcg = dcg / idcg
     return ndcg
 
 
-# MAP (Mean Average Precision)
-@weave.op()
+@weave.op
 def compute_map(
     model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
@@ -169,9 +156,7 @@ def compute_map(
 
     MAP provides a single-figure measure of quality across recall levels.
     For a single query, it's equivalent to the Average Precision (AP).
-    It's calculated using the following formula:
 
-    \[ \text{MAP} = \frac{\sum_{k=1}^n P(k) \times \text{rel}(k)}{\text{number of relevant documents}} \]
 
     Where:
     - n is the number of retrieved documents
@@ -199,7 +184,7 @@ def compute_map(
     return average_precision
 
 
-@weave.op()
+@weave.op
 def compute_precision(
     model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
@@ -219,9 +204,6 @@ def compute_precision(
         float: The Precision score for the given query.
 
     Precision measures the proportion of retrieved documents that are relevant.
-    It is calculated using the following formula:
-
-    \[ \text{Precision} = \frac{\text{Number of Relevant Documents Retrieved}}{\text{Total Number of Documents Retrieved}} \]
     """
     relevant_sources = {
         context["source"] for context in contexts if context["relevance"] != 0
@@ -237,7 +219,7 @@ def compute_precision(
 
 
 # Recall
-@weave.op()
+@weave.op
 def compute_recall(
     model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
@@ -257,9 +239,6 @@ def compute_recall(
         float: The Recall score for the given query.
 
     Recall measures the proportion of relevant documents that are retrieved.
-    It is calculated using the following formula:
-
-    \[ \text{Recall} = \frac{\text{Number of Relevant Documents Retrieved}}{\text{Total Number of Relevant Documents}} \]
     """
     relevant_sources = {
         context["source"] for context in contexts if context["relevance"] != 0
@@ -275,7 +254,7 @@ def compute_recall(
 
 
 # F1 Score
-@weave.op()
+@weave.op
 def compute_f1_score(
     model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
@@ -295,9 +274,6 @@ def compute_f1_score(
         float: The F1-Score for the given query.
 
     F1-Score is the harmonic mean of Precision and Recall.
-    It is calculated using the following formula:
-
-    \[ \text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} \]
     """
     precision = compute_precision(model_output, contexts)
     recall = compute_recall(model_output, contexts)
@@ -309,27 +285,82 @@ def compute_f1_score(
     return f1_score
 
 
-@weave.op()
+@weave.op
 async def parse_and_validate_response(
     response_text: str, num_contexts: int
 ) -> Dict[str, Any]:
-    """Parse and validate the response text."""
+    """
+    Parse and validate the response text.
+
+    Args:
+        response_text (str): The response text to be parsed and validated.
+        num_contexts (int): The expected number of contexts.
+
+    Returns:
+        Dict[str, Any]: The validated response as a dictionary.
+
+    Raises:
+        ValueError: If the relevance score is not 0, 1, or 2.
+        ValueError: If the IDs are not unique.
+        ValueError: If the number of scores does not match the number of contexts.
+    """
 
     class RelevanceScore(BaseModel):
+        """
+        A model representing a relevance score for a document.
+
+        Attributes:
+            id (int): The unique identifier for the document.
+            relevance (int): The relevance score of the document (0, 1, or 2).
+        """
+
         id: int
         relevance: int
 
         @field_validator("relevance")
         def check_relevance_range(cls, v):
+            """
+            Validate that the relevance score is within the acceptable range.
+
+            Args:
+                v (int): The relevance score to validate.
+
+            Returns:
+                int: The validated relevance score.
+
+            Raises:
+                ValueError: If the relevance score is not 0, 1, or 2.
+            """
             if v not in [0, 1, 2]:
                 raise ValueError(f"Relevance must be 0, 1, or 2. Got {v}")
             return v
 
     class RelevanceResponse(BaseModel):
+        """
+        A model representing the response containing relevance scores for documents.
+
+        Attributes:
+            final_scores (List[RelevanceScore]): A list of relevance scores for the documents.
+        """
+
         final_scores: List[RelevanceScore]
 
         @field_validator("final_scores")
         def check_unique_ids(cls, v, values, **kwargs):
+            """
+            Validate that the IDs in the final_scores list are unique.
+
+            Args:
+                v (List[RelevanceScore]): The list of relevance scores to validate.
+                values (dict): Additional values passed to the validator.
+                **kwargs: Additional keyword arguments.
+
+            Returns:
+                List[RelevanceScore]: The validated list of relevance scores.
+
+            Raises:
+                ValueError: If the IDs in the final_scores list are not unique.
+            """
             ids = [score.id for score in v]
             if len(ids) != len(set(ids)):
                 raise ValueError("IDs must be unique")
@@ -347,13 +378,28 @@ async def parse_and_validate_response(
     return validated_response.model_dump()
 
 
-@weave.op()
+@weave.op
 async def call_cohere_with_retry(
-    co_client: cohere.AsyncClient,
+    co_client: cohere.AsyncClientV2,
     messages: List[Dict[str, any]],
     num_contexts: int,
     max_retries: int = 5,
 ) -> Dict[str, Any]:
+    """
+    Call the Cohere API with retry logic.
+
+    Args:
+        co_client (cohere.AsyncClientV2): The Cohere client instance.
+        messages (List[Dict[str, any]]): The list of messages to send to the API.
+        num_contexts (int): The expected number of contexts.
+        max_retries (int, optional): The maximum number of retry attempts. Defaults to 5.
+
+    Returns:
+        Dict[str, Any]: The validated response from the API.
+
+    Raises:
+        Exception: If the maximum number of retries is reached without successful validation.
+    """
     for attempt in range(max_retries):
         response_text = ""
         try:
@@ -367,7 +413,12 @@ async def call_cohere_with_retry(
             return await parse_and_validate_response(response_text, num_contexts)
         except Exception as e:
             error_message = f"Your previous response resulted in an error: {str(e)}"
-            error_message = f"{error_message}\nPlease provide a valid JSON response based on the previous context and error message. Ensure that:\n1. The number of scores matches the number of contexts ({num_contexts}).\n2. The IDs are unique.\n3. The relevance scores are 0, 1, or 2.\n4. The response is a valid JSON object, not wrapped in markdown code blocks."
+            error_message = (
+                f"{error_message}\nPlease provide a valid JSON response based on the previous context and "
+                f"error message. Ensure that:\n1. The number of scores matches the number of contexts ({num_contexts})."
+                f"\n2. The IDs are unique.\n3. The relevance scores are 0, 1, or 2.\n4. The"
+                f"response is a valid JSON object, not wrapped in markdown code blocks."
+            )
 
             if attempt == max_retries - 1:
                 raise
@@ -382,18 +433,27 @@ async def call_cohere_with_retry(
     raise Exception("Max retries reached without successful validation")
 
 
-@weave.op()
+@weave.op
 async def evaluate_retrieval_with_llm(
     question: str,
     contexts: List[Dict[str, Any]],
     prompt_file: str = "prompts/retrieval_eval.json",
 ) -> Dict[str, Any]:
+    """
+    Evaluate the retrieval results using a language model.
+
+    Args:
+        question (str): The query or question for which the retrieval is being evaluated.
+        contexts (List[Dict[str, Any]]): A list of dictionaries representing the retrieved documents.
+        prompt_file (str, optional): The file path to the prompt template. Defaults to "prompts/retrieval_eval.json".
+
+    Returns:
+        Dict[str, Any]: The validated response from the language model.
+    """
     co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
 
-    # Load the prompt
     messages = json.load(open(prompt_file))
 
-    # Prepare the message
     message_template = """<question>
     {question}
     </question>
@@ -404,17 +464,27 @@ async def evaluate_retrieval_with_llm(
         context += f"<doc_{idx}>\n{doc['text']}\n</doc_{idx}>\n"
 
     messages.append(
-        {"role": "user", "content": message_template.format(question=question, context=context)}
+        {
+            "role": "user",
+            "content": message_template.format(question=question, context=context),
+        }
     )
 
-    # Make the API call with retry logic
-    return await call_cohere_with_retry(
-        co_client, messages, len(contexts)
-    )
+    return await call_cohere_with_retry(co_client, messages, len(contexts))
 
 
-@weave.op()
+@weave.op
 def compute_rank_score(scores: List[int]) -> float:
+    """
+    Calculate the rank score for a list of relevance scores.
+
+    Args:
+        scores (List[int]): A list of relevance scores where 2 indicates the highest relevance.
+
+    Returns:
+        float: The rank score, which is the reciprocal of the rank of the first highly relevant document (score of 2).
+               If no such document is found, returns 0.
+    """
     rank_score = 0
     for rank, result in enumerate(scores, 1):
         if result == 2:
@@ -423,10 +493,20 @@ def compute_rank_score(scores: List[int]) -> float:
     return rank_score
 
 
-@weave.op()
+@weave.op
 async def llm_retrieval_scorer(
-    model_output: Dict[str, Any], question: str
+    model_output: List[Dict[str, Any]], question: str
 ) -> Dict[str, float]:
+    """
+    Evaluate the retrieval results using a language model and compute relevance scores.
+
+    Args:
+        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        question (str): The query or question for which the retrieval is being evaluated.
+
+    Returns:
+        Dict[str, float]: A dictionary containing the mean relevance score and the relevance rank score.
+    """
     scores = await evaluate_retrieval_with_llm(question, model_output)
     relevance_scores = [item["relevance"] for item in scores["final_scores"]]
     mean_relevance = sum(relevance_scores) / len(model_output)

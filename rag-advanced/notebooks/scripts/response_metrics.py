@@ -1,3 +1,6 @@
+"""
+This module contains functions for evaluating the correctness of model responses using various metrics.
+"""
 import difflib
 import json
 import os
@@ -8,7 +11,6 @@ from typing import Any, Dict, List
 import cohere
 import Levenshtein
 import weave
-from dotenv import load_dotenv
 from nltk import word_tokenize
 from nltk.corpus import wordnet as wn
 from nltk.translate import meteor
@@ -17,8 +19,6 @@ from pydantic import BaseModel, field_validator
 from rouge import Rouge
 
 from .utils import extract_json_from_markdown, make_cohere_api_call
-
-load_dotenv()
 
 wn.ensure_loaded()
 
@@ -37,15 +37,13 @@ def normalize_text(text: str) -> str:
     if text is None:
         return "no output"
     text = text.lower()
-    # Split on punctuation before removing it, ensuring numbers are not split
     text = re.sub(r"[^\w\s\d]", " ", text)
     text = text.translate(str.maketrans("", "", string.punctuation))
-    # Remove extra whitespace
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
-@weave.op()
+@weave.op
 def compute_diff(model_output: str, answer: str) -> float:
     """
     Compute the similarity ratio between the normalized model output and the expected answer.
@@ -62,7 +60,7 @@ def compute_diff(model_output: str, answer: str) -> float:
     return difflib.SequenceMatcher(None, norm_output, norm_answer).ratio()
 
 
-@weave.op()
+@weave.op
 def compute_levenshtein(model_output: str, answer: str) -> float:
     """
     Compute the Levenshtein ratio between the normalized model output and the answer.
@@ -79,7 +77,7 @@ def compute_levenshtein(model_output: str, answer: str) -> float:
     return Levenshtein.ratio(norm_output, norm_answer)
 
 
-@weave.op()
+@weave.op
 def compute_rouge(model_output: str, answer: str) -> float:
     """
     Compute the ROUGE-L F1 score between the normalized model output and the reference answer.
@@ -98,7 +96,7 @@ def compute_rouge(model_output: str, answer: str) -> float:
     return scores[0]["rouge-l"]["f"]
 
 
-@weave.op()
+@weave.op
 def compute_bleu(model_output: str, answer: str) -> float:
     """
     Compute the BLEU score between the normalized model output and the reference answer.
@@ -141,9 +139,20 @@ def compute_meteor(model_output: str, answer: str) -> float:
     return meteor_score
 
 
-@weave.op()
+@weave.op
 async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
-    """Parse and validate the response text."""
+    """
+    Parse and validate the response text to ensure it meets the expected format.
+
+    Args:
+        response_text (str): The response text to be parsed and validated.
+
+    Returns:
+        Dict[str, Any]: The validated response as a dictionary.
+
+    Raises:
+        ValueError: If the 'final_score' is not in [0, 1, 2] or if the 'decision' is not 'correct' or 'incorrect'.
+    """
 
     class CorrectnessScore(BaseModel):
         reason: str
@@ -168,12 +177,26 @@ async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
     return validated_response.model_dump()
 
 
-@weave.op()
+@weave.op
 async def call_cohere_with_retry(
-    co_client: cohere.AsyncClient,
+    co_client: cohere.AsyncClientV2,
     messages: List[Dict[str, str]],
     max_retries: int = 5,
 ) -> Dict[str, Any]:
+    """
+    Call the Cohere API with retry logic.
+
+    Args:
+        co_client (cohere.AsyncClient): The Cohere asynchronous client.
+        messages (List[Dict[str, str]]): The list of messages to send to the Cohere API.
+        max_retries (int, optional): The maximum number of retry attempts. Defaults to 5.
+
+    Returns:
+        Dict[str, Any]: The parsed and validated response from the Cohere API.
+
+    Raises:
+        Exception: If the maximum number of retries is reached without successful validation.
+    """
     response_text = ""
 
     for attempt in range(max_retries):
@@ -188,7 +211,11 @@ async def call_cohere_with_retry(
             return await parse_and_validate_response(response_text)
         except Exception as e:
             error_message = f"Your previous response resulted in an error:\n{str(e)}"
-            error_message = f"{error_message}\nEnsure that:\n1. The 'final_score' is 0, 1, or 2.\n2. The 'decision' is either 'correct' or 'incorrect'.\n3. The 'reason' field is included.\n4. The response is a valid JSON object, not wrapped in markdown code blocks."
+            error_message = (
+                f"{error_message}\nEnsure that:\n1. The 'final_score' is 0, 1, or 2.\n2. The 'decision' "
+                f"is either 'correct' or 'incorrect'.\n3. The 'reason' field is included.\n4. The "
+                f"response is a valid JSON object, not wrapped in markdown code blocks."
+            )
 
             if attempt == max_retries - 1:
                 raise
@@ -203,16 +230,29 @@ async def call_cohere_with_retry(
     raise Exception("Max retries reached without successful validation")
 
 
-@weave.op()
+@weave.op
 async def evaluate_correctness_using_llm_judge(
     question: str,
     answer: str,
     model_output: str,
     prompt_file: str = "prompts/correctness_eval.json",
 ) -> Dict[str, Any]:
+    """
+    Evaluate the correctness of the model output using a language model judge.
+
+    Args:
+        question (str): The question posed to the model.
+        answer (str): The reference answer.
+        model_output (str): The output generated by the model.
+        prompt_file (str, optional): The file containing the prompt for the language model. Defaults to "prompts/correctness_eval.json".
+
+    Returns:
+        Dict[str, Any]: The evaluation result containing the final score and decision.
+    """
     co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
     messages = json.load(open(prompt_file))
-    message_template = """<question>\n{question}\n</question><reference_answer>\n{reference_answer}\n</reference_answer>\n<generated_answer>\n{generated_answer}\n</generated_answer>"""
+    message_template = """<question>\n{question}\n</question><reference_answer>\n{
+    reference_answer}\n</reference_answer>\n<generated_answer>\n{generated_answer}\n</generated_answer>"""
     messages.append(
         {
             "role": "user",
@@ -227,10 +267,21 @@ async def evaluate_correctness_using_llm_judge(
     return await call_cohere_with_retry(co_client, messages)
 
 
-@weave.op()
+@weave.op
 async def llm_response_scorer(
     model_output: str, question: str, answer: str
 ) -> Dict[str, Any]:
+    """
+    Evaluate the correctness of the model output using a language model judge.
+
+    Args:
+        model_output (str): The output generated by the model.
+        question (str): The question posed to the model.
+        answer (str): The reference answer.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the final score and a boolean indicating correctness.
+    """
     evaluation_result = await evaluate_correctness_using_llm_judge(
         question, answer, model_output
     )
@@ -246,7 +297,6 @@ NLP_METRICS = [
     compute_levenshtein,
     compute_rouge,
     compute_bleu,
-    # compute_meteor, # TODO: fix this metric
 ]
 
 LLM_METRICS = [
