@@ -1,0 +1,51 @@
+name: Rag Course Test
+on: 
+  workflow_dispatch: #allows repo admins to trigger this workflow from the Actions tab
+    inputs:
+      create_github_issue:
+        type: boolean
+        description: 'Create issues on failing notebooks'     
+        default: true
+      notebooks_folder:
+        type: choice
+        description: 'folder of notebooks to test'
+        options: 
+          - './rag-advanced/notebooks'
+        default: './rag-advanced/notebooks'
+
+defaults:
+  run:
+    shell: bash  # default shell is sh
+
+
+jobs:
+  run-tests:
+    container:
+      image: us-docker.pkg.dev/colab-images/public/runtime:latest
+      options: --shm-size "16gb" --entrypoint /bin/bash
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+      TF_CPP_MIN_LOG_LEVEL: 3
+    runs-on: ubuntu-latest
+    steps:
+    - name: setup
+      run: |
+        echo "Installing dependencies"
+        python3 -m pip install -U requests wandb ghapi simple_parsing weave
+        python3 -m pip install git+https://github.com/wandb/nb_helpers
+        echo "Add current folder to git safe"
+        git config --global --add safe.directory $(pwd)
+    - name: log-to-wandb
+      run: |
+        wandb login
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: run-tests
+      env:
+        CONTEXT_GITHUB: ${{ toJson(github) }}
+      run: |
+        cp .github/workflows/run_one.py ${{ github.event.inputs.notebooks_folder }}/run_one.py
+        cd ${{ github.event.inputs.notebooks_folder }}
+        for nb_name in $(ls *.ipynb); do
+          python3 run_one.py --nb_name="/$nb_name" --create_github_issue=${{ github.event.inputs.create_github_issue }}
+        done
