@@ -1,5 +1,5 @@
 weave>=0.51.2
-cohere>=5.5.8
+cohere>=5.9.4
 beautifulsoup4>=4.12.3
 blingfire>=0.1.8
 levenshtein>=0.25.1
