@@ -1,6 +1,7 @@
 """
 A module containing response generators using Cohere's API for generating responses.
 """
+
 import os
 from typing import Dict, List
 
@@ -65,8 +66,9 @@ class SimpleResponseGenerator(weave.Model):
         documents = self.generate_context(context)
         messages = [
             {"role": "system", "content": self.prompt},
-            {"role": "user", "content": query, "documents": documents},
+            {"role": "user", "content": query},
         ]
+        documents = documents
         return messages
 
     @weave.op()
@@ -139,7 +141,8 @@ class QueryEnhanedResponseGenerator(weave.Model):
             List[Dict[str, any]]: A list of dictionaries with 'source' and 'text' keys.
         """
         contexts = [
-            {"source": item["source"], "text": item["text"]} for item in context
+            {"data": {"source": item["source"], "text": item["text"]}}
+            for item in context
         ]
         return contexts
 
@@ -169,8 +172,9 @@ class QueryEnhanedResponseGenerator(weave.Model):
                 "role": "system",
                 "content": self.prompt.format(language=language, intents=intents),
             },
-            {"role": "user", "content": query, "documents": documents},
+            {"role": "user", "content": query},
         ]
+        documents = documents
         return messages
 
     @weave.op()
