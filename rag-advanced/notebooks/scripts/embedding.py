@@ -53,9 +53,12 @@ class EmbeddingFunction:
         if isinstance(texts, str):
             texts = [texts]
         response = await self.client.embed(
-            texts=texts, model=self.embedding_model, input_type=input_type
+            texts=texts,
+            model=self.embedding_model,
+            input_type=input_type,
+            embedding_types=["float"],
         )
-        return response.embeddings
+        return response.embeddings.float
 
     async def embed_texts(
         self, texts: TextType, input_type: str = "search_document"
