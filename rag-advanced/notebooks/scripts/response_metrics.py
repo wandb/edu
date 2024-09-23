@@ -251,8 +251,8 @@ async def evaluate_correctness_using_llm_judge(
     """
     co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
     messages = json.load(open(prompt_file))
-    message_template = """<question>\n{question}\n</question><reference_answer>\n{
-    reference_answer}\n</reference_answer>\n<generated_answer>\n{generated_answer}\n</generated_answer>"""
+    message_template = """<question>\n{question}\n</question><reference_answer>\n
+    {reference_answer}\n</reference_answer>\n<generated_answer>\n{generated_answer}\n</generated_answer>"""
     messages.append(
         {
             "role": "user",
