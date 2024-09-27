@@ -48,7 +48,8 @@ class SimpleResponseGenerator(weave.Model):
             List[Dict[str, any]]: A list of dictionaries with 'source' and 'text' keys.
         """
         contexts = [
-            {"source": item["source"], "text": item["text"]} for item in context
+            {"data": {"source": item["source"], "text": item["text"]}}
+            for item in context
         ]
         return contexts
 
@@ -81,7 +82,7 @@ class SimpleResponseGenerator(weave.Model):
             str: The generated response from the chat model.
         """
         documents = self.generate_context(context)
-        messages = self.create_messages(query, context)
+        messages = self.create_messages(query)
         response = self.client.chat(
             messages=messages,
             model=self.model,
