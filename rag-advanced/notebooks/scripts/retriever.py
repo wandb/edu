@@ -109,7 +109,7 @@ class BM25Retriever(weave.Model):
         self.data = data
         corpus = [doc["cleaned_content"] for doc in data]
 
-        corpus_tokens = bm25s.tokenize(corpus)
+        corpus_tokens = bm25s.tokenize(corpus, show_progress=False)
 
         self.index.index(corpus_tokens, show_progress=False)
 
@@ -125,7 +125,7 @@ class BM25Retriever(weave.Model):
         Returns:
             list: A list of dictionaries containing the source, text, and score of the top-k results.
         """
-        query_tokens = bm25s.tokenize(query)
+        query_tokens = bm25s.tokenize(query, show_progress=False)
         # Get top-k results as a tuple of (doc ids, scores). Both are arrays of shape (n_queries, k)
         results, scores = self.index.retrieve(
             query_tokens, corpus=self.data, k=k, show_progress=False
