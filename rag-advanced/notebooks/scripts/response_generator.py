@@ -52,23 +52,20 @@ class SimpleResponseGenerator(weave.Model):
         ]
         return contexts
 
-    def create_messages(self, query: str, context: List[Dict[str, any]]):
+    def create_messages(self, query: str):
         """
-        Create a list of messages for the chat model based on the query and context.
+        Create a list of messages for the chat model based on the query.
 
         Args:
             query (str): The user's query.
-            context (List[Dict[str, any]]): A list of dictionaries containing context data.
 
         Returns:
             List[Dict[str, any]]: A list of messages formatted for the chat model.
         """
-        documents = self.generate_context(context)
         messages = [
             {"role": "system", "content": self.prompt},
             {"role": "user", "content": query},
         ]
-        documents = documents
         return messages
 
     @weave.op()
@@ -83,12 +80,14 @@ class SimpleResponseGenerator(weave.Model):
         Returns:
             str: The generated response from the chat model.
         """
+        documents = self.generate_context(context)
         messages = self.create_messages(query, context)
         response = self.client.chat(
             messages=messages,
             model=self.model,
             temperature=0.1,
             max_tokens=2000,
+            documents=documents,
         )
         return response.message.content[0].text
 
@@ -109,7 +108,7 @@ class SimpleResponseGenerator(weave.Model):
 
 class QueryEnhanedResponseGenerator(weave.Model):
     """
-    A response generator model that enhances queries with additional context, language, and intents.
+    A response generator model that enhances queries with additional, language, and intents.
 
     Attributes:
         model (str): The model name to be used for generating responses.
@@ -119,7 +118,7 @@ class QueryEnhanedResponseGenerator(weave.Model):
 
     model: str
     prompt: str
-    client: cohere.AsyncClient = None
+    client: cohere.AsyncClientV2 = None
 
     def __init__(self, **kwargs):
         """
@@ -149,7 +148,6 @@ class QueryEnhanedResponseGenerator(weave.Model):
     def create_messages(
         self,
         query: str,
-        context: List[Dict[str, any]],
         language: str,
         intents: List[str],
     ):
@@ -158,14 +156,12 @@ class QueryEnhanedResponseGenerator(weave.Model):
 
         Args:
             query (str): The user's query.
-            context (List[Dict[str, any]]): A list of dictionaries containing context data.
             language (str): The language to be used in the response.
             intents (List[str]): A list of intents to be considered in the response.
 
         Returns:
             List[Dict[str, any]]: A list of messages formatted for the chat model.
         """
-        documents = self.generate_context(context)
 
         messages = [
             {
@@ -174,7 +170,6 @@ class QueryEnhanedResponseGenerator(weave.Model):
             },
             {"role": "user", "content": query},
         ]
-        documents = documents
         return messages
 
     @weave.op()
@@ -197,12 +192,14 @@ class QueryEnhanedResponseGenerator(weave.Model):
         Returns:
             str: The generated response from the chat model.
         """
-        messages = self.create_messages(query, context, language, intents)
+        documents = self.generate_context(context)
+        messages = self.create_messages(query, language, intents)
         response = await self.client.chat(
             messages=messages,
             model=self.model,
             temperature=0.1,
             max_tokens=2000,
+            documents=documents,
         )
         return response.message.content[0].text
 
