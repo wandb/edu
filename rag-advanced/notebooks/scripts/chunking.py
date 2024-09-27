@@ -6,7 +6,7 @@ from functools import partial
 from typing import Callable, List, Optional
 
 import numpy as np
-from blingfire import text_to_sentences
+from nltk import sent_tokenize
 from sklearn.metrics.pairwise import cosine_distances
 from tqdm.notebook import tqdm
 
@@ -26,7 +26,7 @@ def sentence_splitter(text: str) -> List[str]:
     Returns:
         List[str]: A list of sentences.
     """
-    return text_to_sentences(text).split("\n")
+    return sent_tokenize(text)
 
 
 def split_into_chunks(
