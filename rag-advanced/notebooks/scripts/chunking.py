@@ -5,6 +5,7 @@ This module contains functions and classes for splitting text into chunks based 
 from functools import partial
 from typing import Callable, List, Optional
 
+import nltk
 import numpy as np
 from nltk import sent_tokenize
 from sklearn.metrics.pairwise import cosine_distances
@@ -13,6 +14,7 @@ from tqdm.notebook import tqdm
 from .embedding import sync_embed
 from .utils import length_function
 
+nltk.download("punkt")
 CHUNK_SIZE = 512
 
 
