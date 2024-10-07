@@ -1,0 +1,84 @@
+1
+00:00:00,000 --> 00:00:02,000
+Selecting the right vector store is also very important.
+
+2
+00:00:02,000 --> 00:00:05,000
+Usually the likes of Chroma and Weaviate are all you need.
+
+3
+00:00:05,000 --> 00:00:08,000
+In wandbot, when we switched from FAISS to Chroma,
+
+4
+00:00:08,000 --> 00:00:10,000
+we got a massive speed boost.
+
+5
+00:00:10,000 --> 00:00:12,000
+This was mostly coming from the fact
+
+6
+00:00:12,000 --> 00:00:15,000
+that we were able to do efficient metadata filtering.
+
+7
+00:00:15,000 --> 00:00:17,000
+Note that for most applications,
+
+8
+00:00:17,000 --> 00:00:19,000
+fancy vector store is not necessary.
+
+9
+00:00:19,000 --> 00:00:21,000
+Vector stores are usually fast,
+
+10
+00:00:21,000 --> 00:00:23,000
+and super fast vector stores gain their speed
+
+11
+00:00:23,000 --> 00:00:25,000
+at the cost of recall.
+
+12
+00:00:25,000 --> 00:00:28,000
+For most applications like RAG, recall is more important.
+
+13
+00:00:29,000 --> 00:00:32,000
+For wandbot, we used in-memory vector store
+
+14
+00:00:32,000 --> 00:00:33,000
+to lower latency,
+
+15
+00:00:33,000 --> 00:00:35,000
+but note that this was only possible
+
+16
+00:00:35,000 --> 00:00:38,000
+because the total size of the documents to index
+
+17
+00:00:38,000 --> 00:00:39,000
+wasn't that huge.
+
+18
+00:00:39,000 --> 00:00:42,000
+And many applications will fall in this bracket.
+
+19
+00:00:43,000 --> 00:00:46,000
+However, using dedicated cloud managed DBs
+
+20
+00:00:46,000 --> 00:00:49,000
+make the application overall easy to manage
+
+21
+00:00:49,000 --> 00:00:50,000
+and easy to configure.
+

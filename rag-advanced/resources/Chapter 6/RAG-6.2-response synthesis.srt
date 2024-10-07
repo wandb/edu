@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:04,000
+Let's kick things off by understanding response synthesis and prompting.
+
+2
+00:00:04,000 --> 00:00:08,000
+Think of response synthesis as the translator in your RAG system.
+
+3
+00:00:08,000 --> 00:00:12,000
+It takes the raw data and transforms it into a user-friendly answer.
+
+4
+00:00:12,000 --> 00:00:16,000
+It's the bridge between what your system retrieves and what the user sees.
+
+5
+00:00:16,000 --> 00:00:20,000
+Now, prompting is like giving your LLM a really good instruction manual.
+
+6
+00:00:20,000 --> 00:00:25,000
+It guides the LLM's behavior, ensuring that it generates relevant and friendly responses.
+
+7
+00:00:26,000 --> 00:00:30,000
+In wandbot, we've seen firsthand how crucial these elements are.
+
+8
+00:00:30,000 --> 00:00:33,000
+The beauty of effective prompting is its versatility.
+
+9
+00:00:33,000 --> 00:00:37,000
+It allows RAG systems like wandbot to handle a wide range of queries,
+
+10
+00:00:37,000 --> 00:00:41,000
+ranging from simple questions to complex technical issues.
+

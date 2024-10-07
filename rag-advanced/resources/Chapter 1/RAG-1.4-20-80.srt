@@ -1,0 +1,136 @@
+1
+00:00:00,000 --> 00:00:05,000
+Let's talk about a key principle in our development of wandbot, the 80-20 rule.
+
+2
+00:00:05,000 --> 00:00:11,000
+We found that about 80% of user queries can be resolved using just 20% of our available
+
+3
+00:00:11,000 --> 00:00:12,000
+information.
+
+4
+00:00:12,000 --> 00:00:14,000
+So how do we apply this to building our RAG system?
+
+5
+00:00:14,000 --> 00:00:16,000
+Here's our approach.
+
+6
+00:00:16,000 --> 00:00:23,000
+First, we prioritize high-impact content, focusing on the most critical 20% of our documentation.
+
+7
+00:00:23,000 --> 00:00:29,000
+We zero in on common queries, optimizing for the 20% that represents 80% of our users'
+
+8
+00:00:29,000 --> 00:00:30,000
+queries.
+
+9
+00:00:30,000 --> 00:00:35,000
+We believe in iterative improvement, tackling the most impactful problems first.
+
+10
+00:00:35,000 --> 00:00:41,000
+And we are always mindful of technical debt, balancing quick fixes with long-term maintainability.
+
+11
+00:00:41,000 --> 00:00:45,000
+Now some level of hallucination is unavoidable in LLM-based systems.
+
+12
+00:00:45,000 --> 00:00:51,000
+That's why we focus on addressing issues with the most frequent and impactful queries first.
+
+13
+00:00:51,000 --> 00:00:55,000
+Remember, the goal isn't perfection, it's excellence.
+
+14
+00:00:55,000 --> 00:00:59,000
+By focusing on what matters most, we can create a system that delivers outstanding results
+
+15
+00:00:59,000 --> 00:01:04,000
+for majority of use cases while continuously improving over time.
+
+16
+00:01:04,000 --> 00:01:08,000
+This approach has been key to wandbot's success, and it's a principle you can apply to your
+
+17
+00:01:08,000 --> 00:01:13,000
+own RAG projects to maximize impact and efficiency.
+
+18
+00:01:13,000 --> 00:01:17,000
+Balancing risks and rewards in AI-powered systems is a bit like walking a tightrope.
+
+19
+00:01:17,000 --> 00:01:21,000
+Our experience with wandbot has shown us that when done right, the payoff can be huge.
+
+20
+00:01:21,000 --> 00:01:26,000
+We rolled out wandbot in stages, starting small with free users on Discord and then expanding
+
+21
+00:01:26,000 --> 00:01:29,000
+to chat and email support.
+
+22
+00:01:29,000 --> 00:01:33,000
+This allowed us to get real feedback and fine-tune the system without too much pressure.
+
+23
+00:01:33,000 --> 00:01:38,000
+We tackled challenges like inaccurate responses by adding source citations and refreshing
+
+24
+00:01:38,000 --> 00:01:40,000
+our content regularly.
+
+25
+00:01:40,000 --> 00:01:43,000
+To address privacy concerns, we anonymized user data.
+
+26
+00:01:43,000 --> 00:01:47,000
+And to address the lack of human touch, we ensured that customers have a clear path to
+
+27
+00:01:47,000 --> 00:01:49,000
+get human help when needed.
+
+28
+00:01:49,000 --> 00:01:51,000
+Now let's talk about rewards.
+
+29
+00:01:51,000 --> 00:01:54,000
+We've seen significant improvements to user satisfaction.
+
+30
+00:01:54,000 --> 00:01:58,000
+People love instant and accurate answers to their questions.
+
+31
+00:01:58,000 --> 00:02:01,000
+Our support team's workload has decreased significantly.
+
+32
+00:02:01,000 --> 00:02:07,000
+And for our global users, it's like having a 24-7 Weights & Biases expert at their fingertips.
+
+33
+00:02:07,000 --> 00:02:11,000
+The bottom line is, wandbot has shown us that with careful planning and constant tweaking,
+
+34
+00:02:11,000 --> 00:02:16,000
+a RAG system can greatly enhance customer assistance and keep risks at a check.
+

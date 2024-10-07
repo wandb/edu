@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:05,000
+In order to handle complex queries, we have a few strategies collectively called query translation.
+
+2
+00:00:05,000 --> 00:00:12,000
+The basic idea is to modify the query such that it can improve the recall of the retrieval and in-process help answer complex queries.
+
+3
+00:00:12,000 --> 00:00:16,000
+Depending on the use case, we can consider the following strategies.
+
+4
+00:00:16,000 --> 00:00:22,000
+We can use an LLM to rewrite the original query into multiple similar queries with slight modification.
+
+5
+00:00:22,000 --> 00:00:25,000
+This can help improve the misalignment problem.
+
+6
+00:00:26,000 --> 00:00:32,000
+Another strategy is to decompose the user query into smaller or simpler queries called sub-queries.
+
+7
+00:00:32,000 --> 00:00:38,000
+The query enhancer, Bharat discussed in chapter 4, uses this strategy. This can help answer complex queries.
+
+8
+00:00:38,000 --> 00:00:47,000
+Another idea is to convert the query to a high-level abstract query, retrieve for it, and generate an abstract response.
+
+9
+00:00:47,000 --> 00:00:51,000
+Then use this abstract answer in documents to reason about the original query.
+
+10
+00:00:51,000 --> 00:00:57,000
+This method can be useful if you care a lot about the factual consistency of the response.
+
+11
+00:00:57,000 --> 00:01:01,000
+Let's look at the retrieval steps for one such query translation strategy.
+
+12
+00:01:01,000 --> 00:01:07,000
+In the last chapter, query enhancer decomposed the query into sub-queries and then retrieved for all the sub-queries together.
+
+13
+00:01:07,000 --> 00:01:11,000
+Alternatively, we can also retrieve sequentially.
+
+14
+00:01:11,000 --> 00:01:16,000
+We first use an LLM to figure out intermediate sub-problems that can solve the main question.
+
+15
+00:01:16,000 --> 00:01:23,000
+We sequentially retrieve for one sub-problem, generate an answer for it, and do it sequentially till all the sub-problems are answered.
+
+16
+00:01:23,000 --> 00:01:27,000
+We can then use these intermediate answers to solve the main question.
+

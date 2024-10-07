@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:05,000
+Hello and welcome to chapter 4 of our course, where we will be exploring query enhancement.
+
+2
+00:00:05,000 --> 00:00:09,000
+In this chapter, we'll discuss some powerful tools and techniques to enrich user queries for our RAG
+
+3
+00:00:09,000 --> 00:00:15,000
+systems. Query enhancement gives a RAG system a deep understanding of user intentions. It allows
+
+4
+00:00:15,000 --> 00:00:20,000
+your system to grasp the real meaning and intentions behind each query. We'll give you
+
+5
+00:00:20,000 --> 00:00:25,000
+the techniques to improve how a RAG system interprets and responds to user queries.
+
+6
+00:00:25,000 --> 00:00:30,000
+So let's get started. By the end of this chapter, you will have a comprehensive understanding of
+
+7
+00:00:30,000 --> 00:00:35,000
+query enhancement and its significance in RAG systems. We'll dive into four key techniques
+
+8
+00:00:35,000 --> 00:00:39,000
+that can significantly improve query processing capabilities. These aren't just theoretical
+
+9
+00:00:39,000 --> 00:00:44,000
+concepts. We'll examine their practical applications through our wandbot example.
+
+10
+00:00:44,000 --> 00:00:49,000
+We'll also share some best practices to effectively implement query enhancement in your
+
+11
+00:00:49,000 --> 00:00:54,000
+own RAG systems. This knowledge will be instrumental in enhancing a RAG system's capabilities.
+
+12
+00:00:55,000 --> 00:01:00,000
+So let's begin our exploration of query enhancement and its potential to elevate RAG performance.
+

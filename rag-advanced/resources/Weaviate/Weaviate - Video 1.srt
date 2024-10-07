@@ -1,0 +1,180 @@
+1
+00:00:00,000 --> 00:00:05,000
+Hi everyone, I'm Charles from Weaviate and in this section I'm going to be covering how to build
+
+2
+00:00:06,000 --> 00:00:12,000
+production-ready RAG applications with Weaviate back to database, as well as how to optimize your
+
+3
+00:00:12,000 --> 00:00:18,000
+search and increase the quality using our built-in hybrid search functionality. And finally we're
+
+4
+00:00:18,000 --> 00:00:23,000
+going to cover how to use Cohere's re-ranker to improve the final quality of your results using
+
+5
+00:00:23,000 --> 00:00:29,000
+Weaviate. As your use case expands from a POC stage to a fully fledged application, the question
+
+6
+00:00:29,000 --> 00:00:34,000
+of how to make it ready for production scale will likely come to mind. Weaviate is designed to
+
+7
+00:00:34,000 --> 00:00:38,000
+optimize the storage and querying of unstructured data to allow fast and efficient retrieval of
+
+8
+00:00:38,000 --> 00:00:43,000
+similar objects and most importantly it enables users to quickly build AI native applications
+
+9
+00:00:43,000 --> 00:00:49,000
+with a rich ecosystem of tooling and services. So let's jump in. So here to begin with I've just
+
+10
+00:00:49,000 --> 00:00:56,000
+imported my Weaviate Python client as well as Weave which we'll be using to fetch the data set
+
+11
+00:00:56,000 --> 00:01:01,000
+from the pre-processed data set from the previous sections. We're using Weaviate Cloud to streamline
+
+12
+00:01:01,000 --> 00:01:06,000
+setting up Weaviate. This Weaviate Cloud is built on top of Weaviate's core open source database
+
+13
+00:01:06,000 --> 00:01:10,000
+and by using Weaviate Cloud for building our application we don't need to worry about hosting
+
+14
+00:01:10,000 --> 00:01:16,000
+or infrastructure setup, we get to just focus on building the application. So all I need for using
+
+15
+00:01:16,000 --> 00:01:21,000
+Weaviate Cloud is my Weaviate URL and my Weaviate key. So I'm going to set those here.
+
+16
+00:01:23,000 --> 00:01:30,000
+Oops. Set those here and I'm also going to fetch our pre-processed data
+
+17
+00:01:30,000 --> 00:01:32,000
+from Weave that we created in the last section.
+
+18
+00:01:35,000 --> 00:01:41,000
+So Weaviate also has a number of modules and integrations. One of them is Cohere and we provide
+
+19
+00:01:41,000 --> 00:01:47,000
+integrations for Cohere's embed, re-rank and chat APIs. When initializing our Weaviate client below
+
+20
+00:01:47,000 --> 00:01:52,000
+we simply add the Cohere API key in as an entry to our headers argument and we're ready to start
+
+21
+00:01:52,000 --> 00:01:57,000
+using any of the API integrations that we need. So I create our client here and that's it, that's
+
+22
+00:01:57,000 --> 00:02:03,000
+our Weaviate client created. So now we need to create a collection. So collections are where we
+
+23
+00:02:03,000 --> 00:02:09,000
+store objects and build vector indexes. To create a collection we need a unique property collection
+
+24
+00:02:09,000 --> 00:02:14,000
+and then we need a list of properties and their corresponding data types. Optionally we can add
+
+25
+00:02:14,000 --> 00:02:19,000
+additional configuration such as a vectorizer config and a re-ranker config which in this setup
+
+26
+00:02:19,000 --> 00:02:26,000
+we're going to use Cohere's APIs for. So once created the collection is ready to ingest and index data.
+
+27
+00:02:26,000 --> 00:02:30,000
+There's no need to pass vectors in manually. Our vectorizer will make all the calls to Cohere's
+
+28
+00:02:30,000 --> 00:02:36,000
+embed endpoint in the background. So here you can see I have a collection and I'm giving it this name
+
+29
+00:02:36,000 --> 00:02:43,000
+wandb weaviate demo. I've passed in a vectorizer config which is text-effect Cohere as well as a
+
+30
+00:02:43,000 --> 00:02:50,000
+re-ranker config which is Cohere's re-ranker. I've added four properties, parsed content, source, words
+
+31
+00:02:50,000 --> 00:02:55,000
+and parse tokens as well as the corresponding data type for each of those. So if I hit enter here
+
+32
+00:02:56,000 --> 00:03:03,000
+that should create the collection. So now it's time to import our data. Before we start querying
+
+33
+00:03:03,000 --> 00:03:08,000
+our data for the rag app we need to first get it into Weaviate. Weaviate provides an optimized batch
+
+34
+00:03:08,000 --> 00:03:13,000
+API that enables users to add multiple data objects to their collection without having to
+
+35
+00:03:13,000 --> 00:03:18,000
+worry about configuring batches themselves. By initializing a batch object and adding your
+
+36
+00:03:18,000 --> 00:03:23,000
+batches inside the context manager the client will dynamically add batches to your collection
+
+37
+00:03:23,000 --> 00:03:27,000
+and since we've already initialized our collection the default Cohere vectorizer
+
+38
+00:03:27,000 --> 00:03:31,000
+vectorizes these objects and they'll have their embeddings created during the import step.
+
+39
+00:03:32,000 --> 00:03:37,000
+So here you can see I'm just creating the batch object and I'm just adding
+
+40
+00:03:37,000 --> 00:03:41,000
+adding objects from our data set to that and those will all be added automatically. So let's run this.
+
+41
+00:03:52,000 --> 00:03:55,000
+And there we have it the objects are imported and we can double check that they've all been added by
+
+42
+00:03:56,000 --> 00:04:03,000
+doing the length of the collection and here we can see that there's 406 items which corresponds to
+
+43
+00:04:03,000 --> 00:04:09,000
+all the docs that we've added. So that's it that's how you can add set up a Weaviate client and
+
+44
+00:04:09,000 --> 00:04:14,000
+collection and add your data to it. It only takes a few short steps and we're now ready to start
+
+45
+00:04:14,000 --> 00:04:17,000
+querying.
+

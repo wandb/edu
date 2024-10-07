@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:03,000
+let's talk a little bit about the art of crafting effective prompts.
+
+2
+00:00:03,000 --> 00:00:09,000
+Prompting is more like being a coach. You need to give clear instructions and set the context right.
+
+3
+00:00:10,000 --> 00:00:15,000
+A well-structured prompt typically includes a few key elements, a clear role for the LLM,
+
+4
+00:00:15,000 --> 00:00:22,000
+a specific goal we intend to achieve, some relevant context, and detailed instructions
+
+5
+00:00:22,000 --> 00:00:28,000
+on how to generate the outputs. However, in case of RAG systems, we also need to be guiding the
+
+6
+00:00:28,000 --> 00:00:33,000
+LLM in blending the retrieved information with its pre-trained knowledge. It's like combining
+
+7
+00:00:33,000 --> 00:00:39,000
+new ingredients in an existing recipe. One way to achieve this is to use dynamic prompt construction,
+
+8
+00:00:39,000 --> 00:00:45,000
+adjusting your prompts based on the query and the retrieved data. For instance, in wandbot,
+
+9
+00:00:45,000 --> 00:00:51,000
+we tweak our prompts for technical queries versus sales inquiries. This flexible, context-aware
+
+10
+00:00:51,000 --> 00:00:56,000
+approach has improved wandbot's ability to provide relevant responses across a wide range of
+
+11
+00:00:56,000 --> 00:01:02,000
+scenarios. Remember, effective prompt engineering is key to unlocking the full potential of your
+
+12
+00:01:02,000 --> 00:01:08,000
+RAG system. Refining prompts is like fine-tuning an instrument. You need to keep adjusting to get
+
+13
+00:01:08,000 --> 00:01:15,000
+the best performance. Our refinement process focuses on three key areas. Data-driven optimization,
+
+14
+00:01:15,000 --> 00:01:20,000
+testing prompt variations, and continuous monitoring. It's a cycle of improvement.
+
+15
+00:01:20,000 --> 00:01:25,000
+In wandbot's journey, we started with basic prompts and systematically analyzed how they performed.
+
+16
+00:01:25,000 --> 00:01:32,000
+We identified areas of improvement and implemented and refined our prompts and rigorously tested them.
+
+17
+00:01:32,000 --> 00:01:38,000
+Rinse and repeat. This process has paid off big time. We've seen a remarkable increase in the
+
+18
+00:01:38,000 --> 00:01:44,000
+response quality, especially in handling tricky queries about machine learning workflows. A couple
+
+19
+00:01:44,000 --> 00:01:49,000
+of pro tips. Keep version control of your prompts and involve your whole team in the refinement
+
+20
+00:01:49,000 --> 00:01:54,000
+process. It's amazing how insights from different perspectives can lead to breakthroughs.
+
+21
+00:01:54,000 --> 00:02:01,000
+Remember, the key to success is persistence and a data-driven approach. Keep refining and you'll
+
+22
+00:02:01,000 --> 00:02:05,000
+see your RAG system get smarter and more helpful over time.
+

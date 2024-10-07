@@ -1,0 +1,68 @@
+1
+00:00:00,000 --> 00:00:06,000
+What's even more exciting is that because our simple RAG pipeline is written using Weave.model
+
+2
+00:00:06,000 --> 00:00:13,000
+or in a structured manner, we can easily switch the underlying LLM from Command R to Command R+, re-initialize
+
+3
+00:00:13,000 --> 00:00:17,000
+the RAG pipeline and run the evaluation on all the metrics that we have discussed so
+
+4
+00:00:17,000 --> 00:00:20,000
+far.
+
+5
+00:00:20,000 --> 00:00:25,000
+Using the Weave dashboard, we can easily compare two evaluations.
+
+6
+00:00:25,000 --> 00:00:31,000
+In this case, I am comparing the evaluation of two RAG pipeline, one using Command R and another
+
+7
+00:00:31,000 --> 00:00:32,000
+one using Command R+.
+
+8
+00:00:32,000 --> 00:00:39,000
+Click on the compare button and we have the comparison dashboard created for us automatically.
+
+9
+00:00:39,000 --> 00:00:44,000
+We can look through the differences or the delta of the metrics that changed and the
+
+10
+00:00:44,000 --> 00:00:50,000
+best part is that we can look through individual samples and compare the answer for all of
+
+11
+00:00:50,000 --> 00:00:51,000
+these.
+
+12
+00:00:51,000 --> 00:00:57,000
+For example, here this particular output got a score of 1, whereas this output only got
+
+13
+00:00:57,000 --> 00:01:00,000
+a score of 0.
+
+14
+00:01:00,000 --> 00:01:06,000
+Maybe there was something wrong when Command R was used and we can literally run through
+
+15
+00:01:06,000 --> 00:01:11,000
+all the 20 samples here and try to figure out where our system is failing.
+
+16
+00:01:11,000 --> 00:01:17,000
+This concludes how we can use evaluation on Weave for evaluation driven development to
+
+17
+00:01:17,000 --> 00:01:19,000
+improve the quality of our RAG pipeline.
+

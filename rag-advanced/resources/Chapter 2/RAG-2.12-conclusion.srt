@@ -1,0 +1,36 @@
+1
+00:00:00,000 --> 00:00:04,000
+Well, this is the end of the chapter. I hope you learned something new and useful.
+
+2
+00:00:04,000 --> 00:00:06,000
+To conclude, here are some of the take home pointers.
+
+3
+00:00:08,000 --> 00:00:12,000
+Make sure to spend time and resources on evaluation and evaluate all the non-deterministic
+
+4
+00:00:12,000 --> 00:00:18,000
+components both individually and end-to-end. Use a mix of direct, pairwise and reference
+
+5
+00:00:18,000 --> 00:00:24,000
+evaluation depending on your use case. Start building your evaluation set from the get-go,
+
+6
+00:00:24,000 --> 00:00:31,000
+but keep iterating on it. LLM evaluators are a strong tool, but use it wisely. Make sure to
+
+7
+00:00:31,000 --> 00:00:38,000
+align the judgment with that of humans. Finally, make sure to spend time to integrate your
+
+8
+00:00:38,000 --> 00:00:43,000
+evaluation pipeline with better tooling early on to iterate rapidly. I hope it was useful.
+
+9
+00:00:44,000 --> 00:00:46,000
+Let's see you in chapter 3.
+

@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:03,000
+We'll now look at a few advanced prompting techniques.
+
+2
+00:00:03,000 --> 00:00:08,000
+These strategies are where RAG systems start to really flex their muscles.
+
+3
+00:00:08,000 --> 00:00:10,000
+First is Chain of Thought Prompting.
+
+4
+00:00:10,000 --> 00:00:15,000
+It helps the LLM break down complex problems into step-by-step solutions.
+
+5
+00:00:15,000 --> 00:00:16,000
+Next we have Self-reflection Prompting.
+
+6
+00:00:16,000 --> 00:00:22,000
+Here's where an LLM double checks its own work and refines its responses for improved
+
+7
+00:00:22,000 --> 00:00:23,000
+accuracy.
+
+8
+00:00:23,000 --> 00:00:26,000
+Next we have Tree of Thought Prompting.
+
+9
+00:00:26,000 --> 00:00:31,000
+This technique allows your LLM to explore multiple reasoning paths simultaneously,
+
+10
+00:00:31,000 --> 00:00:35,000
+much like a chess player considering various moves simultaneously.
+
+11
+00:00:35,000 --> 00:00:38,000
+These techniques pack a punch in terms of benefits.
+
+12
+00:00:38,000 --> 00:00:43,000
+They sharpen the reasoning skills, tackle complex queries with ease, and produce nuanced
+
+13
+00:00:43,000 --> 00:00:46,000
+and more context-aware responses.
+
+14
+00:00:46,000 --> 00:00:47,000
+But here's the catch.
+
+15
+00:00:47,000 --> 00:00:51,000
+With the increased power comes increased complexity.
+
+16
+00:00:51,000 --> 00:00:56,000
+You might find yourself juggling token limitations and intricate prompt designs.
+
+17
+00:00:56,000 --> 00:01:00,000
+The secret sauce is finding the right balance for your specific use case.
+
+18
+00:01:00,000 --> 00:01:04,000
+For those hungry for more, we have a full course dedicated to these techniques.
+
+19
+00:01:04,000 --> 00:01:08,000
+Check out the link in the description to dive deeper into this fascinating world.
+

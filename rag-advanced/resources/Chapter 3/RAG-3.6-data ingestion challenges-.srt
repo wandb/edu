@@ -1,0 +1,144 @@
+1
+00:00:00,000 --> 00:00:02,000
+Let's look at some of the challenges you might face
+
+2
+00:00:02,000 --> 00:00:04,000
+when implementing data ingestion pipelines.
+
+3
+00:00:04,000 --> 00:00:07,000
+Again, we'll draw upon our experience with wandbot.
+
+4
+00:00:07,000 --> 00:00:09,000
+In our journey with wandbot,
+
+5
+00:00:09,000 --> 00:00:11,000
+we encountered several pitfalls.
+
+6
+00:00:11,000 --> 00:00:13,000
+First, we struggled with incorrect data parsing
+
+7
+00:00:13,000 --> 00:00:15,000
+and had trouble with parsing the documentation
+
+8
+00:00:15,000 --> 00:00:18,000
+and code snippets using out-of-the-box parsers.
+
+9
+00:00:18,000 --> 00:00:21,000
+We also faced format discrepancies.
+
+10
+00:00:21,000 --> 00:00:23,000
+Different parts of our dataset used different formats
+
+11
+00:00:23,000 --> 00:00:27,000
+which led to inconsistencies in our parse data.
+
+12
+00:00:27,000 --> 00:00:28,000
+Chunking was another challenge.
+
+13
+00:00:28,000 --> 00:00:31,000
+Initially, our chunks were somewhat incoherent,
+
+14
+00:00:31,000 --> 00:00:33,000
+breaking apart related information.
+
+15
+00:00:33,000 --> 00:00:36,000
+This affected the quality of our responses.
+
+16
+00:00:36,000 --> 00:00:38,000
+And of course, we had to deal with the issue
+
+17
+00:00:38,000 --> 00:00:40,000
+of outdated knowledge.
+
+18
+00:00:40,000 --> 00:00:41,000
+In a fast-moving field like ours,
+
+19
+00:00:41,000 --> 00:00:44,000
+information can become obsolete really quickly.
+
+20
+00:00:44,000 --> 00:00:47,000
+So how did we address these issues?
+
+21
+00:00:47,000 --> 00:00:50,000
+We developed a tailored parsing approach
+
+22
+00:00:50,000 --> 00:00:52,000
+that could handle our specific documentation structure
+
+23
+00:00:52,000 --> 00:00:53,000
+and code formats.
+
+24
+00:00:53,000 --> 00:00:55,000
+We implemented a systematic evaluation
+
+25
+00:00:55,000 --> 00:00:57,000
+of our chunking strategy,
+
+26
+00:00:57,000 --> 00:01:00,000
+continuously testing and refining our approach.
+
+27
+00:01:00,000 --> 00:01:04,000
+We also adopted a staged approach to evaluation.
+
+28
+00:01:04,000 --> 00:01:06,000
+Instead of trying to fix everything at once,
+
+29
+00:01:06,000 --> 00:01:08,000
+we tackled issues in manageable groups,
+
+30
+00:01:08,000 --> 00:01:12,000
+running evaluations on major groups of commits.
+
+31
+00:01:12,000 --> 00:01:14,000
+This process wasn't quick or easy,
+
+32
+00:01:14,000 --> 00:01:17,000
+but it led to significant improvements overall.
+
+33
+00:01:17,000 --> 00:01:18,000
+It's important to note that troubleshooting
+
+34
+00:01:18,000 --> 00:01:21,000
+ingestion issues is an ongoing process.
+
+35
+00:01:21,000 --> 00:01:24,000
+It requires patience, systematic evaluation,
+
+36
+00:01:24,000 --> 00:01:27,000
+and a willingness to continuously refine your approach.
+

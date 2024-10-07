@@ -1,0 +1,56 @@
+1
+00:00:00,000 --> 00:00:03,000
+Let's look at data ingestion and how we can speed it up and make it more efficient.
+
+2
+00:00:04,000 --> 00:00:07,000
+A general rule of thumb is to use multi-processing for your data ingestion operations,
+
+3
+00:00:07,000 --> 00:00:10,000
+like converting raw files to text or chunking them.
+
+4
+00:00:10,000 --> 00:00:14,000
+Depending on your use case, you can also approach indexing in multiple ways.
+
+5
+00:00:14,000 --> 00:00:18,000
+If you only have a few thousand samples, doing flat indexing is not a bad option.
+
+6
+00:00:18,000 --> 00:00:22,000
+You can also consider various variants of hierarchical indexing
+
+7
+00:00:22,000 --> 00:00:25,000
+to speed up searching through most relevant pieces of information.
+
+8
+00:00:26,000 --> 00:00:31,000
+Make sure your files, be it PDF, web pages or markdown are converted to a simple text
+
+9
+00:00:31,000 --> 00:00:34,000
+and associated metadata. This makes the whole application more efficient.
+
+10
+00:00:34,000 --> 00:00:39,000
+I like LlamaIndex's Document class which is an excellent abstraction for handling data.
+
+11
+00:00:40,000 --> 00:00:43,000
+Make sure you have validation in place which is very important.
+
+12
+00:00:43,000 --> 00:00:47,000
+Also ensure to keep track of your data versions with Weave dataset.
+
+13
+00:00:47,000 --> 00:00:51,000
+Baking in versioning tool like Weave is a one-time work but you get the benefits out of it
+
+14
+00:00:51,000 --> 00:00:54,000
+throughout the lifecycle of the project.
+

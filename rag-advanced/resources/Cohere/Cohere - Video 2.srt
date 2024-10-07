@@ -1,0 +1,208 @@
+1
+00:00:00,000 --> 00:00:03,000
+So in this section, we'll get the first introduction to tool use by looking at the
+
+2
+00:00:03,000 --> 00:00:08,000
+tool use workflow with a few specific examples. So in a nutshell, tool use workflow works in four
+
+3
+00:00:08,000 --> 00:00:14,000
+steps. You have four different components. The first is the user, the application that the user
+
+4
+00:00:14,000 --> 00:00:19,000
+is interacting with. In our case, we'll be using Jupyter notebook as the app. We also have the LLM
+
+5
+00:00:20,000 --> 00:00:25,000
+as the engine to run all the different parts of tool calling and response generation. And you also
+
+6
+00:00:25,000 --> 00:00:31,000
+have the tools themselves. So the first step in the workflow is to first get the user message.
+
+7
+00:00:31,000 --> 00:00:35,000
+And using this user message, the second step is for the LLM to generate the tool calls
+
+8
+00:00:35,000 --> 00:00:41,000
+to the tools that it's given to. And then step three is for the application to execute the tool
+
+9
+00:00:41,000 --> 00:00:45,000
+calling and to get back the two results and sending it back to the LLM. And finally, for the
+
+10
+00:00:45,000 --> 00:00:52,000
+LLM to use these results to generate response with citations. So note that steps two and three can
+
+11
+00:00:52,000 --> 00:00:57,000
+run multiple times before the response is generated. For example, in complex scenarios
+
+12
+00:00:57,000 --> 00:01:03,000
+where the model will need to look for information in multiple sequences. So this is where the Cohere
+
+13
+00:01:03,000 --> 00:01:09,000
+API helps you by supporting this out of the box. So with the Cohere API, you also get citations
+
+14
+00:01:09,000 --> 00:01:14,000
+from tool use. The same way that you get citations from using the chat API for RAG, you also get that
+
+15
+00:01:14,000 --> 00:01:20,000
+with tool use and citations make responses verifiable. And we'll see how it works in the
+
+16
+00:01:20,000 --> 00:01:25,000
+Cohere example. So here we are importing the necessary libraries and that also includes
+
+17
+00:01:25,000 --> 00:01:29,000
+the two definitions that we have defined in the previous section, as well as defining the Cohere
+
+18
+00:01:29,000 --> 00:01:34,000
+client, which we are using the version 2 client in this example. So we are also defining the
+
+19
+00:01:34,000 --> 00:01:40,000
+functions map variable here for us to use in the function call later as a helper function.
+
+20
+00:01:40,000 --> 00:01:45,000
+We are also defining a system message, which tells a bit more information to the LLM to help it
+
+21
+00:01:45,000 --> 00:01:50,000
+go through and run its tasks. So you are in system helps developers use ways and biases
+
+22
+00:01:50,000 --> 00:01:54,000
+and so on. So you are equipped with a number of tools that can provide different types of
+
+23
+00:01:54,000 --> 00:01:58,000
+information and yeah, just giving a bit more information to the LLM on the kind of task that
+
+24
+00:01:58,000 --> 00:02:04,000
+is expected to do. So now going back to the slide that we showed you now, this is the first step of
+
+25
+00:02:04,000 --> 00:02:09,000
+getting the user message. In this case, we'll try a few examples where we can refine the output of
+
+26
+00:02:09,000 --> 00:02:14,000
+a run being the first one. And here we are pending and building the chat history through the messages
+
+27
+00:02:14,000 --> 00:02:19,000
+variable, first with a system message and then pending with the user message. And this chat
+
+28
+00:02:19,000 --> 00:02:23,000
+history will be required for the LLM as it goes along with the tool calling and generating the
+
+29
+00:02:23,000 --> 00:02:29,000
+response so that it has all the context it needs to perform a task. And step two, the model will
+
+30
+00:02:29,000 --> 00:02:34,000
+generate tool calls if it determines that it requires any. So what happens here is that we
+
+31
+00:02:34,000 --> 00:02:40,000
+are calling the chat endpoint, giving the model parameter as command R+, which is what we're going
+
+32
+00:02:40,000 --> 00:02:45,000
+to use. The messages, which is the chat history that we have defined earlier. Tools, so this is
+
+33
+00:02:45,000 --> 00:02:49,000
+the list of tool schemas that we have defined in the previous section as well as the temperature
+
+34
+00:02:49,000 --> 00:02:57,000
+in this case, we are giving it 0.3. And the response contains a few, a couple of important
+
+35
+00:02:57,000 --> 00:03:03,000
+information. So the first is tool plan. So here the model will describe the plan it will do given
+
+36
+00:03:03,000 --> 00:03:09,000
+the user query. So the next step is to execute the tools, which is done by calling the developer docs.
+
+37
+00:03:09,000 --> 00:03:13,000
+And if you recall, we are, we having a predefined list of documents that we pass for any query,
+
+38
+00:03:13,000 --> 00:03:20,000
+just for simplicity. And this is done by the function variable that we had defined earlier
+
+39
+00:03:20,000 --> 00:03:26,000
+and passing back the result to this cohere tool content object and appending the required
+
+40
+00:03:26,000 --> 00:03:30,000
+information that you see here in terms of the tool call ID that's generated as well as the
+
+41
+00:03:30,000 --> 00:03:34,000
+content that we get back. So this is the tool as you could change step. And then we are now
+
+42
+00:03:34,000 --> 00:03:38,000
+in a position that the model has all the information that it needs to respond to the
+
+43
+00:03:38,000 --> 00:03:45,000
+user message. Now that it has performed the tool calls and received the results back. So it takes
+
+44
+00:03:45,000 --> 00:03:50,000
+the messages that is now updated with the tool calls and tool results and uses it to generate
+
+45
+00:03:50,000 --> 00:03:57,000
+the response. And here it says that to view the output of run navigate to the app UI, select
+
+46
+00:03:57,000 --> 00:04:02,000
+relevant project and choose run from the runs table. So you can further verify the response by
+
+47
+00:04:02,000 --> 00:04:08,000
+printing the citation. So you have another object in the message response. So here you can see that
+
+48
+00:04:08,000 --> 00:04:14,000
+it generates fine grained citations, which contains the start and end points of specific
+
+49
+00:04:14,000 --> 00:04:19,000
+text spans where it uses external documents to ground its response. And to make it simpler,
+
+50
+00:04:19,000 --> 00:04:24,000
+you can see all the citations here, which are now printed in a more simpler way. So you have
+
+51
+00:04:24,000 --> 00:04:30,000
+all the start and end points, and you have the exact text where it cites from the source and also
+
+52
+00:04:30,000 --> 00:04:32,000
+the sources themselves.
+

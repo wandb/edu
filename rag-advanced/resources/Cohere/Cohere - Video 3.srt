@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:05,000
+The tool use approach becomes more powerful when it involves working with complex queries,
+
+2
+00:00:05,000 --> 00:00:11,000
+and that requires tool use to run in a sequential manner, and we call it multi-step tool use.
+
+3
+00:00:11,000 --> 00:00:17,000
+So let's look at examples on what this means. So the example that we have seen in the previous
+
+4
+00:00:17,000 --> 00:00:21,000
+section is a single step scenario where, for example, in this case, you are given two tools.
+
+5
+00:00:21,000 --> 00:00:25,000
+One is the web search and the other one is Python interpreter. So given the question of what is
+
+6
+00:00:25,000 --> 00:00:30,000
+Apple's revenue in 2023, you just need one information to answer the question, which is
+
+7
+00:00:30,000 --> 00:00:36,000
+Apple 2023 revenue, and the LLM will have enough information to respond to the query. The Cohere
+
+8
+00:00:36,000 --> 00:00:40,000
+API also supports parallel tool calling, which we didn't see in the previous section. So now,
+
+9
+00:00:40,000 --> 00:00:45,000
+if the question is what is Apple's and Google's revenue in 2023, now the LLM needs two separate
+
+10
+00:00:45,000 --> 00:00:50,000
+information, the revenue of Apple and Google separately for it to be able to respond. And for
+
+11
+00:00:50,000 --> 00:00:56,000
+this, it needs to run queries in parallel. And then we get to the scenario of sequential
+
+12
+00:00:56,000 --> 00:01:01,000
+reasoning where the tool calls run in multiple steps. So for example, if you have a question
+
+13
+00:01:01,000 --> 00:01:07,000
+of plot Apple's 2023 revenue on a bar chart, you first need to get the Apple 2023 revenue
+
+14
+00:01:07,000 --> 00:01:13,000
+information, and then only you can use that information to run a Python function to plot
+
+15
+00:01:13,000 --> 00:01:17,000
+it on a chart. And the same way how you saw in single step, the Cohere API also supports
+
+16
+00:01:17,000 --> 00:01:21,000
+running multi-step in parallel. Okay, so now we are back to the code example,
+
+17
+00:01:21,000 --> 00:01:25,000
+and now we are using the same steps that we saw in the previous section. The only difference is
+
+18
+00:01:25,000 --> 00:01:31,000
+that we are now wrapping the whole four steps in a function. And the reason for that is we are
+
+19
+00:01:31,000 --> 00:01:37,000
+allowing for multi-step to happen. And in particular, here we have a loop of tool calls.
+
+20
+00:01:38,000 --> 00:01:43,000
+As long as the model continues to generate tool calls in every step, it will continue to run in
+
+21
+00:01:43,000 --> 00:01:48,000
+this loop of tool calling and getting the two results in steps two and three. And finally,
+
+22
+00:01:48,000 --> 00:01:53,000
+once the model decides that no more tool calls are required, it will continue to generate the
+
+23
+00:01:53,000 --> 00:01:58,000
+response. Okay, so this is an example that we're going to use. The question is, what's that feature
+
+24
+00:01:58,000 --> 00:02:02,000
+to view artifacts? Do you have any Jupyter notebook examples? So this requires the model to
+
+25
+00:02:02,000 --> 00:02:07,000
+first figure out what's that feature. And once it knows what that feature is, only then it will be
+
+26
+00:02:07,000 --> 00:02:12,000
+able to search for the code examples for that feature. So it requires two steps to respond to
+
+27
+00:02:12,000 --> 00:02:17,000
+this question. So now you can see that showing in the tool plan here. So it says that the model
+
+28
+00:02:17,000 --> 00:02:21,000
+will search for the feature to view artifacts and then search for Jupyter notebooks examples
+
+29
+00:02:21,000 --> 00:02:27,000
+of this feature. So that's an example of a model taking multiple steps to answer a question. So
+
+30
+00:02:27,000 --> 00:02:35,000
+let's extend that concept a little bit further. So multi-step scenario is useful for sequential
+
+31
+00:02:35,000 --> 00:02:39,000
+reasoning example that we saw earlier, but it's also useful when the model needs to make
+
+32
+00:02:39,000 --> 00:02:43,000
+adjustments and corrections based on the output that it receives from a particular step. The
+
+33
+00:02:43,000 --> 00:02:48,000
+model says that I will search for weave product from the developer docs and write an answer based
+
+34
+00:02:48,000 --> 00:02:52,000
+on that. It goes on to search the developer docs, but the problem we have here is that the developer
+
+35
+00:02:52,000 --> 00:02:58,000
+docs doesn't contain information about the weave product. So now the model says that I could not
+
+36
+00:02:58,000 --> 00:03:03,000
+find information about weave product. So it does a replanning and it will search the internet for
+
+37
+00:03:03,000 --> 00:03:10,000
+this information. Now it needs a second step to respond to the query. And now in the second step
+
+38
+00:03:10,000 --> 00:03:14,000
+is calling the internet with a similar query. It gets back the results. And now the internet
+
+39
+00:03:14,000 --> 00:03:18,000
+does contain more information about weave and because of that is able to generate the response.
+
+40
+00:03:18,000 --> 00:03:22,000
+Weave is the lightweight toolkit for tracking and evaluating LLM applications.
+

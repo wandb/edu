@@ -1,0 +1,80 @@
+1
+00:00:00,000 --> 00:00:04,000
+Welcome back to another new chapter where we will be discussing ideas to improve our
+
+2
+00:00:04,000 --> 00:00:10,000
+retriever's quality and talk more about advanced retriever and re-ranking techniques.
+
+3
+00:00:10,000 --> 00:00:15,000
+I will first try to motivate the need to go beyond simple retriever systems and argue
+
+4
+00:00:15,000 --> 00:00:20,000
+that just naively retrieving some pieces of information is not enough for complex queries.
+
+5
+00:00:20,000 --> 00:00:24,000
+We will be discussing ideas to improve the retrieval by doing query translation.
+
+6
+00:00:24,000 --> 00:00:50,000
+In this chapter, Charles from Weaviate is going to dig deeper into production, grade retrieval
+
+7
+00:00:50,000 --> 00:00:51,000
+system and hybrid system.
+
+8
+00:00:51,000 --> 00:00:56,000
+Meor from Cohere will be digging into RAG system with access to tool calls like web
+
+9
+00:00:56,000 --> 00:00:58,000
+search or querying SQL database.
+
+10
+00:00:58,000 --> 00:01:04,000
+Together we will hopefully be covering most of the advanced techniques for retrieval.
+
+11
+00:01:04,000 --> 00:01:06,000
+Let's revisit retrieval.
+
+12
+00:01:06,000 --> 00:01:10,000
+In chapter 3 Bharat talked about the idea of indexing where we will use an embedding
+
+13
+00:01:10,000 --> 00:01:17,000
+model to convert a list of process documents or chunks to vector representations for embeddings.
+
+14
+00:01:17,000 --> 00:01:22,000
+The collection of documents and its vector representation is called a vector store.
+
+15
+00:01:22,000 --> 00:01:27,000
+Retrieval happens during query time where the user query is first embedded using the
+
+16
+00:01:27,000 --> 00:01:32,000
+same embedding model or technique that was used during indexing.
+
+17
+00:01:32,000 --> 00:01:37,000
+A similarity function like cosine similarity is used to find the top k closest embeddings
+
+18
+00:01:37,000 --> 00:01:39,000
+in the vector store.
+
+19
+00:01:39,000 --> 00:01:43,000
+The top k embeddings are mapped back to the corresponding chunks of text.
+
+20
+00:01:43,000 --> 00:01:47,000
+These texts are semantically similar to the user query.
+

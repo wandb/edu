@@ -1,0 +1,44 @@
+1
+00:00:00,000 --> 00:00:04,000
+Let me present a few arguments outlining the limitations of a simple retrieval system.
+
+2
+00:00:04,000 --> 00:00:10,000
+We start off with the embedding. TF-IDF and BM25-based embedding have limited capacity to
+
+3
+00:00:10,000 --> 00:00:15,000
+capture different contexts of the same word. Thus, we need deep neural network-based embeddings
+
+4
+00:00:15,000 --> 00:00:20,000
+that are trained on billions of tokens. The second argument is on misalignment.
+
+5
+00:00:20,000 --> 00:00:26,000
+Usually, user queries lack the precise language or structure that aligns seamlessly with the
+
+6
+00:00:26,000 --> 00:00:31,000
+wording of relevant documents. Furthermore, a simple query when embedded have a better
+
+7
+00:00:31,000 --> 00:00:37,000
+chance of finding a suitable piece of context during retrieval. What is van-db can be answered
+
+8
+00:00:37,000 --> 00:00:42,000
+using the first paragraph of our documentation, whereas a complex query which can be mapped to
+
+9
+00:00:42,000 --> 00:00:46,000
+different sections of our documentation would not be able to find all the pieces of relevant
+
+10
+00:00:46,000 --> 00:00:53,000
+information. We will go into argument 4, but just so you know that the position of relevant chunk
+
+11
+00:00:53,000 --> 00:00:55,000
+is important.
+

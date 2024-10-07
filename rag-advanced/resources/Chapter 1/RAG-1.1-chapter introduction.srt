@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:05,000
+Hello everyone and welcome to the first chapter of our course on retrieval augmented generation.
+
+2
+00:00:05,000 --> 00:00:10,000
+In this chapter, we'll set the stage for the rest of the course by introducing a few concepts,
+
+3
+00:00:10,000 --> 00:00:15,000
+challenges, and best practices in RAG systems. We'll also give you a sneak peek into wandbot,
+
+4
+00:00:15,000 --> 00:00:20,000
+our production RAG system that we'll use as a case study throughout this course.
+
+5
+00:00:20,000 --> 00:00:24,000
+Here's what you can expect to learn in this chapter. First, we'll explore the core components
+
+6
+00:00:24,000 --> 00:00:29,000
+that make up an advanced RAG system. Then, we'll discuss the challenges that you're likely to face
+
+7
+00:00:30,000 --> 00:00:36,000
+implementing a RAG system. Next, we'll then cover a few best practices that we've developed through
+
+8
+00:00:36,000 --> 00:00:41,000
+our experience with building wandbot. And finally, we'll put theory into practice by guiding you
+
+9
+00:00:41,000 --> 00:00:46,000
+through building a RAG system. This hands-on experience will serve as the foundation that
+
+10
+00:00:46,000 --> 00:00:50,000
+we'll build upon and refine through the rest of the course. By the end of this chapter,
+
+11
+00:00:50,000 --> 00:00:55,000
+you should have the necessary foundation required to start your journey into building an advanced
+
+12
+00:00:55,000 --> 00:00:58,000
+RAG system that we will explore in this course.
+

@@ -1,0 +1,224 @@
+1
+00:00:00,000 --> 00:00:02,000
+Having discussed different query enhancement techniques,
+
+2
+00:00:02,000 --> 00:00:05,000
+let's look at its impact on our RAG system.
+
+3
+00:00:05,000 --> 00:00:06,000
+In the case of wandbot,
+
+4
+00:00:06,000 --> 00:00:08,000
+the results have been quite impressive.
+
+5
+00:00:08,000 --> 00:00:13,000
+We've seen response accuracy jump from 55% to 72%.
+
+6
+00:00:13,000 --> 00:00:15,000
+This improvement comes from more accurate
+
+7
+00:00:15,000 --> 00:00:18,000
+intent classification, relevant keyword extraction,
+
+8
+00:00:18,000 --> 00:00:20,000
+effective query decomposition,
+
+9
+00:00:20,000 --> 00:00:22,000
+and improved multilingual support.
+
+10
+00:00:22,000 --> 00:00:25,000
+But how do we measure these improvements?
+
+11
+00:00:25,000 --> 00:00:26,000
+We use key performance indicators
+
+12
+00:00:26,000 --> 00:00:29,000
+and metrics like retrieval relevance
+
+13
+00:00:29,000 --> 00:00:33,000
+and response accuracy to evaluate our system's performance.
+
+14
+00:00:33,000 --> 00:00:36,000
+You could also look at user satisfaction ratings
+
+15
+00:00:36,000 --> 00:00:38,000
+to gauge the overall user experience.
+
+16
+00:00:39,000 --> 00:00:42,000
+What's important is we don't just focus on isolated metrics.
+
+17
+00:00:42,000 --> 00:00:45,000
+We look at overall impact on the system's performance.
+
+18
+00:00:45,000 --> 00:00:48,000
+This holistic approach ensures that we are optimizing
+
+19
+00:00:48,000 --> 00:00:51,000
+both for performance and user satisfaction.
+
+20
+00:00:51,000 --> 00:00:54,000
+We don't just set it and forget it either.
+
+21
+00:00:54,000 --> 00:00:57,000
+It's important to regularly assess these KPIs
+
+22
+00:00:57,000 --> 00:01:00,000
+using insights to guide the refinement process.
+
+23
+00:01:00,000 --> 00:01:01,000
+This evaluation-driven approach
+
+24
+00:01:01,000 --> 00:01:03,000
+has been key to wandbot's success,
+
+25
+00:01:03,000 --> 00:01:05,000
+and it's something you can implement
+
+26
+00:01:05,000 --> 00:01:08,000
+in your own RAG systems to drive continuous improvements.
+
+27
+00:01:08,000 --> 00:01:10,000
+To wrap up our chapter,
+
+28
+00:01:10,000 --> 00:01:12,000
+let's talk about some best practices
+
+29
+00:01:12,000 --> 00:01:14,000
+we've learned from developing wandbot
+
+30
+00:01:14,000 --> 00:01:17,000
+and how to overcome some of these challenges.
+
+31
+00:01:17,000 --> 00:01:19,000
+While this is repetitive, I cannot emphasize enough
+
+32
+00:01:19,000 --> 00:01:22,000
+the importance of evaluation-driven development.
+
+33
+00:01:22,000 --> 00:01:24,000
+Regularly analyzing user interactions
+
+34
+00:01:24,000 --> 00:01:27,000
+and using those insights to refine your techniques
+
+35
+00:01:27,000 --> 00:01:29,000
+is crucial for success.
+
+36
+00:01:29,000 --> 00:01:32,000
+Next, focus on continuous learning and adaptation.
+
+37
+00:01:32,000 --> 00:01:36,000
+The world of AI moves fast, and your RAG system should too.
+
+38
+00:01:36,000 --> 00:01:38,000
+Incorporate logging and monitoring
+
+39
+00:01:38,000 --> 00:01:40,000
+into your system early on.
+
+40
+00:01:40,000 --> 00:01:42,000
+These are your eyes and ears on the ground.
+
+41
+00:01:42,000 --> 00:01:46,000
+They will help you identify issues and track performance.
+
+42
+00:01:46,000 --> 00:01:49,000
+Now let's talk about some challenges you might face.
+
+43
+00:01:49,000 --> 00:01:51,000
+Ambiguous queries can be tricky.
+
+44
+00:01:51,000 --> 00:01:54,000
+There's always a balance between flexibility and precision.
+
+45
+00:01:54,000 --> 00:01:57,000
+Consider fine-tuning your query rewriting
+
+46
+00:01:57,000 --> 00:01:58,000
+to strike this balance.
+
+47
+00:01:58,000 --> 00:02:01,000
+For multilingual support, ensure your system can detect
+
+48
+00:02:01,000 --> 00:02:04,000
+and handle different languages effectively.
+
+49
+00:02:04,000 --> 00:02:07,000
+And of course, latency is always a concern.
+
+50
+00:02:07,000 --> 00:02:10,000
+Optimize your system for speed without sacrificing accuracy.
+
+51
+00:02:10,000 --> 00:02:13,000
+Remember, every RAG system is unique,
+
+52
+00:02:13,000 --> 00:02:16,000
+but these sprints can guide you in developing robust,
+
+53
+00:02:16,000 --> 00:02:19,000
+efficient, and usable queries.
+
+54
+00:02:19,000 --> 00:02:21,000
+And remember, every RAG system is unique,
+
+55
+00:02:21,000 --> 00:02:24,000
+but these sprints can guide you in developing robust,
+
+56
+00:02:24,000 --> 00:02:26,000
+efficient, and user-friendly system.
+

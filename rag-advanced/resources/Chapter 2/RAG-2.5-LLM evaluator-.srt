@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:05,000
+Now let's evaluate our retriever using an LLM evaluator. We will talk more formally about
+
+2
+00:00:05,000 --> 00:00:10,000
+this concept when we will evaluate a response generator. But here let me show you an LLM
+
+3
+00:00:10,000 --> 00:00:17,000
+evaluator in action for evaluating a component of the RAG pipeline. The idea is to first ask an LLM
+
+4
+00:00:17,000 --> 00:00:22,000
+to score each retrieved context based on a relevance to a given question. You can check
+
+5
+00:00:22,000 --> 00:00:28,000
+out the system prompt. The instruction is documented here which is to rank documents
+
+6
+00:00:28,000 --> 00:00:33,000
+based on their relevance to a given question as well as answer pair. The instructions are also
+
+7
+00:00:33,000 --> 00:00:40,000
+followed by a rubric or the scoring criteria. Here the criteria is to give a score in a range of 0 to
+
+8
+00:00:40,000 --> 00:00:48,000
+2 where 0 represents that the document is irrelevant whereas 1 is neutral and 2 is that
+
+9
+00:00:48,000 --> 00:00:53,000
+the document is highly relevant to the question answer pair. The final output of the judge should
+
+10
+00:00:53,000 --> 00:01:00,000
+look something like this where each context id is given a relevant score.
+
+11
+00:01:05,000 --> 00:01:10,000
+Based on this scoring by LLM we can then compute two metrics the mean relevance as well as the
+
+12
+00:01:10,000 --> 00:01:18,000
+rank score. The rank metric measures the position of the relevant chunks. We then set up our
+
+13
+00:01:18,000 --> 00:01:25,000
+evaluation like we did in the past and run the evaluation using our LLM as a judge metric.
+

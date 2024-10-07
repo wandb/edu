@@ -1,0 +1,80 @@
+1
+00:00:00,000 --> 00:00:03,000
+Think of data ingestion as the gateway to your RAG system.
+
+2
+00:00:03,000 --> 00:00:07,000
+It's where we transform raw information into something our system can work with effectively.
+
+3
+00:00:08,000 --> 00:00:13,000
+This process is absolutely critical because the quality of your data ingestion directly impacts
+
+4
+00:00:13,000 --> 00:00:18,000
+how well a RAG system can retrieve information and generate accurate responses.
+
+5
+00:00:18,000 --> 00:00:22,000
+Imagine trying to find a specific book in a library where all the books are all piled up.
+
+6
+00:00:23,000 --> 00:00:27,000
+That's what a poor data ingestion looks like for a RAG system.
+
+7
+00:00:27,000 --> 00:00:31,000
+But with good ingestion, it's like having a well-organized library with a great catalog system.
+
+8
+00:00:32,000 --> 00:00:37,000
+So as we explore this topic further, keep in mind that good data ingestion is key to building a RAG
+
+9
+00:00:37,000 --> 00:00:43,000
+system that not only is functional but also truly exceptional. Now let's break down data ingestion
+
+10
+00:00:43,000 --> 00:00:48,000
+into its core components. We'll call these the three pillars of data ingestion. First up,
+
+11
+00:00:48,000 --> 00:00:52,000
+we have data parsing. This is where we take all those different document formats, the PDFs,
+
+12
+00:00:52,000 --> 00:00:57,000
+Word docs, and web pages and convert them into a standard format that our RAG system can utilize.
+
+13
+00:00:58,000 --> 00:01:04,000
+Next, we've got chunking, the art of breaking down information into bite-sized digestible chunks.
+
+14
+00:01:04,000 --> 00:01:08,000
+It's crucial because it helps our system find and retrieve relevant information without getting
+
+15
+00:01:08,000 --> 00:01:15,000
+bogged down into massive documents. Finally, we have metadata management. This is like adding
+
+16
+00:01:15,000 --> 00:01:20,000
+tags or labels to our data. It helps our system understand more about the content without having
+
+17
+00:01:20,000 --> 00:01:26,000
+to read through everything in detail. Each of these pillars plays a vital role in the preparation
+
+18
+00:01:26,000 --> 00:01:31,000
+of our data. They work together to ensure that when our RAG system needs to retrieve information,
+
+19
+00:01:31,000 --> 00:01:36,000
+it can do so quickly and accurately. As we go through this chapter, we'll dive into each of
+
+20
+00:01:36,000 --> 00:01:40,000
+these pillars and see how they contribute to building a robust RAG system.
+

@@ -1,0 +1,132 @@
+1
+00:00:00,000 --> 00:00:04,000
+Now let's head over to the Collab notebook for chapter 2, where we will be evaluating
+
+2
+00:00:04,000 --> 00:00:09,000
+the two main components of the RAG pipeline, the Retriever as well as the Response Generator.
+
+3
+00:00:09,000 --> 00:00:17,000
+We start off by setting up the required packages for this Collab notebook.
+
+4
+00:00:17,000 --> 00:00:22,000
+In this chapter we will be using wandb Weave for our evaluation purposes, but I've already
+
+5
+00:00:22,000 --> 00:00:24,000
+covered what wandb Weave is.
+
+6
+00:00:24,000 --> 00:00:29,000
+In this chapter we will focus on Weave Evaluation, which is a lightweight class that can be used
+
+7
+00:00:29,000 --> 00:00:35,000
+to evaluate the performance of a Weave model on a Weave dataset.
+
+8
+00:00:35,000 --> 00:00:39,000
+We first initialize a Weave client, which can track both the traces as well as the evaluation
+
+9
+00:00:39,000 --> 00:00:41,000
+scores.
+
+10
+00:00:41,000 --> 00:00:47,000
+Weave Evaluation begins by first building the evaluation set.
+
+11
+00:00:47,000 --> 00:00:54,000
+In our case, we used a subset of the evaluation dataset we had created for wandbot.
+
+12
+00:00:54,000 --> 00:00:58,000
+If you are interested, I would highly recommend checking out our series on how to evaluate
+
+13
+00:00:58,000 --> 00:01:03,000
+LLM, specifically part 1 as well as part 2.
+
+14
+00:01:03,000 --> 00:01:08,000
+The main takeaway from these reports are that we first deployed wandbot for internal usage
+
+15
+00:01:08,000 --> 00:01:11,000
+based on rigorous eyeballing-based evaluation.
+
+16
+00:01:11,000 --> 00:01:14,000
+We then analyzed the query distribution.
+
+17
+00:01:14,000 --> 00:01:19,000
+We sampled a good representative from the clusters we created to create a gold standard
+
+18
+00:01:19,000 --> 00:01:21,000
+set of queries.
+
+19
+00:01:21,000 --> 00:01:26,000
+We then used in-house MLEs to perform manual evaluation using Argila.
+
+20
+00:01:26,000 --> 00:01:29,000
+Remember that creating such evaluation platforms are easy these days.
+
+21
+00:01:29,000 --> 00:01:31,000
+To summarize, speed is key.
+
+22
+00:01:31,000 --> 00:01:34,000
+Use whatever means you have to create a meaningful eval set.
+
+23
+00:01:34,000 --> 00:01:36,000
+The evaluation samples are logged as Weave dataset.
+
+24
+00:01:36,000 --> 00:01:39,000
+You can check out the question, answer, and context triplets.
+
+25
+00:01:39,000 --> 00:01:46,000
+We can also drill down to individual questions, the ground truth answer, as well as the context
+
+26
+00:01:46,000 --> 00:01:48,000
+that was used to create this ground truth answer.
+
+27
+00:01:48,000 --> 00:01:55,000
+Obviously, while experimenting with your evaluation dataset, you will be creating multiple versions
+
+28
+00:01:55,000 --> 00:01:56,000
+of the evaluation set.
+
+29
+00:01:56,000 --> 00:02:00,000
+It's important that we keep track of the different versions.
+
+30
+00:02:00,000 --> 00:02:05,000
+For example, this version 4 had 20 examples, whereas the version 3 of the evaluation set
+
+31
+00:02:05,000 --> 00:02:07,000
+had only two examples.
+
+32
+00:02:07,000 --> 00:02:12,000
+This is how you keep iterating on eval set and keep building better and better quality
+
+33
+00:02:12,000 --> 00:02:13,000
+of the eval set.
+

@@ -1,0 +1,148 @@
+1
+00:00:00,000 --> 00:00:04,000
+The fundamental idea of evaluating a retriever is to know how well the retrieved content
+
+2
+00:00:04,000 --> 00:00:11,000
+matches the expected contents. One way of doing so is to rank the retrieved context against
+
+3
+00:00:11,000 --> 00:00:17,000
+Ground-Truth Context aka Reference Evaluation. Another way is to ask another LLM to judge if
+
+4
+00:00:17,000 --> 00:00:24,000
+the retrieved context is relevant for the user query aka Direct Evaluation. In most cases,
+
+5
+00:00:24,000 --> 00:00:29,000
+Reference Evaluation will give a more confident measure of the quality of your retriever.
+
+6
+00:00:30,000 --> 00:00:36,000
+A quick way of generating Ground-Truth Context is to first create clusters of semantically similar
+
+7
+00:00:36,000 --> 00:00:42,000
+chunks. You can then sample similar chunks and ask an LLM to come up with one or more queries
+
+8
+00:00:42,000 --> 00:00:49,000
+that can only be answered based on this information. At its core, retrieval evaluation is a search
+
+9
+00:00:49,000 --> 00:00:53,000
+problem. Thus, it is easiest to start with traditional information retrieval metrics.
+
+10
+00:00:54,000 --> 00:00:59,000
+Some ranking-based metrics are Hit Rate, which measures if there is at least one relevant
+
+11
+00:00:59,000 --> 00:01:05,000
+recommendation. Min-reciprocal ranking or MRR calculates the average of the reciprocal ranks
+
+12
+00:01:05,000 --> 00:01:12,000
+of the first relevant content. Normalized discounted cumulative gain or NDCG considers
+
+13
+00:01:12,000 --> 00:01:17,000
+both the relevance and the position of the items in the rank list. Together, they help measure
+
+14
+00:01:18,000 --> 00:01:23,000
+retriever's ability to pick context based on their relevance to the user or query.
+
+15
+00:01:24,000 --> 00:01:29,000
+The position of relevant context is important for the LLM to give proper attention or attribution to
+
+16
+00:01:29,000 --> 00:01:36,000
+it aka loss in the middle problem, which we will cover later in this chapter. We can also use
+
+17
+00:01:36,000 --> 00:01:40,000
+predictive quality metrics that measure if the retriever can make accurate predictions about
+
+18
+00:01:40,000 --> 00:01:47,000
+item relevance. Precision, recall, map, F1 score are familiar metrics in this category.
+
+19
+00:01:48,000 --> 00:01:52,000
+Now let's evaluate our TFIDF retriever from chapter 1 using these metrics.
+
+20
+00:01:52,000 --> 00:01:56,000
+Now let's evaluate our retriever using the metrics we have discussed so far.
+
+21
+00:01:57,000 --> 00:01:59,000
+We first download the chunk data from chapter 1.
+
+22
+00:02:04,000 --> 00:02:09,000
+We will import the TFIDF retriever, which is an instance of weave.model, and index the chunk data.
+
+23
+00:02:10,000 --> 00:02:17,000
+All the metrics we have discussed so far are implemented in the script
+
+24
+00:02:18,000 --> 00:02:22,000
+slash retriever underscore metrics dot py file. I would highly recommend you all to check this
+
+25
+00:02:22,000 --> 00:02:28,000
+file out. Note that every scoring function here has the same signature wherein it expects two
+
+26
+00:02:28,000 --> 00:02:32,000
+arguments model output, which is the list of retrieved contexts as well as context,
+
+27
+00:02:32,000 --> 00:02:36,000
+which is which are the ground truth context. Each metric is also decorated with weave.op.
+
+28
+00:02:40,000 --> 00:02:45,000
+Now that we have our evaluation data set, as well as the list of scoring functions,
+
+29
+00:02:45,000 --> 00:02:49,000
+we can set up our evaluation pipeline using Weave evaluation.
+
+30
+00:02:50,000 --> 00:02:54,000
+We then run the evaluation of our retriever using this pipeline.
+
+31
+00:02:55,000 --> 00:03:02,000
+Once the evaluation is done, we get a summary scores like this. Note that for each metric,
+
+32
+00:03:02,000 --> 00:03:06,000
+we have the mean score computed for us automatically.
+
+33
+00:03:06,000 --> 00:03:10,000
+Alternatively, we can go to the evaluation section of our Weave dashboard.
+
+34
+00:03:11,000 --> 00:03:16,000
+Here we find all the evaluation runs and we can even filter out runs based on the columns.
+
+35
+00:03:18,000 --> 00:03:23,000
+Clicking on the evaluation we just ran, we can check out the mean of each metrics.
+
+36
+00:03:25,000 --> 00:03:28,000
+We can also check out the scores on per sample basis.
+
+37
+00:03:28,000 --> 00:03:35,000
+We can choose to drill down further by checking out the trace timeline for our evaluation run.
+

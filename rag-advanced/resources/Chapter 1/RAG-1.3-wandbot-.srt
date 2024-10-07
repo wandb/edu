@@ -1,0 +1,136 @@
+1
+00:00:00,000 --> 00:00:05,000
+In this course, we'll refer to wandbot quite often as a practical example of a RAG application.
+
+2
+00:00:05,000 --> 00:00:09,000
+So let me introduce you to wandbot and some of its applications.
+
+3
+00:00:09,000 --> 00:00:14,000
+wandbot is our LLM-powered document assistant, and it has been a total game changer for us.
+
+4
+00:00:14,000 --> 00:00:19,000
+First off, wandbot offers our free users support through chat and email.
+
+5
+00:00:19,000 --> 00:00:22,000
+This has been a huge boost to our customer service,
+
+6
+00:00:22,000 --> 00:00:26,000
+allowing us to provide instant help to users around the clock.
+
+7
+00:00:26,000 --> 00:00:29,000
+But it's not just our external users who are benefiting.
+
+8
+00:00:29,000 --> 00:00:31,000
+Our internal teams love wandbot.
+
+9
+00:00:31,000 --> 00:00:35,000
+It has made finding information from our docs a total breeze.
+
+10
+00:00:35,000 --> 00:00:38,000
+Building wandbot actually helped us improve our documentation.
+
+11
+00:00:38,000 --> 00:00:44,000
+As we developed the system, we gained new insights into how users interact with our docs,
+
+12
+00:00:44,000 --> 00:00:46,000
+allowing us to optimize and clarify our content.
+
+13
+00:00:47,000 --> 00:00:50,000
+Now, here's something I'm particularly excited about.
+
+14
+00:00:50,000 --> 00:00:54,000
+We built wandbot in the open. You can find it on GitHub right now.
+
+15
+00:00:54,000 --> 00:00:56,000
+We wanted to share our work with the community.
+
+16
+00:00:56,000 --> 00:01:00,000
+We hope that AI developers can use wandbot as a reference,
+
+17
+00:01:00,000 --> 00:01:04,000
+learn from our experience, and maybe even contribute to its development.
+
+18
+00:01:04,000 --> 00:01:09,000
+By exploring wandbot, you'll get a first-hand look at building an effective RAG system.
+
+19
+00:01:09,000 --> 00:01:14,000
+And by the end of this course, you will have the knowledge and skills to build something similar,
+
+20
+00:01:14,000 --> 00:01:16,000
+tailored to your own unique needs and use cases.
+
+21
+00:01:16,000 --> 00:01:18,000
+As we progress through the course,
+
+22
+00:01:18,000 --> 00:01:21,000
+we'll guide you through the process of building a developer assistant.
+
+23
+00:01:21,000 --> 00:01:26,000
+We'll draw upon our experience of having had wandbot in production for over 18 months.
+
+24
+00:01:26,000 --> 00:01:30,000
+What's interesting is how versatile RAG systems like wandbot can be.
+
+25
+00:01:30,000 --> 00:01:35,000
+We initially created it for a specific purpose, but it ended up doing so much more.
+
+26
+00:01:35,000 --> 00:01:39,000
+For instance, wandbot has made customer self-service incredibly easy.
+
+27
+00:01:39,000 --> 00:01:44,000
+Our support agents are using wandbot to provide faster and more accurate help.
+
+28
+00:01:44,000 --> 00:01:49,000
+And surprisingly, our developers are using it to quickly generate code snippets and API documentation.
+
+29
+00:01:50,000 --> 00:01:53,000
+As we walk through the process of building a RAG application
+
+30
+00:01:53,000 --> 00:01:57,000
+and explore the advanced techniques that make systems like wandbot so effective and adaptable,
+
+31
+00:01:57,000 --> 00:02:01,000
+you'll gain the skills to create RAG systems that meet a wide range of needs,
+
+32
+00:02:01,000 --> 00:02:03,000
+just like wandbot did for us.
+
+33
+00:02:03,000 --> 00:02:07,000
+You'll get the hands-on experience that you can apply to real-world scenarios
+
+34
+00:02:07,000 --> 00:02:11,000
+and develop robust and versatile RAG systems of your own.
+

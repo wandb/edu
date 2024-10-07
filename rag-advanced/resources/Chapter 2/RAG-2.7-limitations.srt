@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:04,000
+The traditional metrics for evaluating generation fall short on measuring the semantics deeply
+
+2
+00:00:04,000 --> 00:00:08,000
+and usually ignore the contextual relevance of the user query.
+
+3
+00:00:08,000 --> 00:00:12,000
+It usually performs fuzzy exact match which are hard to interpret.
+
+4
+00:00:12,000 --> 00:00:17,000
+Furthermore, most track pipelines are nuanced and subjective demanding for better evaluation
+
+5
+00:00:17,000 --> 00:00:23,000
+metrics. Note however that these traditional metrics can be included in the evaluation suite
+
+6
+00:00:23,000 --> 00:00:29,000
+because of its speed. LLM evaluators can help overcome some of these limitations
+
+7
+00:00:29,000 --> 00:00:36,000
+but has its own set of problems. We have already used LLM as a judge to evaluate our retriever
+
+8
+00:00:36,000 --> 00:00:42,000
+but let us define what it means more formally here. The idea of LLM evaluator is based on two
+
+9
+00:00:42,000 --> 00:00:47,000
+facts. One, a powerful LLM can compare pieces of text and second it can follow instructions.
+
+10
+00:00:48,000 --> 00:00:54,000
+Using these two facts we can give a powerful LLM pieces of text like the retrieve context,
+
+11
+00:00:54,000 --> 00:01:00,000
+the generated response and the user query. We also give it a set of instructions which outline
+
+12
+00:01:00,000 --> 00:01:07,000
+the scoring criteria. The LLM then gives a score based on the learned internal representations.
+
+13
+00:01:07,000 --> 00:01:12,000
+One can pause here and ask two important questions. Are these scores deterministic
+
+14
+00:01:12,000 --> 00:01:18,000
+to which I would say a no. If we are using an LLM to evaluate an LLM system,
+
+15
+00:01:18,000 --> 00:01:23,000
+how can we evaluate the LLM evaluator in the first place. Well, we will get to it later.
+

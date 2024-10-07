@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:05,000
+Hello, my name is Ayush and I will be your instructor for this chapter focused on evaluating
+
+2
+00:00:05,000 --> 00:00:10,000
+LLM applications. We will build from where Bharat left off in the last chapter.
+
+3
+00:00:10,000 --> 00:00:14,000
+Before we start, a crucial disclaimer. Every application is unique, so we designed this
+
+4
+00:00:14,000 --> 00:00:20,000
+chapter to help build a mental model of approaching evaluation. In this chapter, we will explore
+
+5
+00:00:20,000 --> 00:00:25,000
+the importance of evaluating LLM applications. We will dive into practical approaches and
+
+6
+00:00:25,000 --> 00:00:31,000
+cover a few strategies. We will explore ideas to build eval datasets and finally try to
+
+7
+00:00:31,000 --> 00:00:35,000
+drill the idea of evaluation-driven development.
+
+8
+00:00:35,000 --> 00:00:39,000
+Talking about evaluation-driven development, we learned it the hard way. A few months ago,
+
+9
+00:00:39,000 --> 00:00:44,000
+we refactored wandbot to make it faster and better. In a rush to get it done quickly,
+
+10
+00:00:44,000 --> 00:00:49,000
+in two weeks time, we skipped through evaluating major changes. Well, our first evaluation
+
+11
+00:00:49,000 --> 00:00:54,000
+of the refactored branch gave only 9% accuracy, which was a significant drop from our baseline
+
+12
+00:00:54,000 --> 00:00:59,000
+of 72%. We made a mistake, so you don't have to. In order to do it right, we created
+
+13
+00:00:59,000 --> 00:01:06,000
+a GitHub branch, cherry-picked the changes and evaluated each one. After running 50 evaluations
+
+14
+00:01:06,000 --> 00:01:12,000
+and spending $2000 over a span of another 6 weeks, we identified the key issues, resolved
+
+15
+00:01:12,000 --> 00:01:16,000
+them and ultimately improved the accuracy by 8% over the baseline.
+

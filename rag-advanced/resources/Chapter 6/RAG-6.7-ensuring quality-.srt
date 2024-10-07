@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:05,000
+When it comes to quality control in RAG systems, we focus on three key elements
+
+2
+00:00:05,000 --> 00:00:08,000
+guardrails, grounding, and citations.
+
+3
+00:00:08,000 --> 00:00:11,000
+Think of output guardrails as your system's safety net.
+
+4
+00:00:11,000 --> 00:00:15,000
+We use structural checks, semantic filters, and safety measures
+
+5
+00:00:15,000 --> 00:00:19,000
+to keep responses on topic and appropriate.
+
+6
+00:00:19,000 --> 00:00:23,000
+Grounding techniques are all about anchoring the responses in facts.
+
+7
+00:00:23,000 --> 00:00:27,000
+For example, in wandbot, we tightly couple the responses with our documentation
+
+8
+00:00:28,000 --> 00:00:30,000
+and fact check against our knowledge base.
+
+9
+00:00:30,000 --> 00:00:34,000
+This has reduced hallucinations and improved response accuracy significantly.
+
+10
+00:00:35,000 --> 00:00:37,000
+Citations are our transparency tool.
+
+11
+00:00:38,000 --> 00:00:43,000
+By including links and in-text references, we have enhanced user trust
+
+12
+00:00:43,000 --> 00:00:46,000
+and users appreciate being able to verify information themselves.
+
+13
+00:00:47,000 --> 00:00:50,000
+The impact on wandbot has evolved from a basic query system
+
+14
+00:00:50,000 --> 00:00:52,000
+to a trusted documentation assistant.
+
+15
+00:00:52,000 --> 00:00:55,000
+For example, when explaining complex features,
+
+16
+00:00:56,000 --> 00:00:59,000
+it now provides accurate step-by-step guidance with verifiable sources.
+
+17
+00:01:00,000 --> 00:01:05,000
+Remember, these techniques work together to create a robust, trustworthy RAG system.
+
+18
+00:01:05,000 --> 00:01:09,000
+Implement them consistently and you will see a marked improvement
+
+19
+00:01:09,000 --> 00:01:11,000
+in output quality and user satisfaction.
+

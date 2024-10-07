@@ -1,0 +1,72 @@
+1
+00:00:00,000 --> 00:00:02,000
+Hello and welcome to chapter 3 of our course.
+
+2
+00:00:02,000 --> 00:00:06,000
+In this chapter, we'll dive into a crucial aspect of RAG systems,
+
+3
+00:00:06,000 --> 00:00:08,000
+data ingestion and pre-processing.
+
+4
+00:00:08,000 --> 00:00:11,000
+Think of this chapter as your guidebook to transform your raw data
+
+5
+00:00:11,000 --> 00:00:14,000
+into the fuel that powers your RAG engine.
+
+6
+00:00:14,000 --> 00:00:17,000
+We'll explore how to process and convert all sorts of information
+
+7
+00:00:17,000 --> 00:00:20,000
+from documents to code snippets into a format
+
+8
+00:00:20,000 --> 00:00:23,000
+that your RAG system can work with efficiently.
+
+9
+00:00:23,000 --> 00:00:26,000
+Let's take a look at what we're going to cover in this chapter.
+
+10
+00:00:26,000 --> 00:00:30,000
+First, we're going to really dig into what data ingestion means for RAG systems.
+
+11
+00:00:30,000 --> 00:00:33,000
+We'll then explore some techniques for formatting your data.
+
+12
+00:00:33,000 --> 00:00:36,000
+Next, we're going to dive into the art of chunking.
+
+13
+00:00:36,000 --> 00:00:40,000
+We'll also look at how to use metadata to give your system even more context.
+
+14
+00:00:40,000 --> 00:00:45,000
+Finally, you'll learn how to spot and fix common ingestion issues.
+
+15
+00:00:45,000 --> 00:00:47,000
+By the end of this chapter, you'll have a solid grasp
+
+16
+00:00:47,000 --> 00:00:50,000
+of how to prepare your data for optimal RAG performance.
+
+17
+00:00:50,000 --> 00:00:54,000
+This is the foundation that can really take your RAG system to the next level.
+
+18
+00:00:54,000 --> 00:00:55,000
+So let's dive in.
+

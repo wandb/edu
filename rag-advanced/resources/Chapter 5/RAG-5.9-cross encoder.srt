@@ -1,0 +1,28 @@
+1
+00:00:00,000 --> 00:00:03,000
+Another powerful re-ranker model is a cross-encoder transformer.
+
+2
+00:00:03,000 --> 00:00:06,000
+Cross-encoder because we train this transformer like BERT
+
+3
+00:00:06,000 --> 00:00:10,000
+with pairs of documents and learn to map it to relevancy score.
+
+4
+00:00:10,000 --> 00:00:14,000
+During the ranking, we pass it pairs of query and retrieve chunks.
+
+5
+00:00:15,000 --> 00:00:20,000
+The model does assigns a new score to each chunk which we can order in descending order.
+
+6
+00:00:21,000 --> 00:00:26,000
+Note that since we are processing a lot of text, this is a relatively slow process,
+
+7
+00:00:26,000 --> 00:00:28,000
+so be mindful of the top key parameter of your retriever.
+

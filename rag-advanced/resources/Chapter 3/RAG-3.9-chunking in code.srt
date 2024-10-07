@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:02,000
+Now, let's look at chunking.
+
+2
+00:00:02,000 --> 00:00:05,000
+Here, we are using a semantic chunking approach,
+
+3
+00:00:05,000 --> 00:00:07,000
+which groups similar sentences together.
+
+4
+00:00:07,000 --> 00:00:10,000
+This method preserves context better than simple
+
+5
+00:00:10,000 --> 00:00:12,000
+fixed-length chunk splitting.
+
+6
+00:00:12,000 --> 00:00:15,000
+While I'll not dive into the details of the chunker here,
+
+7
+00:00:15,000 --> 00:00:18,000
+you should definitely explore the chunking code in the repository
+
+8
+00:00:18,000 --> 00:00:21,000
+to develop a deeper understanding of the chunking mechanism.
+
+9
+00:00:21,000 --> 00:00:24,000
+Notice how our chunks have varying sizes
+
+10
+00:00:24,000 --> 00:00:26,000
+but maintain semantic coherence.
+
+11
+00:00:26,000 --> 00:00:29,000
+This adaptive approach can significantly improve
+
+12
+00:00:29,000 --> 00:00:31,000
+the retrieval relevance of our system.
+

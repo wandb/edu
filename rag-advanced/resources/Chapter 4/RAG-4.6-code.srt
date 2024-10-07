@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:04,000
+Hello and welcome to the hands-on session of chapter 4 of our course.
+
+2
+00:00:04,000 --> 00:00:07,000
+In this session, we'll explore query enhancement techniques.
+
+3
+00:00:07,000 --> 00:00:12,000
+First, we'll quickly set up the environment and load the semantically chunked data from chapter 3.
+
+4
+00:00:12,000 --> 00:00:16,000
+Now let's dive into the core of this chapter, the query enhancer.
+
+5
+00:00:16,000 --> 00:00:18,000
+This module performs three key tasks.
+
+6
+00:00:18,000 --> 00:00:24,000
+Language identification, detecting whether the query is in English, Japanese, or Korean.
+
+7
+00:00:24,000 --> 00:00:28,000
+Intent classification, determining if the query is relevant to our documentation.
+
+8
+00:00:28,000 --> 00:00:34,000
+And subquery generation, that is breaking down complex queries into smaller, more focused subqueries.
+
+9
+00:00:34,000 --> 00:00:37,000
+Let's look at an example from our query enhancer.
+
+10
+00:00:37,000 --> 00:00:44,000
+As you can see, it provides language detection, generates subqueries, and classifies the intent.
+
+11
+00:00:44,000 --> 00:00:49,000
+Next, we'll look at how we can leverage this information in our query-enhanced RAG pipeline.
+
+12
+00:00:50,000 --> 00:00:55,000
+The query-enhanced RAG pipeline leverages the enhancements in several ways.
+
+13
+00:00:55,000 --> 00:01:01,000
+It uses subqueries for multiple-query retrieval, broadening the scope of the relevant information.
+
+14
+00:01:01,000 --> 00:01:05,000
+It performs context deduplication to optimize LLM input.
+
+15
+00:01:05,000 --> 00:01:11,000
+And it implements an intent-based workflow, allowing us to handle off-topic or inappropriate queries better.
+
+16
+00:01:11,000 --> 00:01:18,000
+Next, let's compare the performance of our query-enhanced pipeline against a simple RAG pipeline from the previous chapter.
+
+17
+00:01:18,000 --> 00:01:22,000
+As you can see, both pipelines achieved similar correctness scores.
+
+18
+00:01:22,000 --> 00:01:31,000
+The simple RAG pipelines showed a slightly higher overall response quality, while the query-enhanced pipeline exhibited a significantly higher latency.
+
+19
+00:01:31,000 --> 00:01:35,000
+These results highlight important considerations when designing RAG systems.
+
+20
+00:01:35,000 --> 00:01:40,000
+Adding complexity doesn't always lead to immediate improvements in automated metrics.
+
+21
+00:01:40,000 --> 00:01:44,000
+The increased latency can significantly impact user experience.
+
+22
+00:01:44,000 --> 00:01:48,000
+We might need to improve our evaluation methods as we evolve our pipeline.
+
+23
+00:01:48,000 --> 00:01:55,000
+In conclusion, we've demonstrated the complexity of enhancing and evaluating RAG systems.
+
+24
+00:01:55,000 --> 00:02:02,000
+We also emphasize the need for balanced system design and efficient processing and comprehensive evaluation methods.
+
+25
+00:02:02,000 --> 00:02:09,000
+As you continue to develop RAG systems, keep these factors in mind and create more effective and user-friendly solutions.
+

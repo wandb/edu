@@ -1,0 +1,28 @@
+1
+00:00:00,000 --> 00:00:01,000
+When you retrieve from multiple sources,
+
+2
+00:00:01,000 --> 00:00:05,000
+re-ranking so many chunks add to the latency of the application.
+
+3
+00:00:05,000 --> 00:00:08,000
+A simpler yet powerful way is to use rank fusion.
+
+4
+00:00:08,000 --> 00:00:11,000
+The idea is to aggregate the rank of unique documents
+
+5
+00:00:11,000 --> 00:00:15,000
+appearing in retrieved contexts from different retrieval sources.
+
+6
+00:00:15,000 --> 00:00:18,000
+We then take this unified or fused rank and order it.
+
+7
+00:00:18,000 --> 00:00:22,000
+Taking top end from here should improve the recall of the retrieval system as a whole.
+

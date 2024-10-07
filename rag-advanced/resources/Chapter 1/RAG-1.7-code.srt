@@ -1,0 +1,276 @@
+1
+00:00:00,000 --> 00:00:05,000
+Hello everyone and welcome to the first hands-on session of this course. In this session, we'll
+
+2
+00:00:05,000 --> 00:00:10,000
+build a simple rag application over the weights and biases documentation. We start off by doing
+
+3
+00:00:10,000 --> 00:00:16,000
+some initial setup and downloading our data set using weights and biases artifact. We've already
+
+4
+00:00:17,000 --> 00:00:21,000
+set up most of the files for this data set so you should be able to run and get started very quickly.
+
+5
+00:00:22,000 --> 00:00:28,000
+You will notice that most of these documents are in Markdown format and we're going to convert
+
+6
+00:00:28,000 --> 00:00:33,000
+these documents into a list of dictionaries with some content and metadata. Metadata is usually
+
+7
+00:00:33,000 --> 00:00:38,000
+some extra information about our documents and in this case we are just storing the source of
+
+8
+00:00:38,000 --> 00:00:44,000
+the document and the number of tokens that is present in each document. Our data set contains
+
+9
+00:00:44,000 --> 00:00:50,000
+about 260,000 tokens which is a good candidate for building a simple rag system. It's a good time
+
+10
+00:00:50,000 --> 00:00:54,000
+to talk about weights and biases Weave. Weights and biases Weave is a lightweight toolkit for
+
+11
+00:00:54,000 --> 00:00:58,000
+tracking and evaluating LLM applications and since we are building a rag application,
+
+12
+00:00:58,000 --> 00:01:04,000
+this might be a good time to plug in weave. It helps us log and debug large language model inputs
+
+13
+00:01:04,000 --> 00:01:10,000
+and outputs and trace their calls and also provides nice versioning of data sets and models.
+
+14
+00:01:11,000 --> 00:01:17,000
+In this case, we're going to take our raw data set and put it into a weights and biases weave data set
+
+15
+00:01:17,000 --> 00:01:22,000
+and then you know publish it so that we can version it and track it for future purposes.
+
+16
+00:01:22,000 --> 00:01:28,000
+Next, we proceed with chunking our data. Chunking is usually important because you know most
+
+17
+00:01:28,000 --> 00:01:35,000
+embedding models have a limit of about 512 tokens and we are also using it to like you know reduce
+
+18
+00:01:35,000 --> 00:01:39,000
+the number of tokens that we send to our large language model. In this case, we'll be doing a
+
+19
+00:01:39,000 --> 00:01:46,000
+simple chunking mechanism wherein we chunk our data into a list of words and about 500 with
+
+20
+00:01:46,000 --> 00:01:53,000
+about 500 tokens per chunk without any overlap and we can then go ahead and store this chunked data
+
+21
+00:01:53,000 --> 00:02:02,000
+into a weave artifact so that we can then reuse it later. But then before we do that, we also need to
+
+22
+00:02:02,000 --> 00:02:09,000
+make our text tokenization safe. Sometimes text contains special tokens that interfere with the
+
+23
+00:02:09,000 --> 00:02:13,000
+model's tokenization process and it's always a good practice to remove these special tokens.
+
+24
+00:02:13,000 --> 00:02:17,000
+These special tokens might be tokens like end of text and start of text so depending on the
+
+25
+00:02:17,000 --> 00:02:22,000
+model's tokenizer you might have to build a special you know cleaning process and in this
+
+26
+00:02:22,000 --> 00:02:28,000
+case we've built in a cleaning process based on Cohere's tokenizer because that will be the model
+
+27
+00:02:28,000 --> 00:02:33,000
+we are going to be using the Cohere command R model. We can then now that we've cleaned this
+
+28
+00:02:33,000 --> 00:02:38,000
+data set we can then store this data set into a weave artifact and you can see a snapshot of what
+
+29
+00:02:38,000 --> 00:02:43,000
+this artifact looks like. You should also have a similar artifact once you run this colab in
+
+30
+00:02:44,000 --> 00:02:51,000
+your own environment. Now that we have our clean data set we can go ahead and vectorize the data.
+
+31
+00:02:51,000 --> 00:02:56,000
+Vectorization is a simple process of converting our data into numerical representations so that
+
+32
+00:02:56,000 --> 00:03:03,000
+we can then go ahead and retrieve this data based on a new query from a user and in this case we
+
+33
+00:03:03,000 --> 00:03:10,000
+are using a simple vectorizer the tfidf vectorizer. We're just matching terms based off of the
+
+34
+00:03:10,000 --> 00:03:16,000
+keywords that are there in a query to the keywords that are there in a document and we can store this
+
+35
+00:03:16,000 --> 00:03:23,000
+as a weave model. A weave model is a simple way to wrap your data and your code and logic so that
+
+36
+00:03:23,000 --> 00:03:27,000
+you can then version your application in a more systematic way as you track your experiments.
+
+37
+00:03:28,000 --> 00:03:36,000
+In this case you can see that our tfidf retriever class has an index data method where we take in
+
+38
+00:03:36,000 --> 00:03:42,000
+index it using a tfidf vectorizer from scikit-learn and then we also provide a search
+
+39
+00:03:42,000 --> 00:03:48,000
+method wherein we use cosine distance to calculate the cosine distance between the input
+
+40
+00:03:48,000 --> 00:03:53,000
+query and the existing documents and then retrieve the top k documents and return them
+
+41
+00:03:54,000 --> 00:04:02,000
+for a given query. Now that we have our tfidf retriever we can then index our data and you know
+
+42
+00:04:02,000 --> 00:04:07,000
+run it on a simple query like in this case I've run it on a simple query as how do I use
+
+43
+00:04:07,000 --> 00:04:13,000
+w and v to log metrics in my training script and it does pretty well by retrieving you know
+
+44
+00:04:13,000 --> 00:04:18,000
+documents from our technical faq and documents from our logging faq. This is a good baseline to
+
+45
+00:04:18,000 --> 00:04:23,000
+start off with. Now that we have these retrieved documents we are then ready for generating a
+
+46
+00:04:23,000 --> 00:04:29,000
+response from our lm. To generate a response from our lm we'll create a simple weave model
+
+47
+00:04:29,000 --> 00:04:36,000
+that is a simple response generator. It will take in our user query the context that we've retrieved
+
+48
+00:04:36,000 --> 00:04:42,000
+and then you know use an instruction to finally generate an output. In this case our instruction
+
+49
+00:04:42,000 --> 00:04:46,000
+is pretty simple we say answer the following question about weights and biases provide an
+
+50
+00:04:46,000 --> 00:04:51,000
+helpful and complete answer based only on the provided documents. You can go ahead and play
+
+51
+00:04:51,000 --> 00:04:56,000
+with these instructions yourself by changing the initial prompt and once you pass this to your
+
+52
+00:04:56,000 --> 00:05:00,000
+response generator you should be able to get a response from the cohere command r model.
+
+53
+00:05:01,000 --> 00:05:07,000
+Now that we have our response generator ready we can put it all together into a simple rag pipeline.
+
+54
+00:05:07,000 --> 00:05:11,000
+This pipeline does nothing but you know it combines the two steps the retrieval step and
+
+55
+00:05:11,000 --> 00:05:18,000
+the response generation step. It takes in a query retrieves the required documents from our retriever
+
+56
+00:05:18,000 --> 00:05:24,000
+and then passes it on to the lm to generate a response. Putting together the rag pipeline is
+
+57
+00:05:24,000 --> 00:05:30,000
+pretty straightforward again and you know running the rag pipeline generates a final answer based
+
+58
+00:05:30,000 --> 00:05:35,000
+off of the response from the lm. Since we have instrumented all of this code with weave already
+
+59
+00:05:35,000 --> 00:05:40,000
+you should see a dashboard like this once you have published once you click on this link and
+
+60
+00:05:40,000 --> 00:05:45,000
+the dashboard should show you the nested calls that we have in our rag pipeline starting from
+
+61
+00:05:45,000 --> 00:05:50,000
+the rag pipeline predict that takes in the user query and generates an output to the retriever
+
+62
+00:05:50,000 --> 00:05:55,000
+predict which shows your retrieved documents based on the query and the response generator
+
+63
+00:05:55,000 --> 00:06:00,000
+predict which which shows the query and the context as inputs and the response generated by
+
+64
+00:06:00,000 --> 00:06:07,000
+the llm. So to sum up in this chapter we've seen how we can take some data process pre-process it
+
+65
+00:06:07,000 --> 00:06:12,000
+do some cleaning create a simple retriever and create a simple response generator based off of
+
+66
+00:06:12,000 --> 00:06:18,000
+cohere's command model and generate and create a rag pipeline by putting it all together.
+
+67
+00:06:18,000 --> 00:06:25,000
+We've also seen how we can utilize weights and biases weave to track and log traces of our llm
+
+68
+00:06:25,000 --> 00:06:30,000
+calls and track and version our data sets and models. In the next chapter we will see how we
+
+69
+00:06:30,000 --> 00:06:36,000
+can build upon these aspects and create more complex and advanced systems.
+

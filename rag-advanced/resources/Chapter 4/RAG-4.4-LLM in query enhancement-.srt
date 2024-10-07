@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:05,000
+This is a good time to talk about the role that large language models play in query enhancement.
+
+2
+00:00:05,000 --> 00:00:09,000
+While traditional NLP techniques have been the go-to for query enhancement,
+
+3
+00:00:09,000 --> 00:00:14,000
+in OneBot we use LLMs with function calling capabilities for our query enhancement.
+
+4
+00:00:15,000 --> 00:00:21,000
+Here's how it works. We prompt the LLM to enhance the user queries and generate structured outputs.
+
+5
+00:00:21,000 --> 00:00:26,000
+The LLM then gives a structured JSON that includes intent classification,
+
+6
+00:00:26,000 --> 00:00:29,000
+keyword extraction, and subquery generation.
+
+7
+00:00:30,000 --> 00:00:33,000
+We then use pydantic models to validate this output,
+
+8
+00:00:33,000 --> 00:00:35,000
+ensuring it meets our schema requirements.
+
+9
+00:00:36,000 --> 00:00:40,000
+This approach has significantly improved the accuracy of our intent classification
+
+10
+00:00:40,000 --> 00:00:45,000
+and keyword extraction steps. It allows for more nuanced query reformulation,
+
+11
+00:00:45,000 --> 00:00:49,000
+which is particularly effective when handling complex queries.
+
+12
+00:00:50,000 --> 00:00:53,000
+With this, we are able to provide more contextually relevant responses,
+
+13
+00:00:53,000 --> 00:00:59,000
+even for tricky technical queries. Using LLMs with function calling capabilities in
+
+14
+00:00:59,000 --> 00:01:04,000
+your query enhancement process can get you started without training NLP models from scratch,
+
+15
+00:01:04,000 --> 00:01:10,000
+giving your RAG system the extra boost of intelligence and flexibility it needs.
+

@@ -1,0 +1,20 @@
+1
+00:00:00,000 --> 00:00:02,000
+To summarize, we've covered tokenization,
+
+2
+00:00:02,000 --> 00:00:07,000
+semantic chunking, and explode BM25 as an alternative to TF-IDF retrieval.
+
+3
+00:00:07,000 --> 00:00:12,000
+We also evaluated the impact of these techniques on the RAG system as a whole using Weave.
+
+4
+00:00:12,000 --> 00:00:17,000
+These improvements can significantly enhance the performance of your RAG system.
+
+5
+00:00:17,000 --> 00:00:23,000
+In the next chapter, we'll dive into improving our system's ability to understand and parse user queries better.
+

@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:02,000
+For complex or multi-step QA tasks,
+
+2
+00:00:02,000 --> 00:00:04,000
+retrieval with chain of thought reasoning
+
+3
+00:00:04,000 --> 00:00:06,000
+is getting a lot of traction.
+
+4
+00:00:06,000 --> 00:00:09,000
+The idea is same as retrieval with decomposition,
+
+5
+00:00:09,000 --> 00:00:12,000
+but instead of breaking down the query into sub-questions
+
+6
+00:00:12,000 --> 00:00:14,000
+in the first LLM call,
+
+7
+00:00:14,000 --> 00:00:18,000
+we first retrieve relevant documents for a query Q.
+
+8
+00:00:18,000 --> 00:00:21,000
+We then prompt LLM to read the query and documents
+
+9
+00:00:21,000 --> 00:00:25,000
+to come up with reasoning sentence T1 and retrieve for it.
+
+10
+00:00:25,000 --> 00:00:26,000
+We keep retrieving and reasoning
+
+11
+00:00:26,000 --> 00:00:28,000
+till termination step is met.
+
+12
+00:00:28,000 --> 00:00:32,000
+In this case, determination is the presence of the answer,
+
+13
+00:00:32,000 --> 00:00:34,000
+is substring.
+
+14
+00:00:34,000 --> 00:00:37,000
+You can come up with different complexities of retrieval
+
+15
+00:00:37,000 --> 00:00:39,000
+with chain of thought reasoning.
+

@@ -1,0 +1,188 @@
+1
+00:00:00,000 --> 00:00:06,000
+We will now see an LLM Evaluator in action. For our use case, we care about the correctness,
+
+2
+00:00:06,000 --> 00:00:11,000
+relevancy and faithfulness of the generative response. The correctness metric compares
+
+3
+00:00:11,000 --> 00:00:15,000
+the response to the ground truth. The relevancy metric checks if the response is relevant
+
+4
+00:00:15,000 --> 00:00:20,000
+to the user query, while the faithfulness measures the factual consistency of the response
+
+5
+00:00:20,000 --> 00:00:23,000
+given retrieved context.
+
+6
+00:00:23,000 --> 00:00:27,000
+In this colab, we have only implemented the correctness metric. We leave the other two
+
+7
+00:00:27,000 --> 00:00:31,000
+metrics as an assignment for our viewers.
+
+8
+00:00:31,000 --> 00:00:36,000
+We set up our evaluation and evaluate our RAG pipeline like we have been doing. Now
+
+9
+00:00:36,000 --> 00:00:40,000
+let's go through the Weave dashboard to look through and dig deeper into the evaluation
+
+10
+00:00:40,000 --> 00:00:46,000
+result from this evaluation run.
+
+11
+00:00:46,000 --> 00:00:53,000
+If you have noticed, for this particular evaluation, we got a score of 0%. Why is that the case?
+
+12
+00:00:53,000 --> 00:00:57,000
+First, let's look into the system prompt to understand what are the set of instructions
+
+13
+00:00:57,000 --> 00:01:01,000
+that we have provided and what's the scoring criteria and then we will look through few
+
+14
+00:01:01,000 --> 00:01:06,000
+of the examples to understand why the judge gave the score it gave.
+
+15
+00:01:06,000 --> 00:01:15,000
+Well, it's very easy because of this trace timeline to look through the judge's system
+
+16
+00:01:15,000 --> 00:01:22,000
+prompt. Because we are using Cohere, the underlying cohere.async, client v2 chat method
+
+17
+00:01:22,000 --> 00:01:26,000
+is the one responsible for making the API call. You can look through the system prompt
+
+18
+00:01:26,000 --> 00:01:34,000
+here. It clearly outlines the amount of information that is provided, what are the different instructions
+
+19
+00:01:34,000 --> 00:01:41,000
+or the criteria for evaluation and the evaluation range. So a 0 score is incorrect and does
+
+20
+00:01:41,000 --> 00:01:46,000
+not satisfy the criteria that is outlined here. Whereas a score of 2 is correct and
+
+21
+00:01:46,000 --> 00:01:52,000
+thoroughly answers the question. Remember that we are asking the LLM judge to return
+
+22
+00:01:52,000 --> 00:02:00,000
+a suggestion with the reason for why it believes the score, what is the final score, which
+
+23
+00:02:00,000 --> 00:02:07,000
+is 0 or 1 or 2 and the decision. Remember that the decision here is that if the score
+
+24
+00:02:07,000 --> 00:02:14,000
+is 2, only then the generative response is correct, otherwise it is not correct.
+
+25
+00:02:14,000 --> 00:02:20,000
+Now let's look for the score for this particular example. It gave a score of 0 and let's see
+
+26
+00:02:20,000 --> 00:02:25,000
+why. The generative answer provides code snippets for saving data to a wandb table but does
+
+27
+00:02:25,000 --> 00:02:30,000
+not address the specific user question about logging the outputs and the parameters. It
+
+28
+00:02:30,000 --> 00:02:39,000
+gave a score, it compared the ground truth with the response and came up with this reasoning.
+
+29
+00:02:39,000 --> 00:02:47,000
+Let's look at some other query. In this query for example, the question was, my distributed
+
+30
+00:02:47,000 --> 00:02:52,000
+runs are not in sync when using PyTorch Lightning integration, how do I fix that? And this is
+
+31
+00:02:52,000 --> 00:03:01,000
+the output that the system gave. Well, it gave a score of 1. It says that the generative
+
+32
+00:03:01,000 --> 00:03:05,000
+answer provides a code snippet to address the issue but does not cover all the relevant
+
+33
+00:03:05,000 --> 00:03:10,000
+point mentioned in the reference answer. So it's comparing against the reference answer,
+
+34
+00:03:10,000 --> 00:03:14,000
+such as proper logging setup, configuring the trainer and avoiding direct access to
+
+35
+00:03:14,000 --> 00:03:19,000
+one data front. So these are the things that are missing in the reference evaluation ground
+
+36
+00:03:19,000 --> 00:03:26,000
+truth and does it give us decision of incorrect. Like this, we can go through the entire sample
+
+37
+00:03:26,000 --> 00:03:33,000
+of 20 or so dataset and see where it failed and why it failed. And this will help us gain
+
+38
+00:03:33,000 --> 00:03:39,000
+more insight. What's more interesting is that for a given response, if I feel that
+
+39
+00:03:39,000 --> 00:03:45,000
+the LLM judge gave a score which is incorrect, I can maybe go and give it a feedback of thumbs
+
+40
+00:03:45,000 --> 00:03:53,000
+down and then I can write a piece of code and pull down all the traces or all the evaluation
+
+41
+00:03:53,000 --> 00:03:59,000
+runs where I have given a particular kind of emoji indicating a particular kind of intent.
+
+42
+00:03:59,000 --> 00:04:07,000
+In this case, a thumbs down is intending that the LLM response or the LLM judgment
+
+43
+00:04:07,000 --> 00:04:15,000
+is not in line with my own judgment of the generative response. And this information
+
+44
+00:04:15,000 --> 00:04:21,000
+or this data can help me figure out what kind of future examples I would like to give in
+
+45
+00:04:21,000 --> 00:04:28,000
+the system prompt to align the judge with the human judgment as well as what kind of
+
+46
+00:04:28,000 --> 00:04:36,000
+tweaking I should do with the system prompt to again align the LLM judge with my own judgment.
+
+47
+00:04:36,000 --> 00:04:42,000
+And this is an exercise that we have done for wandbot and we'll show some flavor of this.
+

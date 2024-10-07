@@ -1,0 +1,276 @@
+1
+00:00:00,000 --> 00:00:02,000
+The tool use approach is especially useful
+
+2
+00:00:02,000 --> 00:00:03,000
+because it enables you to perform
+
+3
+00:00:03,000 --> 00:00:05,000
+RAG over structured data.
+
+4
+00:00:05,000 --> 00:00:08,000
+So we have looked at the search code example
+
+5
+00:00:08,000 --> 00:00:09,000
+tool briefly in the previous session,
+
+6
+00:00:09,000 --> 00:00:11,000
+but now we are formally introducing it.
+
+7
+00:00:11,000 --> 00:00:13,000
+So what we have here is we have a Python function
+
+8
+00:00:13,000 --> 00:00:16,000
+to query code examples.
+
+9
+00:00:16,000 --> 00:00:19,000
+But now instead of just querying based on textual information,
+
+10
+00:00:19,000 --> 00:00:21,000
+we have further information that we
+
+11
+00:00:21,000 --> 00:00:24,000
+can use to filter the examples that we want retrieved.
+
+12
+00:00:24,000 --> 00:00:26,000
+So the query itself, which is the string, now
+
+13
+00:00:26,000 --> 00:00:29,000
+we have the file type, programming language,
+
+14
+00:00:29,000 --> 00:00:30,000
+as well as the language.
+
+15
+00:00:30,000 --> 00:00:32,000
+So let's look at the first example
+
+16
+00:00:32,000 --> 00:00:36,000
+of using structured queries on the search code examples tool.
+
+17
+00:00:36,000 --> 00:00:38,000
+So the question here is any GPT notebook for data
+
+18
+00:00:38,000 --> 00:00:39,000
+visioning with artifacts.
+
+19
+00:00:39,000 --> 00:00:42,000
+And based on that, the model response
+
+20
+00:00:42,000 --> 00:00:44,000
+that is a GPT notebook for the model data
+
+21
+00:00:44,000 --> 00:00:46,000
+visioning with artifacts.
+
+22
+00:00:46,000 --> 00:00:47,000
+So for querying structured data, we'll
+
+23
+00:00:47,000 --> 00:00:52,000
+use an example of querying this CSV of mock evaluation results.
+
+24
+00:00:52,000 --> 00:00:55,000
+So in order to be able to query the CSV file,
+
+25
+00:00:56,000 --> 00:00:59,000
+we are going to leverage a langchain set of tools, which
+
+26
+00:00:59,000 --> 00:01:02,000
+is the Python interpreter.
+
+27
+00:01:02,000 --> 00:01:05,000
+And how we implement it is over here.
+
+28
+00:01:05,000 --> 00:01:09,000
+So we define a Python interpreter using line chain.
+
+29
+00:01:09,000 --> 00:01:11,000
+And here is how we're going to define it in the schema
+
+30
+00:01:11,000 --> 00:01:13,000
+that we provide to the model.
+
+31
+00:01:13,000 --> 00:01:16,000
+So here we give the name, analyze evaluation results,
+
+32
+00:01:16,000 --> 00:01:18,000
+and we give a description of generating Python code
+
+33
+00:01:18,000 --> 00:01:20,000
+using the pandas library to analyze
+
+34
+00:01:20,000 --> 00:01:22,000
+evaluation results from a data frame called
+
+35
+00:01:22,000 --> 00:01:23,000
+evaluation_results.
+
+36
+00:01:23,000 --> 00:01:25,000
+So now we have set up the tool schema for the model
+
+37
+00:01:25,000 --> 00:01:29,000
+to generate the right code to pass to the Python
+
+38
+00:01:29,000 --> 00:01:30,000
+interpreter.
+
+39
+00:01:30,000 --> 00:01:32,000
+So let's now see how it works with the code example.
+
+40
+00:01:32,000 --> 00:01:35,000
+So we have a question now, what's the average evaluation
+
+41
+00:01:35,000 --> 00:01:37,000
+score in run A?
+
+42
+00:01:37,000 --> 00:01:40,000
+So now the model decides that it needs
+
+43
+00:01:40,000 --> 00:01:43,000
+to use the analyze evaluation results tool.
+
+44
+00:01:43,000 --> 00:01:47,000
+It generates the pandas code, and it gets the answer
+
+45
+00:01:47,000 --> 00:01:48,000
+based on the code it generates.
+
+46
+00:01:48,000 --> 00:01:52,000
+So yeah, it's filtering the data frame for run A,
+
+47
+00:01:52,000 --> 00:01:53,000
+calculating the average score over here,
+
+48
+00:01:53,000 --> 00:01:55,000
+and printing the results.
+
+49
+00:01:55,000 --> 00:01:58,000
+So 0.63 is the correct answer.
+
+50
+00:01:58,000 --> 00:02:00,000
+We'll try with a few more examples.
+
+51
+00:02:00,000 --> 00:02:02,000
+Again, it decides to use the same tool,
+
+52
+00:02:02,000 --> 00:02:06,000
+generating the pandas code, and then giving the answer.
+
+53
+00:02:06,000 --> 00:02:10,000
+And as you notice, again, it generates the citations
+
+54
+00:02:10,000 --> 00:02:13,000
+based on the result that it gets from the two results
+
+55
+00:02:13,000 --> 00:02:15,000
+that it gets from the Python interpreter.
+
+56
+00:02:15,000 --> 00:02:18,000
+And this sample is 4.8 seconds, which is also the correct answer
+
+57
+00:02:18,000 --> 00:02:19,000
+that we are looking for.
+
+58
+00:02:19,000 --> 00:02:22,000
+Let's try a bit more complex example.
+
+59
+00:02:22,000 --> 00:02:25,000
+Which use case uses the least amount of tokens on average?
+
+60
+00:02:25,000 --> 00:02:27,000
+Show the comparison in the markdown table.
+
+61
+00:02:27,000 --> 00:02:29,000
+So now it will again use the same tool,
+
+62
+00:02:29,000 --> 00:02:33,000
+generate the two calls, and then giving the response
+
+63
+00:02:33,000 --> 00:02:34,000
+in the markdown table.
+
+64
+00:02:34,000 --> 00:02:36,000
+And now we look at the final example
+
+65
+00:02:36,000 --> 00:02:39,000
+of using the Python interpreter to create plots.
+
+66
+00:02:39,000 --> 00:02:42,000
+And here it generates the evaluation score
+
+67
+00:02:42,000 --> 00:02:44,000
+by temperature for extract names, use case for each
+
+68
+00:02:44,000 --> 00:02:46,000
+of the temperature settings.
+
+69
+00:02:46,000 --> 00:02:50,000
+And that concludes the section on agentic RAG with tool use.
+

@@ -1,0 +1,112 @@
+1
+00:00:00,000 --> 00:00:04,000
+Hello and welcome to this walkthrough of chapter 6 of our RAG course where we'll be focusing on
+
+2
+00:00:04,000 --> 00:00:09,000
+response synthesis and prompting techniques. First, we'll set up our environment and load
+
+3
+00:00:09,000 --> 00:00:13,000
+the chunk data like we did in the previous chapters. With the initial setup out of the way,
+
+4
+00:00:13,000 --> 00:00:19,000
+let's jump straight into the core concepts. Our goal is to improve the response quality through
+
+5
+00:00:19,000 --> 00:00:24,000
+iterative prompt engineering. We'll start with a baseline prompt and make several improvements.
+
+6
+00:00:24,000 --> 00:00:28,000
+So here's our baseline prompt. It's simple and provides basic instructions.
+
+7
+00:00:28,000 --> 00:00:35,000
+Let's run our evaluation and see how it performs. As we can see, our baseline scores gives us a good
+
+8
+00:00:35,000 --> 00:00:42,000
+starting point for the comparison. In our first iteration, we've added more precise instructions.
+
+9
+00:00:42,000 --> 00:00:47,000
+We've defined a role, included a few dynamic elements, and provided a structured approach
+
+10
+00:00:47,000 --> 00:00:54,000
+for responses. You should notice that upon running evaluations, there is a marked improvement in the
+
+11
+00:00:54,000 --> 00:01:01,000
+response metrics. For our second iteration, we'll include an example output in the system prompt.
+
+12
+00:01:01,000 --> 00:01:07,000
+This demonstrates proper formatting, citation use, and the expected level of detail to the LLM.
+
+13
+00:01:08,000 --> 00:01:12,000
+Upon running evaluations, we should see some improvements in the metrics,
+
+14
+00:01:12,000 --> 00:01:16,000
+again showing us the value of providing a concrete example to the LLM.
+
+15
+00:01:17,000 --> 00:01:22,000
+In our third iteration, we have incorporated model reasoning. We are now asking the model
+
+16
+00:01:22,000 --> 00:01:29,000
+to explain its thought process and break down complex queries. Again, this approach should lead
+
+17
+00:01:29,000 --> 00:01:34,000
+to significant improvements in our response quality metrics. And for our final iteration,
+
+18
+00:01:35,000 --> 00:01:38,000
+we'll keep the same prompt but switch to a more advanced language model.
+
+19
+00:01:40,000 --> 00:01:46,000
+This demonstrates how combining refined prompts with better models can yield synergistic improvements.
+
+20
+00:01:47,000 --> 00:01:53,000
+Now let's compare our results across these iterations. We can see a clear trend of improvement
+
+21
+00:01:53,000 --> 00:01:58,000
+in response quality with some trade-offs in latency for later iterations. To wrap up what
+
+22
+00:01:58,000 --> 00:02:03,000
+we've learned, iterative prompt engineering significantly enhances response quality.
+
+23
+00:02:04,000 --> 00:02:08,000
+Structured instructions and examples guide the model effectively.
+
+24
+00:02:09,000 --> 00:02:14,000
+Encouraging reasoning transparency leads to more trustworthy responses and combining refined
+
+25
+00:02:14,000 --> 00:02:20,000
+prompts with advanced models yields the best results. It's crucial to balance response quality
+
+26
+00:02:20,000 --> 00:02:26,000
+with system efficiency. Remember, RAG system development is an ongoing process. Continuously
+
+27
+00:02:26,000 --> 00:02:30,000
+analyze, refine, and optimize your prompts and model selection for the best results.
+
+28
+00:02:31,000 --> 00:02:34,000
+That's all for this chapter and thank you for watching.
+

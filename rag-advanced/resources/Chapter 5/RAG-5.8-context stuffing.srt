@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:03,000
+Now let's look at the fourth argument I made about the position of the relevant context.
+
+2
+00:00:04,000 --> 00:00:08,000
+After we do cosine similarity between the query embedding and all the document embeddings,
+
+3
+00:00:08,000 --> 00:00:13,000
+we then sort it in descending order. Note that this ordering will not necessarily surface all
+
+4
+00:00:13,000 --> 00:00:18,000
+the relevant information. Say there are six relevant pieces of information. If we take the
+
+5
+00:00:18,000 --> 00:00:25,000
+top three chunks, we only have one relevant chunk, thus the recall is 0.167. Taking the top five
+
+6
+00:00:25,000 --> 00:00:32,000
+chunks improves the recall to 0.4. If we take top 10 chunks, the recall will be 0.667. You get the
+
+7
+00:00:32,000 --> 00:00:37,000
+point. The more we take from this ordered list of documents, the better the recall. But obviously
+
+8
+00:00:37,000 --> 00:00:42,000
+there ain't any free lunch. More context increases the latency and the cost of the pipeline.
+
+9
+00:00:43,000 --> 00:00:48,000
+Moreover, we know from control study that the position of the relevant context is crucial for
+
+10
+00:00:48,000 --> 00:00:53,000
+the LLM to properly attend to it. In the Lost in the Middle paper, the authors change the position
+
+11
+00:00:53,000 --> 00:00:58,000
+of the most relevant document from the first position till the 20th. Clearly the performance
+
+12
+00:00:58,000 --> 00:01:03,000
+is highest when the relevant information occurs at the beginning or at the end of the input context
+
+13
+00:01:03,000 --> 00:01:08,000
+and significantly degrades when models must access relevant information in the middle of long
+
+14
+00:01:08,000 --> 00:01:14,000
+contexts. In our top k equals 10 retrieve context, two of the relevant pieces of information are in
+
+15
+00:01:14,000 --> 00:01:18,000
+middle which will obviously impact the quality of the generated response.
+

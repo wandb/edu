@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:02,000
+Now let's look at re-ranking in action.
+
+2
+00:00:02,000 --> 00:00:03,000
+In this Colab notebook for chapter five,
+
+3
+00:00:03,000 --> 00:00:06,000
+we first do the setup, import relevant packages,
+
+4
+00:00:06,000 --> 00:00:09,000
+initialize Weave, and then download the chunked data.
+
+5
+00:00:11,000 --> 00:00:13,000
+The idea here is to compare the DenseRetriever
+
+6
+00:00:13,000 --> 00:00:15,000
+and DenseRetrieverWithReranker.
+
+7
+00:00:18,000 --> 00:00:21,000
+We first initialize the DenseRetriever
+
+8
+00:00:21,000 --> 00:00:23,000
+and index the chunked data.
+
+9
+00:00:23,000 --> 00:00:26,000
+We set up evaluation using Weave Evaluation
+
+10
+00:00:26,000 --> 00:00:28,000
+like we showed in chapter two.
+
+11
+00:00:29,000 --> 00:00:32,000
+We do the same with DenseRetrieverWithReranker,
+
+12
+00:00:32,000 --> 00:00:36,000
+initialize it, index the chunked data, and then evaluate it.
+
+13
+00:00:36,000 --> 00:00:38,000
+We'll go to the evaluation comparison in a second,
+
+14
+00:00:38,000 --> 00:00:41,000
+but let's look into the re-ranker
+
+15
+00:00:41,000 --> 00:00:44,000
+and how we are doing retrieval with re-ranker.
+
+16
+00:00:44,000 --> 00:00:46,000
+You can see the Cohere re-ranker here
+
+17
+00:00:46,000 --> 00:00:48,000
+uses the Cohere client,
+
+18
+00:00:48,000 --> 00:00:50,000
+and we send the data to the Cohere API.
+
+19
+00:00:52,000 --> 00:00:53,000
+The data here are the query,
+
+20
+00:00:53,000 --> 00:00:56,000
+the documents that we want to compare against,
+
+21
+00:00:56,000 --> 00:00:57,000
+and the top end.
+
+22
+00:00:57,000 --> 00:01:01,000
+These are the number of chunks we want to return back
+
+23
+00:01:01,000 --> 00:01:02,000
+after re-ranking.
+
+24
+00:01:06,000 --> 00:01:08,000
+The DenseRetrieverWithReranker
+
+25
+00:01:08,000 --> 00:01:11,000
+first retrieves top-k context
+
+26
+00:01:11,000 --> 00:01:15,000
+and then uses the re-ranker to return top-nchunks.
+
+27
+00:01:15,000 --> 00:01:18,000
+This is what is fed to our LLM for response synthesis.
+
+28
+00:01:20,000 --> 00:01:22,000
+I've already evaluated the DenseRetriever
+
+29
+00:01:22,000 --> 00:01:24,000
+and DenseRetrieverWithReranker.
+
+30
+00:01:24,000 --> 00:01:25,000
+Let's compare both.
+
+31
+00:01:26,000 --> 00:01:29,000
+As you can see, the DenseRetriever,
+
+32
+00:01:29,000 --> 00:01:31,000
+which is in purple color,
+
+33
+00:01:31,000 --> 00:01:33,000
+has a lower hit rate at MRR
+
+34
+00:01:33,000 --> 00:01:36,000
+compared to the DenseRetrieverWithReranker.
+
+35
+00:01:36,000 --> 00:01:40,000
+It is slightly better in terms of NDGC and MAP,
+
+36
+00:01:40,000 --> 00:01:43,000
+but overall, if you look at the F1 score,
+
+37
+00:01:43,000 --> 00:01:45,000
+our DenseRetrieverWithReranker
+
+38
+00:01:45,000 --> 00:01:48,000
+is exceeding the DenseRetriever,
+
+39
+00:01:48,000 --> 00:01:50,000
+which means both the recall and the precision
+
+40
+00:01:50,000 --> 00:01:52,000
+are well-balanced.
+

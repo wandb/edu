@@ -1,0 +1,120 @@
+1
+00:00:00,000 --> 00:00:04,000
+Talking about configurability, if you are experimenting a lot with different LLM providers,
+
+2
+00:00:04,000 --> 00:00:07,000
+using LiteLLM's unified API is a good approach.
+
+3
+00:00:07,000 --> 00:00:11,000
+I, however, am also in favor of using the target LLM's SDK
+
+4
+00:00:11,000 --> 00:00:14,000
+if you aren't sure on what LLM you are going to be using.
+
+5
+00:00:14,000 --> 00:00:19,000
+Talking about system prompt, it can live directly in the script where it is going to be consumed
+
+6
+00:00:19,000 --> 00:00:24,000
+for a less complex code base, but we recommend using text files or JSON files to keep track
+
+7
+00:00:24,000 --> 00:00:26,000
+of the system prompts for more complex code bases.
+
+8
+00:00:27,000 --> 00:00:33,000
+Following good software principles is the best way ahead and make sure to evaluate everything possible.
+
+9
+00:00:33,000 --> 00:00:38,000
+Write unit tests, create LLM judges and everything else that we have covered in the chapters so far.
+
+10
+00:00:39,000 --> 00:00:44,000
+Something like wandb Weave can be really useful to keep track and version control everything,
+
+11
+00:00:44,000 --> 00:00:46,000
+be it code, the LLM, the prompts, etc.
+
+12
+00:00:47,000 --> 00:00:51,000
+It is a lightweight package and it doesn't take up a lot of code real estate.
+
+13
+00:00:51,000 --> 00:00:52,000
+Consider using it.
+
+14
+00:00:53,000 --> 00:00:57,000
+Finally, caching is something we recommend if you are handling a many requests at the same time.
+
+15
+00:00:57,000 --> 00:01:01,000
+The general idea is to cache pairs of input and output,
+
+16
+00:01:01,000 --> 00:01:04,000
+especially your LLM generated response for a given query.
+
+17
+00:01:04,000 --> 00:01:10,000
+During query time, if a new query matches some condition to an already existing cached query,
+
+18
+00:01:10,000 --> 00:01:13,000
+serve the cached response instead of generating a response.
+
+19
+00:01:13,000 --> 00:01:15,000
+This will massively speed up your application.
+
+20
+00:01:16,000 --> 00:01:18,000
+Well, this is the end of this short chapter.
+
+21
+00:01:18,000 --> 00:01:20,000
+I hope you learned something new and useful.
+
+22
+00:01:20,000 --> 00:01:24,000
+To conclude, here are some of the key takeaway pointers.
+
+23
+00:01:24,000 --> 00:01:28,000
+You should follow good software development practices to develop efficient applications.
+
+24
+00:01:28,000 --> 00:01:31,000
+Doing it right will give insights to improve and debug your application as well.
+
+25
+00:01:32,000 --> 00:01:36,000
+There is no need to stress about frameworks and make sure to evaluate everything you do.
+
+26
+00:01:36,000 --> 00:01:39,000
+Evaluation driven development is the best approach.
+
+27
+00:01:39,000 --> 00:01:41,000
+Finally, most tricks are use case dependent.
+
+28
+00:01:41,000 --> 00:01:43,000
+We have documented our wandbot refactoring journey,
+
+29
+00:01:43,000 --> 00:01:46,000
+which reduced the latency by 84% in this report.
+
+30
+00:01:46,000 --> 00:01:48,000
+I would highly recommend you all check this out.
+

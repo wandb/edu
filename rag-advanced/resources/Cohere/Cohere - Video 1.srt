@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:04,000
+Hi, my name is Meor. In this section, we'll be talking about the agentic approach of
+
+2
+00:00:04,000 --> 00:00:09,000
+performing RAG and specifically we'll be using the tool use capabilities of the Cohere API.
+
+3
+00:00:11,000 --> 00:00:15,000
+In this first section, we'll talk about the transition from RAG to tool use approach.
+
+4
+00:00:15,000 --> 00:00:19,000
+RAG gives LLMs the capability to ground their responses in external text data.
+
+5
+00:00:19,000 --> 00:00:23,000
+So tool use takes the RAG concept to the next level. It gives the flexibility and robustness
+
+6
+00:00:23,000 --> 00:00:29,000
+to a RAG system. Whereas a typical RAG system only have access on a vector store, for example,
+
+7
+00:00:29,000 --> 00:00:35,000
+that stores unstructured data that are retrieved through the embeddings. With tool use, you can
+
+8
+00:00:35,000 --> 00:00:40,000
+access any kind of tool that can give you information given a type of query that you give them.
+
+9
+00:00:40,000 --> 00:00:45,000
+So it can be a web search tool, it can be a Python interpreter tool, it can be structured data, it can
+
+10
+00:00:45,000 --> 00:00:50,000
+be any API that you can interact with that you can send and get information back. So instead of
+
+11
+00:00:50,000 --> 00:00:55,000
+retrieving information from unstructured documents in simple RAG, we can do that from any source tool
+
+12
+00:00:55,000 --> 00:01:00,000
+use. So tool use generalizes the concept of RAG and whereas the concept in general is still the
+
+13
+00:01:00,000 --> 00:01:04,000
+same, if you look at these two diagrams, it's still sending, getting a message, retrieving
+
+14
+00:01:04,000 --> 00:01:09,000
+something and giving a response. With tool use, you can do this with a much broader set of tools
+
+15
+00:01:09,000 --> 00:01:15,000
+and much more, in much more flexible way. So this makes an LLM more connected to the external world,
+
+16
+00:01:15,000 --> 00:01:18,000
+can take a broader range of actions and is more flexible overall.
+

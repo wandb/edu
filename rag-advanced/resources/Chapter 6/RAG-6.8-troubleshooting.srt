@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:03,000
+Let's wrap up with some troubleshooting tips and best practices.
+
+2
+00:00:03,000 --> 00:00:08,000
+Even the best RAG systems face challenges, but with the right approach, we can overcome them.
+
+3
+00:00:09,000 --> 00:00:14,000
+Common issues include incoherent responses, struggles with ambiguous queries,
+
+4
+00:00:14,000 --> 00:00:16,000
+and inconsistency across topics.
+
+5
+00:00:16,000 --> 00:00:20,000
+For improving coherence, we use structured prompts to guide logical flow.
+
+6
+00:00:21,000 --> 00:00:24,000
+It's like giving your LLM a roadmap for its responses.
+
+7
+00:00:24,000 --> 00:00:28,000
+When dealing with ambiguous queries, clarification prompts are what you need.
+
+8
+00:00:29,000 --> 00:00:32,000
+They help your system ask for more information when needed.
+
+9
+00:00:32,000 --> 00:00:36,000
+To maintain consistency, regular knowledge base updates are crucial.
+
+10
+00:00:36,000 --> 00:00:39,000
+Keep your system's information fresh and aligned.
+
+11
+00:00:40,000 --> 00:00:42,000
+These techniques aren't just theoretical.
+
+12
+00:00:42,000 --> 00:00:47,000
+In wandbot, they've improved the response coherence and halved our irrelevant responses.
+
+13
+00:00:48,000 --> 00:00:50,000
+Remember, troubleshooting is an ongoing process.
+
+14
+00:00:50,000 --> 00:00:54,000
+Stay vigilant, keep refining, and your RAG system will continue to improve over time.
+
+15
+00:00:55,000 --> 00:00:59,000
+By implementing these practices, you're not just fixing problems,
+
+16
+00:00:59,000 --> 00:01:04,000
+you're building a robust, reliable system that can handle whatever the user throws at them.
+

@@ -1,0 +1,272 @@
+1
+00:00:00,000 --> 00:00:05,000
+Let's start by understanding what query enhancement is and why it's so crucial for RAG systems.
+
+2
+00:00:05,000 --> 00:00:09,000
+Think of query enhancement as a skilled interpreter between the user and your RAG system.
+
+3
+00:00:09,000 --> 00:00:13,000
+It takes what the user says and refines it into something your system can better understand and
+
+4
+00:00:13,000 --> 00:00:19,000
+process. It's like giving your RAG system x-ray vision. Suddenly, it can see user intentions more
+
+5
+00:00:19,000 --> 00:00:23,000
+clearly, leading to more accurate information retrieval and more relevant responses.
+
+6
+00:00:24,000 --> 00:00:30,000
+Query enhancement helped us tackle some tricky challenges when we faced in wandbot. For instance,
+
+7
+00:00:30,000 --> 00:00:34,000
+when users ask ambiguous questions or when they fire off complex multi-part queries,
+
+8
+00:00:34,000 --> 00:00:40,000
+this technique has helped wandbot understand the nuances of what users are asking and reply with
+
+9
+00:00:40,000 --> 00:00:45,000
+precision. This has dramatically improved wandbot's ability to understand and respond to user queries,
+
+10
+00:00:45,000 --> 00:00:51,000
+consequently improving the overall user experience. So, as we dive deeper into this topic,
+
+11
+00:00:51,000 --> 00:00:56,000
+keep in mind that a good query enhancement system can be a game-changer for your RAG system's
+
+12
+00:00:56,000 --> 00:01:01,000
+performance and user satisfaction. Now, let's talk about the four key techniques that form the
+
+13
+00:01:01,000 --> 00:01:06,000
+backbone of effective query enhancement. Think of these techniques as the essential tools in your
+
+14
+00:01:06,000 --> 00:01:11,000
+query enhancement toolkit. First, we have conversation history utilization. This is like
+
+15
+00:01:11,000 --> 00:01:16,000
+giving your system a good memory. Next, there is intent recognition, which helps your system
+
+16
+00:01:16,000 --> 00:01:21,000
+understand the why behind a user's query. Then, we have keyword extraction, which helps extract
+
+17
+00:01:21,000 --> 00:01:27,000
+and inject domain knowledge into your user queries. And finally, there is query decomposition that
+
+18
+00:01:27,000 --> 00:01:32,000
+breaks complex queries into manageable parts for your system to process. In wandbot, we've
+
+19
+00:01:32,000 --> 00:01:36,000
+implemented all four of these techniques to ensure that we are getting the most out of our system.
+
+20
+00:01:37,000 --> 00:01:41,000
+As we explore each technique in detail, you'll see how they work together to improve your system's
+
+21
+00:01:41,000 --> 00:01:47,000
+ability to understand and process user queries. These tools are what allow your RAG system to go
+
+22
+00:01:47,000 --> 00:01:53,000
+from just seeing user words to truly understanding what the users are asking for. Let's dive into our
+
+23
+00:01:53,000 --> 00:01:58,000
+first technique, utilizing conversation history. Imagine trying to understand a movie by only
+
+24
+00:01:58,000 --> 00:02:04,000
+watching five random five-minute clips. Frustrating, right? That's what it's like for a RAG system to
+
+25
+00:02:04,000 --> 00:02:09,000
+try to understand queries without context. Utilizing conversation history is like giving
+
+26
+00:02:09,000 --> 00:02:15,000
+your system the ability to remember parts of the conversation. It helps maintain context across
+
+27
+00:02:15,000 --> 00:02:20,000
+multiple interactions, making responses more coherent and relevant. In wandbot, we use this
+
+28
+00:02:20,000 --> 00:02:25,000
+technique through chat history condensation and contextual query reformulation. Here's an example.
+
+29
+00:02:26,000 --> 00:02:31,000
+When a user asks a follow-up question about logging metrics, wandbot can look back at previous
+
+30
+00:02:31,000 --> 00:02:37,000
+interactions and remember that the user was asking about logging metrics with PyTorch specifically.
+
+31
+00:02:37,000 --> 00:02:42,000
+This allows it to respond in a more targeted way. This is especially useful in conversations that
+
+32
+00:02:42,000 --> 00:02:48,000
+often involve multiple turns and related questions. By utilizing conversation history, you're
+
+33
+00:02:48,000 --> 00:02:53,000
+essentially giving your RAG system a better memory, leading to more natural and conversational
+
+34
+00:02:53,000 --> 00:02:59,000
+interactions. Now let's talk about our second technique, intent recognition. It's our RAG system's
+
+35
+00:02:59,000 --> 00:03:04,000
+mind-reading ability. It helps the system in understanding the why behind the user's query.
+
+36
+00:03:04,000 --> 00:03:09,000
+Traditionally, we use NLP techniques like classification and sentiment analysis for this.
+
+37
+00:03:10,000 --> 00:03:15,000
+These models act like detectives analyzing the query to figure out what the user really wants.
+
+38
+00:03:16,000 --> 00:03:21,000
+In wandbot, we prompt an LLM to classify user queries into predefined intents. For instance,
+
+39
+00:03:21,000 --> 00:03:27,000
+when a user asks, how do I log metrics, wandbot classifies this under product features. This
+
+40
+00:03:27,000 --> 00:03:33,000
+classification is crucial because it guides the retrieval process. It points a system in the right
+
+41
+00:03:33,000 --> 00:03:38,000
+direction before it starts searching for information. By implementing intent recognition,
+
+42
+00:03:38,000 --> 00:03:42,000
+you're giving your RAG system the power to understand user needs more deeply.
+
+43
+00:03:42,000 --> 00:03:46,000
+This deeper understanding leads to more accurate and relevant responses,
+
+44
+00:03:46,000 --> 00:03:51,000
+significantly improving the user experience. Remember, the better your system understands
+
+45
+00:03:51,000 --> 00:03:56,000
+user intent, the more helpful and accurate its responses will be. Let's move on to our
+
+46
+00:03:56,000 --> 00:04:01,000
+third technique, keyword enhancement. Keyword extraction and expansion is a tried and tested
+
+47
+00:04:01,000 --> 00:04:07,000
+method in information retrieval for decades. It's part of many search engines and recommendation
+
+48
+00:04:07,000 --> 00:04:12,000
+systems we use daily. In the context of RAG systems, keyword extraction and expansion employs
+
+49
+00:04:12,000 --> 00:04:18,000
+machine learning algorithms to identify, extract, and enhance the most important words and phrases
+
+50
+00:04:18,000 --> 00:04:25,000
+from user queries. In wandbot, we adopted keyword and key phrase enhancements to improve domain
+
+51
+00:04:25,000 --> 00:04:31,000
+specificity. For example, our system extracts and injects key terms such as logging metrics,
+
+52
+00:04:31,000 --> 00:04:38,000
+experiment tracking, and 1 DB usage to the query, how do I log metrics? These enhanced keywords act
+
+53
+00:04:38,000 --> 00:04:43,000
+as lexical anchors guiding our system to the most relevant information in our knowledge base.
+
+54
+00:04:43,000 --> 00:04:49,000
+When you augment queries with such keywords and phrases, you ensure more relevant and accurate
+
+55
+00:04:49,000 --> 00:04:55,000
+information retrieval and ultimately more helpful responses for your users, especially when dealing
+
+56
+00:04:55,000 --> 00:05:00,000
+with domain-specific knowledge. Let's talk about our fourth technique, query decomposition.
+
+57
+00:05:01,000 --> 00:05:07,000
+Sometimes, user queries can be complex, like a puzzle with multiple pieces. Query decomposition
+
+58
+00:05:07,000 --> 00:05:12,000
+is our way of solving that puzzle. It involves breaking down complex user queries into simple,
+
+59
+00:05:12,000 --> 00:05:18,000
+more manageable subqueries and vector search queries. Let's look at an example. While initially
+
+60
+00:05:18,000 --> 00:05:23,000
+a query like how do I log metrics looks quite simple, it can be decomposed into specific
+
+61
+00:05:23,000 --> 00:05:28,000
+subqueries addressing different aspects of metric logging, like the steps involved, some examples,
+
+62
+00:05:28,000 --> 00:05:33,000
+and even best practices to follow. We also reformulate queries into vector search queries
+
+63
+00:05:33,000 --> 00:05:38,000
+optimized for our retrieval system. This is particularly effective when dealing with intricate
+
+64
+00:05:38,000 --> 00:05:45,000
+or multifaceted user queries. By revealing hidden needs and identifying implicit information,
+
+65
+00:05:45,000 --> 00:05:50,000
+query decomposition helps wandbot provide more comprehensive and accurate responses to user
+
+66
+00:05:50,000 --> 00:05:57,000
+inquiries. This ensures that all aspects of a query and complex system are addressed, giving
+
+67
+00:05:57,000 --> 00:06:03,000
+users a complete and satisfying answer. In a sense, query decomposition allows your
+
+68
+00:06:03,000 --> 00:06:09,000
+rag system to tackle even the most challenging queries with precision and thoroughness.
+

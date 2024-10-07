@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:02,000
+LLM calls take the most time in a RAG pipeline.
+
+2
+00:00:02,000 --> 00:00:06,000
+If you're using an open source model, there are ways to speed up generation,
+
+3
+00:00:06,000 --> 00:00:09,000
+but most frontier LLM providers are already employing these tricks.
+
+4
+00:00:09,000 --> 00:00:13,000
+So the way ahead to reduce overhead due to LLM calls
+
+5
+00:00:13,000 --> 00:00:16,000
+is to make it parallel wherever possible.
+
+6
+00:00:16,000 --> 00:00:18,000
+Most frontier LLM providers can handle multiple requests
+
+7
+00:00:18,000 --> 00:00:21,000
+and this helps in parallelization.
+
+8
+00:00:21,000 --> 00:00:24,000
+Language expression language (LECL) is something we have used in wandbot
+
+9
+00:00:24,000 --> 00:00:27,000
+and something we recommend to parallelize LLM calls
+
+10
+00:00:27,000 --> 00:00:29,000
+while making the code more readable and efficient.
+
+11
+00:00:30,000 --> 00:00:35,000
+LECL allows to chain small components both sequentially and parallelly
+
+12
+00:00:35,000 --> 00:00:38,000
+and the best part is you can switch between sync and async mode
+
+13
+00:00:38,000 --> 00:00:39,000
+without changing anything in the code.
+
+14
+00:00:39,000 --> 00:00:40,000
+It just works.
+
+15
+00:00:40,000 --> 00:00:44,000
+Finally, try to batch user queries wherever possible.
+

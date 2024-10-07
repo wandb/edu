@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:05,000
+Well, LLM evaluators have limitations as well, but there are some solutions.
+
+2
+00:00:05,000 --> 00:00:11,000
+The evaluator is non-deterministic, thus ideally we should be running 3-5 trials per experiment.
+
+3
+00:00:11,000 --> 00:00:15,000
+You might have already thought about it if we are using an LLM to evaluate an LLM system
+
+4
+00:00:15,000 --> 00:00:21,000
+who evaluates the evaluator. Remember the concept of alignment where we align the evaluator's
+
+5
+00:00:21,000 --> 00:00:27,000
+judgement with that of human judgement with careful prompting.
+
+6
+00:00:27,000 --> 00:00:31,000
+Cost is obviously higher compared to traditional metrics, but remember you are using LLM evaluator
+
+7
+00:00:31,000 --> 00:00:37,000
+to measure abstract concepts and manual evaluation will be very costly and time consuming.
+
+8
+00:00:37,000 --> 00:00:43,000
+Finally, the evaluation dataset needs to be updated if the data source has changed, thus
+
+9
+00:00:43,000 --> 00:00:48,000
+requiring a careful inspection of the evaluator's alignment with human judgement. In my opinion,
+
+10
+00:00:48,000 --> 00:00:52,000
+having a dedicated team for evaluation makes a huge difference.
+

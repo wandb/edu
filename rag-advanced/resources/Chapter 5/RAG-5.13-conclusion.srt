@@ -1,0 +1,68 @@
+1
+00:00:00,000 --> 00:00:02,000
+Well, this is the end of this chapter.
+
+2
+00:00:02,000 --> 00:00:04,000
+To summarize, there aren't any silver bullets,
+
+3
+00:00:04,000 --> 00:00:07,000
+so experiment and evaluate with different retrieval techniques.
+
+4
+00:00:07,000 --> 00:00:11,000
+For complex queries, try breaking down the query into smaller subqueries
+
+5
+00:00:11,000 --> 00:00:14,000
+or rewrite the query to improve the recall of your retrieval system.
+
+6
+00:00:15,000 --> 00:00:18,000
+Metadata filtering helps speed up retrieval time
+
+7
+00:00:18,000 --> 00:00:20,000
+and enforce correct information to be picked.
+
+8
+00:00:21,000 --> 00:00:23,000
+Don't be afraid to create multiple vector databases
+
+9
+00:00:23,000 --> 00:00:26,000
+or retrieve using different algorithms,
+
+10
+00:00:26,000 --> 00:00:29,000
+because we can re-rank different retrieved contexts
+
+11
+00:00:29,000 --> 00:00:30,000
+to improve the recall.
+
+12
+00:00:30,000 --> 00:00:31,000
+However, this is a slow technique,
+
+13
+00:00:31,000 --> 00:00:35,000
+so reciprocal rank fusion is a better way or a quicker way
+
+14
+00:00:35,000 --> 00:00:37,000
+to select the best chance across multiple retrieval techniques,
+
+15
+00:00:37,000 --> 00:00:40,000
+which can also be followed with Cohere re-ranking.
+
+16
+00:00:40,000 --> 00:00:43,000
+I hope you learned something new and exciting in this chapter.
+
+17
+00:00:43,000 --> 00:00:44,000
+Thank you.
+

@@ -1,0 +1,84 @@
+1
+00:00:00,000 --> 00:00:04,000
+Before you get started, let us set you up to get the most out of this course.
+
+2
+00:00:04,000 --> 00:00:07,000
+Throughout the course we will be recommending useful tools.
+
+3
+00:00:07,000 --> 00:00:12,000
+However we will mainly be using Weave, Cohere and Weaviate.
+
+4
+00:00:12,000 --> 00:00:17,000
+Weave is a lightweight toolkit for tracking and evaluating your LLM applications.
+
+5
+00:00:17,000 --> 00:00:24,000
+We will be using Cohere family of models for text generation, re-ranking and embedding.
+
+6
+00:00:24,000 --> 00:00:27,000
+Cohere is also providing with free credits for this course.
+
+7
+00:00:27,000 --> 00:00:32,000
+Check out the instructions under this lesson to redeem your free Cohere API key for this
+
+8
+00:00:32,000 --> 00:00:33,000
+course.
+
+9
+00:00:33,000 --> 00:00:37,000
+Once you have the API keys, head over to the Colab notebook for this lesson.
+
+10
+00:00:37,000 --> 00:00:40,000
+We first install the required packages.
+
+11
+00:00:40,000 --> 00:00:42,000
+We then initialise our Weave client.
+
+12
+00:00:42,000 --> 00:00:45,000
+This is where you will put in your wandb API key.
+
+13
+00:00:45,000 --> 00:00:48,000
+We then set up our Cohere client.
+
+14
+00:00:48,000 --> 00:00:52,000
+We will then use the Cohere model to ask about retrieval augmented generation.
+
+15
+00:00:52,000 --> 00:00:56,000
+If everything works fine, you will have a Weave URL.
+
+16
+00:00:56,000 --> 00:00:59,000
+Let's head over to it.
+
+17
+00:00:59,000 --> 00:01:03,000
+This is a single trace of the Cohere client chat method.
+
+18
+00:01:03,000 --> 00:01:08,000
+We will automatically capture the inputs to the client as well as the generated response.
+
+19
+00:01:08,000 --> 00:01:15,000
+We also keep track of the used tokens and the time taken to complete the generation.
+
+20
+00:01:15,000 --> 00:01:17,000
+Now let's get started with the course.
+
+21
+00:01:17,000 --> 00:01:18,000
+Enjoy!
+

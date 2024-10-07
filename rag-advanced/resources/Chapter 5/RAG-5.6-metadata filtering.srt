@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:02,000
+In chapter 3, Bharat talked about metadata management,
+
+2
+00:00:02,000 --> 00:00:07,000
+where the vector store is not only a collection of documents and their embeddings,
+
+3
+00:00:07,000 --> 00:00:10,000
+but also store relevant metadata associated with each document.
+
+4
+00:00:11,000 --> 00:00:17,000
+During retrieval, the metadata filtering strategy uses an LLM to first extract the metadata
+
+5
+00:00:17,000 --> 00:00:19,000
+from the user query based off some schema.
+
+6
+00:00:19,000 --> 00:00:23,000
+In this example, we are extracting the year metadata from the query.
+
+7
+00:00:23,000 --> 00:00:29,000
+We then filter the vector store to select only those documents associated with this metadata.
+
+8
+00:00:29,000 --> 00:00:34,000
+Doing cosine similarity with this subset ensures a better and richer context for LLM.
+

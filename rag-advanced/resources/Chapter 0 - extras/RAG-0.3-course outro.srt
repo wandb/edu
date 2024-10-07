@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:02,000
+That concludes our RAG++ course.
+
+2
+00:00:02,000 --> 00:00:04,000
+Thank you for joining us and taking the time
+
+3
+00:00:04,000 --> 00:00:05,000
+to enhance your skills
+
+4
+00:00:05,000 --> 00:00:08,000
+in building production-ready RAG systems.
+
+5
+00:00:08,000 --> 00:00:09,000
+We appreciate your commitment
+
+6
+00:00:09,000 --> 00:00:12,000
+and hope you found the course valuable.
+
+7
+00:00:12,000 --> 00:00:14,000
+Your feedback is important to us.
+
+8
+00:00:14,000 --> 00:00:16,000
+Please take a moment to leave a review
+
+9
+00:00:16,000 --> 00:00:18,000
+and share your thoughts.
+
+10
+00:00:18,000 --> 00:00:19,000
+Thank you once again,
+
+11
+00:00:19,000 --> 00:00:21,000
+and we look forward to seeing the innovative solutions
+
+12
+00:00:21,000 --> 00:00:23,000
+you will be creating.
+
+13
+00:00:23,000 --> 00:00:25,000
+Best of luck and happy building.
+

@@ -1,0 +1,108 @@
+1
+00:00:00,000 --> 00:00:04,000
+We found few-shot prompting to be highly effective in our RAG system.
+
+2
+00:00:04,000 --> 00:00:09,000
+Few-shot learning bridges the gap between zero-shots approaches and fine-tuning.
+
+3
+00:00:09,000 --> 00:00:12,000
+By providing a small set of examples within the prompt,
+
+4
+00:00:12,000 --> 00:00:16,000
+we enabled the model to quickly adapt to specific tasks.
+
+5
+00:00:16,000 --> 00:00:19,000
+Here's the process we followed while implementing this in wandbot.
+
+6
+00:00:19,000 --> 00:00:25,000
+We carefully selected representative examples covering common query types and desired response formats.
+
+7
+00:00:25,000 --> 00:00:30,000
+The key is balancing diversity with specificity to our use cases.
+
+8
+00:00:30,000 --> 00:00:38,000
+Ensuring that wandbot can handle a wide range of queries while maintaining expertise in the Weights & Biases documentation.
+
+9
+00:00:38,000 --> 00:00:40,000
+The impact has been significant.
+
+10
+00:00:40,000 --> 00:00:48,000
+We achieved a 6% overall performance boost, increasing from 66% to 72% in terms of answer correctness.
+
+11
+00:00:48,000 --> 00:00:55,000
+This improvement encompasses more accurate responses, better code snippets, and enhanced user satisfaction.
+
+12
+00:00:55,000 --> 00:01:02,000
+Few-shot prompting has proven particularly effective for domain-specific applications like documentation assistance.
+
+13
+00:01:02,000 --> 00:01:09,000
+It's a valuable technique to consider when optimizing your RAG system for improved performance and adaptability.
+
+14
+00:01:09,000 --> 00:01:12,000
+Moving on to the nitty-gritty of few-shot prompting,
+
+15
+00:01:12,000 --> 00:01:17,000
+I want to share some key practices that can really boost your RAG system's performance.
+
+16
+00:01:17,000 --> 00:01:21,000
+At the top of our list is using high-quality, diverse examples.
+
+17
+00:01:21,000 --> 00:01:24,000
+It's crucial to tailor these examples to common query types.
+
+18
+00:01:24,000 --> 00:01:29,000
+This prepares your system to handle the most frequent user needs with precision.
+
+19
+00:01:29,000 --> 00:01:31,000
+Now, here's where it gets tricky.
+
+20
+00:01:31,000 --> 00:01:34,000
+You need to balance performance with token usage.
+
+21
+00:01:34,000 --> 00:01:37,000
+And finally, keep your example set dynamic.
+
+22
+00:01:37,000 --> 00:01:40,000
+As your system grows, so should your examples.
+
+23
+00:01:40,000 --> 00:01:46,000
+Regularly update and ensure your system stays in tune with the evolving use cases.
+
+24
+00:01:46,000 --> 00:01:49,000
+These practices have been a game-changer for wandbot,
+
+25
+00:01:49,000 --> 00:01:54,000
+helping us maintain top-notch responses while adapting to shifting user needs.
+
+26
+00:01:54,000 --> 00:01:59,000
+The key takeaway? Guide your model effectively, but don't overwhelm it.
+
+27
+00:01:59,000 --> 00:02:04,000
+Implement these practices, and you'll see a significant uplift in your RAG system's capabilities.
+

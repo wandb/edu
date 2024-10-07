@@ -1,0 +1,28 @@
+1
+00:00:00,000 --> 00:00:05,000
+We have implemented a cohere embed English v3 based dense retriever in the Colab notebook
+
+2
+00:00:05,000 --> 00:00:10,000
+for this chapter. Do check it out. Here I am showing the comparison of TF-IDF based
+
+3
+00:00:10,000 --> 00:00:15,000
+retriever and dense retriever system across multiple evaluation metrics. This is our evaluation
+
+4
+00:00:15,000 --> 00:00:22,000
+comparison dashboard. Dense retriever got a better F1 score compared to the TF-IDF retriever.
+
+5
+00:00:22,000 --> 00:00:27,000
+It has a better NDCG metric which is a more reliable metric compared to MRR and hit rate.
+
+6
+00:00:27,000 --> 00:00:33,000
+The most surprising result from this comparison is the fact that TF-IDF retriever is actually
+
+7
+00:00:33,000 --> 00:00:39,000
+slower compared to the dense retriever which is at least to me counter-intuitive.
+

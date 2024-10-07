@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:02,000
+In cases where we have multiple sources of information,
+
+2
+00:00:02,000 --> 00:00:05,000
+we not only retrieve information from a single vector store,
+
+3
+00:00:05,000 --> 00:00:08,000
+but can do so over multiple vector stores.
+
+4
+00:00:08,000 --> 00:00:10,000
+Depending on use case or business constraints,
+
+5
+00:00:10,000 --> 00:00:13,000
+we can even use conventional SQL databases
+
+6
+00:00:13,000 --> 00:00:15,000
+or consider doing web search.
+
+7
+00:00:15,000 --> 00:00:18,000
+We do all this by using a concept called routing.
+
+8
+00:00:18,000 --> 00:00:21,000
+Besides jargon, the underlying idea is simple.
+
+9
+00:00:21,000 --> 00:00:25,000
+We take in the user query and use an LLM function calling ability
+
+10
+00:00:25,000 --> 00:00:26,000
+to select the retrieval sources.
+
+11
+00:00:27,000 --> 00:00:28,000
+Based on a recent study,
+
+12
+00:00:28,000 --> 00:00:32,000
+it is best if we use one LLM call to come up with a reasoning step
+
+13
+00:00:32,000 --> 00:00:36,000
+to select data sources and use another LLM call to do function calling.
+

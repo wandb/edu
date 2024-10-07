@@ -1,0 +1,264 @@
+1
+00:00:00,000 --> 00:00:06,000
+Hi everyone, I'm Charles from Weaviate and today we're going to be covering how to set up Weaviate for your RAG application
+
+2
+00:00:06,000 --> 00:00:09,000
+and how to ingest your data into Weaviate.
+
+3
+00:00:09,000 --> 00:00:14,000
+And after that we're going to be learning how to query Weaviate for hybrid search
+
+4
+00:00:14,000 --> 00:00:18,000
+and using re-ranking to improve the quality of your results.
+
+5
+00:00:18,000 --> 00:00:22,000
+In this section we're going to be covering querying Weaviate and hybrid search.
+
+6
+00:00:22,000 --> 00:00:28,000
+So vector search is extremely powerful at capturing the semantic relationships between a query
+
+7
+00:00:28,000 --> 00:00:30,000
+and the documents you have stored in your database.
+
+8
+00:00:30,000 --> 00:00:35,000
+However sometimes we also want to add some of the precision of a traditional keyword search
+
+9
+00:00:35,000 --> 00:00:39,000
+which retrieves documents based on exact matches with your input queries.
+
+10
+00:00:39,000 --> 00:00:45,000
+Hybrid search is the answer for these scenarios and as such it's a critical component for building RAG applications.
+
+11
+00:00:45,000 --> 00:00:50,000
+By conducting a hybrid search we can ensure that our system is still able to retrieve documents
+
+12
+00:00:50,000 --> 00:00:56,000
+that may use very specific terms for fields such as medicine including medical names, anatomical terms
+
+13
+00:00:56,000 --> 00:01:00,000
+that otherwise might be lost with a pure vector search where the embedding model
+
+14
+00:01:00,000 --> 00:01:03,000
+might not be able to accurately represent certain domains.
+
+15
+00:01:04,000 --> 00:01:07,000
+So under the hood in Weaviate when you conduct a hybrid search
+
+16
+00:01:07,000 --> 00:01:12,000
+Weaviate conducts both a vector and keyword search in parallel.
+
+17
+00:01:12,000 --> 00:01:17,000
+The results of both of these searches are then merged and ranked accordingly to a weighted system.
+
+18
+00:01:17,000 --> 00:01:24,000
+The degree to which your search favors or keyword or vector results can be manually adjusted with the alpha parameter.
+
+19
+00:01:24,000 --> 00:01:27,000
+Tuning this parameter balances precision and recall.
+
+20
+00:01:28,000 --> 00:01:30,000
+So how do we understand the alpha parameter?
+
+21
+00:01:30,000 --> 00:01:36,000
+Well in Weaviate an alpha parameter of zero would result in a pure BM25 search over your documents.
+
+22
+00:01:36,000 --> 00:01:40,000
+An alpha parameter of one would result in a pure vector search over your documents
+
+23
+00:01:40,000 --> 00:01:47,000
+and an alpha parameter of 0.5 would give you a balanced 50-50 blend of results between BM25 and vector search.
+
+24
+00:01:47,000 --> 00:01:52,000
+Also in this section we're going to be covering re-ranking using Cohere's re-ranking API.
+
+25
+00:01:52,000 --> 00:01:58,000
+We will re-rank our results to ensure that we get the best possible results for more difficult questions.
+
+26
+00:01:58,000 --> 00:01:59,000
+So let's dive in.
+
+27
+00:01:59,000 --> 00:02:05,000
+To begin with before we do a hybrid search I'm going to show this query using a pure vector search.
+
+28
+00:02:05,000 --> 00:02:10,000
+With Weaviate Client a pure vector search can be conducted using the near vector method
+
+29
+00:02:10,000 --> 00:02:15,000
+or in our case because we already configured the vectorizer for collection the near text method.
+
+30
+00:02:15,000 --> 00:02:20,000
+So firstly let's just do a direct vector search.
+
+31
+00:02:20,000 --> 00:02:22,000
+So the question here is how to get started using Weave.
+
+32
+00:02:23,000 --> 00:02:28,000
+Well if we actually look at the result here we can see it's kind of right.
+
+33
+00:02:28,000 --> 00:02:32,000
+It's brought us to a page which gives us an introduction for Weave
+
+34
+00:02:32,000 --> 00:02:37,000
+but really what I'm looking for here is how to actually get started using Weave in my code.
+
+35
+00:02:37,000 --> 00:02:40,000
+So for that we're going to switch over to a hybrid search
+
+36
+00:02:41,000 --> 00:02:46,000
+and all you need to do to conduct a hybrid search is do collection.query.hybrid.
+
+37
+00:02:46,000 --> 00:02:50,000
+You pass in your query, you pass in your limit which is how many results you want
+
+38
+00:02:50,000 --> 00:02:53,000
+and then you also just pass in your alpha parameter.
+
+39
+00:02:53,000 --> 00:02:56,000
+So here we're going to put in an alpha parameter of 0.5
+
+40
+00:02:56,000 --> 00:02:59,000
+meaning we want a balance between BM25 and pure vector search.
+
+41
+00:02:59,000 --> 00:03:01,000
+So let's run that exact same query again.
+
+42
+00:03:06,000 --> 00:03:09,000
+Well now the results are actually showing more what I was looking for
+
+43
+00:03:09,000 --> 00:03:14,000
+which is an actual code setup of how to get started using Weave in your project.
+
+44
+00:03:14,000 --> 00:03:19,000
+So here we can see that the addition of BM25 has actually really brought in results that
+
+45
+00:03:19,000 --> 00:03:24,000
+kind of really emphasize how to get started because that's what this document mentions.
+
+46
+00:03:24,000 --> 00:03:29,000
+So finally we're going to use a re-ranker to help answer more complex questions.
+
+47
+00:03:29,000 --> 00:03:36,000
+So here we have a query, how do I set up a sweep to run on multiple GPU-enabled machines at the same time?
+
+48
+00:03:36,000 --> 00:03:37,000
+So this is a more complex query.
+
+49
+00:03:38,000 --> 00:03:44,000
+So let's see how it performs firstly just with the hybrid search that we conducted in the last section.
+
+50
+00:03:44,000 --> 00:03:54,000
+So I've just brought that query in and the result we get isn't quite what I was looking for.
+
+51
+00:03:54,000 --> 00:03:59,000
+It's actually bringing back pages from a tutorial on how to set up minikube with GPUs
+
+52
+00:03:59,000 --> 00:04:02,000
+whereas that's not really what we're looking for in this section.
+
+53
+00:04:03,000 --> 00:04:11,000
+However if I go down here and now rerun the same question using the Cohere re-ranker
+
+54
+00:04:11,000 --> 00:04:16,000
+which we simply call by passing a re-rank parameter into our hybrid query.
+
+55
+00:04:17,000 --> 00:04:22,000
+If we run that now, let's have a look at the page it brought back.
+
+56
+00:04:22,000 --> 00:04:26,000
+So it brought back guides, sweep, parallelize agents.
+
+57
+00:04:26,000 --> 00:04:27,000
+That's what we were looking for.
+
+58
+00:04:27,000 --> 00:04:34,000
+This is a page that describes how to do a parallel sweep using wandb agents on multiple GPUs.
+
+59
+00:04:35,000 --> 00:04:39,000
+And this really shows the power of re-rankers in these types of situations because
+
+60
+00:04:39,000 --> 00:04:44,000
+they can really focus on all the data we brought back compared to the query and
+
+61
+00:04:44,000 --> 00:04:49,000
+kind of recontextualize and reorder the documents according to the query that we had.
+
+62
+00:04:49,000 --> 00:04:53,000
+So that's it for how to set up Weaviate for your rag applications.
+
+63
+00:04:53,000 --> 00:04:57,000
+So in this you should now know how to import your data objects into Weaviate,
+
+64
+00:04:57,000 --> 00:05:01,000
+how to set up vectorizers and re-rankers for your collection,
+
+65
+00:05:01,000 --> 00:05:08,000
+and finally how to conduct hybrid searches and then how to re-rank those results using a re-ranker.
+
+66
+00:05:08,000 --> 00:05:09,000
+Thanks.
+

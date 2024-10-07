@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:02,000
+Let's start by talking about frameworks.
+
+2
+00:00:02,000 --> 00:00:04,000
+In general, be happy to use whatever suits your purpose,
+
+3
+00:00:04,000 --> 00:00:06,000
+but avoid framework overload.
+
+4
+00:00:06,000 --> 00:00:11,000
+While building wandbot, we switched from LlamaIndex to Instructor to LangChain or a mix of them.
+
+5
+00:00:11,000 --> 00:00:15,000
+It was an exercise to see what works well, but honestly, they are all great.
+
+6
+00:00:15,000 --> 00:00:18,000
+If your workflow is data heavy, consider using LlamaIndex.
+
+7
+00:00:18,000 --> 00:00:21,000
+And if it is LLM Paul heavy, consider using LangChain.
+
+8
+00:00:21,000 --> 00:00:24,000
+I highly recommend evaluating frameworks for yourself.
+
+9
+00:00:24,000 --> 00:00:28,000
+I'm also an active believer of using less abstractions wherever possible.
+
+10
+00:00:28,000 --> 00:00:31,000
+For wandbot, we use frameworks for generic tasks,
+
+11
+00:00:31,000 --> 00:00:35,000
+but wrote custom pure Pythonic code for performance-critical sections.
+
+12
+00:00:35,000 --> 00:00:39,000
+Finally, this is obvious, but asynchronous programming is your best friend.
+
+13
+00:00:39,000 --> 00:00:40,000
+Don't shy away from it.
+
+14
+00:00:40,000 --> 00:00:44,000
+Depending on use case, there can be multiple IO Bottlenecks,
+
+15
+00:00:44,000 --> 00:00:45,000
+and async programming can help.
+

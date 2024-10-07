@@ -1,0 +1,68 @@
+1
+00:00:00,000 --> 00:00:03,000
+Let's dive into some best practices for system prompt iteration.
+
+2
+00:00:03,000 --> 00:00:07,000
+These are the habits that separate a good drag system from great ones.
+
+3
+00:00:07,000 --> 00:00:09,000
+First up, version control.
+
+4
+00:00:09,000 --> 00:00:11,000
+Treat your prompts like code.
+
+5
+00:00:11,000 --> 00:00:13,000
+Track changes and their impacts.
+
+6
+00:00:13,000 --> 00:00:16,000
+It's a lifesaver when you need to roll back or understand what worked.
+
+7
+00:00:17,000 --> 00:00:19,000
+Next, schedule regular performance reviews.
+
+8
+00:00:20,000 --> 00:00:24,000
+Catch issues early and keep improving consistently.
+
+9
+00:00:24,000 --> 00:00:26,000
+Next, involve your whole team.
+
+10
+00:00:26,000 --> 00:00:29,000
+Developers, domain experts, designers.
+
+11
+00:00:30,000 --> 00:00:32,000
+They all bring unique perspectives.
+
+12
+00:00:32,000 --> 00:00:36,000
+And in our experience, this cross-functional approach is what leads to more robust solutions.
+
+13
+00:00:37,000 --> 00:00:39,000
+And lastly, document everything.
+
+14
+00:00:39,000 --> 00:00:42,000
+Write down why you've made each refinement.
+
+15
+00:00:42,000 --> 00:00:46,000
+It builds your team's knowledge base and saves time in the long run.
+
+16
+00:00:46,000 --> 00:00:48,000
+Again, consistency is key.
+
+17
+00:00:48,000 --> 00:00:54,000
+Implement these practices and you'll see your drag system evolve and improve over time.
+

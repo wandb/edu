@@ -1,0 +1,156 @@
+1
+00:00:00,000 --> 00:00:03,000
+Let's talk a little bit about metadata in RAG.
+
+2
+00:00:03,000 --> 00:00:06,000
+Metadata is essentially data about your data.
+
+3
+00:00:06,000 --> 00:00:09,000
+It's like the nutritional information on a food package.
+
+4
+00:00:09,000 --> 00:00:14,000
+It gives you the important details without you having to analyze the entire contents of the package.
+
+5
+00:00:14,000 --> 00:00:18,000
+In RAG systems, we typically work with two types of metadata.
+
+6
+00:00:18,000 --> 00:00:22,000
+There is document metadata, which is information about the entire document,
+
+7
+00:00:22,000 --> 00:00:26,000
+such as title, source, and maybe even a brief summary of the document.
+
+8
+00:00:26,000 --> 00:00:28,000
+On the other hand, there is chunk metadata,
+
+9
+00:00:28,000 --> 00:00:32,000
+and this is more granular, providing context for specific segments of the text.
+
+10
+00:00:32,000 --> 00:00:36,000
+But how do we actually extract and enhance our documents with metadata?
+
+11
+00:00:36,000 --> 00:00:40,000
+Here are a few techniques we can use from traditional natural language processing.
+
+12
+00:00:40,000 --> 00:00:46,000
+We can use entity extraction to identify and classify named entities in the text.
+
+13
+00:00:46,000 --> 00:00:51,000
+We can also use classification to categorize the content and generate new tags for the text.
+
+14
+00:00:51,000 --> 00:00:54,000
+And relationship extraction takes these a step further
+
+15
+00:00:54,000 --> 00:00:58,000
+and helps identify how different entities in the text relate to each other.
+
+16
+00:00:58,000 --> 00:01:02,000
+These are just a few techniques to enrich our content with metadata.
+
+17
+00:01:02,000 --> 00:01:06,000
+By leveraging metadata effectively, a RAG system can understand
+
+18
+00:01:06,000 --> 00:01:10,000
+and not just what the content says, but what it's about
+
+19
+00:01:10,000 --> 00:01:13,000
+and how different pieces of information relate to each other.
+
+20
+00:01:13,000 --> 00:01:18,000
+Now let's see how metadata works in practice by looking at our approach with wandbot.
+
+21
+00:01:18,000 --> 00:01:20,000
+Our metadata strategy is twofold.
+
+22
+00:01:20,000 --> 00:01:23,000
+First, we focus on document-level metadata.
+
+23
+00:01:23,000 --> 00:01:25,000
+This includes the source of the document.
+
+24
+00:01:25,000 --> 00:01:30,000
+For instance, is it from our official docs, our GitHub repo, or our blog post?
+
+25
+00:01:30,000 --> 00:01:37,000
+The type of document, things like, is it API documentation, a tutorial, or a conceptual guide?
+
+26
+00:01:37,000 --> 00:01:39,000
+The language that the document is written in.
+
+27
+00:01:39,000 --> 00:01:41,000
+This is crucial for multilingual support.
+
+28
+00:01:41,000 --> 00:01:45,000
+Then we dive into more granular, chunk-level metadata.
+
+29
+00:01:45,000 --> 00:01:47,000
+We capture structural information here.
+
+30
+00:01:47,000 --> 00:01:52,000
+For instance, is the chunk a header, a code block, or a paragraph?
+
+31
+00:01:52,000 --> 00:01:55,000
+For code chunks, we note the programming language used.
+
+32
+00:01:55,000 --> 00:02:02,000
+We also tag version-specific information, which is crucial for providing accurate and up-to-date responses.
+
+33
+00:02:02,000 --> 00:02:06,000
+For instance, if a user asks about a specific pattern function,
+
+34
+00:02:06,000 --> 00:02:10,000
+our metadata helps us quickly narrow down the relevant code chunks,
+
+35
+00:02:10,000 --> 00:02:15,000
+ensuring we provide the most accurate and contextually appropriate response.
+
+36
+00:02:15,000 --> 00:02:20,000
+Remember, a well-thought-out metadata strategy can significantly enhance your RAG system's ability
+
+37
+00:02:20,000 --> 00:02:23,000
+to provide relevant and accurate responses.
+
+38
+00:02:23,000 --> 00:02:28,000
+It's about adding those extra layers of context that helps your system understand not just the content,
+
+39
+00:02:28,000 --> 00:02:31,000
+but its relevance and applicability.
+

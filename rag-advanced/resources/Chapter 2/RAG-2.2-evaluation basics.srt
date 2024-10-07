@@ -1,0 +1,176 @@
+1
+00:00:00,000 --> 00:00:03,000
+In the last chapter, we created a simple RAG pipeline.
+
+2
+00:00:03,000 --> 00:00:08,000
+However, RAG is as good as the quality of the retrieval system, the quality of the generated
+
+3
+00:00:08,000 --> 00:00:11,000
+response, and the quality of LLM to follow instructions.
+
+4
+00:00:11,000 --> 00:00:15,000
+Depending on the complexity of your application, you should consider measuring the quality
+
+5
+00:00:15,000 --> 00:00:16,000
+of each component.
+
+6
+00:00:16,000 --> 00:00:21,000
+Talking about components, we start off by evaluating a response by comparing it against
+
+7
+00:00:21,000 --> 00:00:23,000
+ground truth.
+
+8
+00:00:23,000 --> 00:00:25,000
+This is called end-to-end evaluation or system evaluation.
+
+9
+00:00:25,000 --> 00:00:30,000
+We do this because response is non-deterministic in nature.
+
+10
+00:00:30,000 --> 00:00:34,000
+We must also evaluate other non-deterministic components of our pipeline like the retrieval
+
+11
+00:00:34,000 --> 00:00:35,000
+system.
+
+12
+00:00:35,000 --> 00:00:40,000
+We can evaluate the context by ranking it against ground truth context or even ask an
+
+13
+00:00:40,000 --> 00:00:44,000
+LLM to judge if the generated response is based on the retrieved context.
+
+14
+00:00:44,000 --> 00:00:45,000
+This is called component evaluation.
+
+15
+00:00:45,000 --> 00:00:48,000
+So far, we have focused on evaluation using ground truth.
+
+16
+00:00:48,000 --> 00:00:52,000
+But the need for ground truth depends on what we want to evaluate, which can further be
+
+17
+00:00:52,000 --> 00:00:54,000
+bucketed into three categories.
+
+18
+00:00:54,000 --> 00:00:59,000
+We can compare evaluation measures, aspects like toxicity, racial bias, or whether a response
+
+19
+00:00:59,000 --> 00:01:01,000
+is grounded on source text.
+
+20
+00:01:01,000 --> 00:01:07,000
+Pairwise evaluation compares two or more responses to the same query measuring factors like tone
+
+21
+00:01:07,000 --> 00:01:08,000
+or coherence.
+
+22
+00:01:08,000 --> 00:01:11,000
+Both these evaluations can be done without ground truth.
+
+23
+00:01:11,000 --> 00:01:16,000
+Finally, if we have or can create a gold standard reference, we can perform reference evaluation
+
+24
+00:01:16,000 --> 00:01:21,000
+typically used to measure the structure of a response or its inclusion of specific information.
+
+25
+00:01:21,000 --> 00:01:24,000
+Now let's talk about evaluation in practice.
+
+26
+00:01:24,000 --> 00:01:28,000
+Practically, your evaluation journey begins while building your system.
+
+27
+00:01:28,000 --> 00:01:32,000
+You eyeball the response of the system to see if it is decent.
+
+28
+00:01:32,000 --> 00:01:37,000
+This is the quickest way of evaluation but is less reliable because you will not be covering
+
+29
+00:01:37,000 --> 00:01:38,000
+every edge case.
+
+30
+00:01:38,000 --> 00:01:42,000
+You can then consider hiring annotators to manually evaluate your system.
+
+31
+00:01:42,000 --> 00:01:47,000
+While building wandbot eval set, in-house MLEs acted as the domain expert annotators.
+
+32
+00:01:47,000 --> 00:01:51,000
+This is both expensive and time consuming but most reliable.
+
+33
+00:01:51,000 --> 00:01:55,000
+Somewhere in between the two spectrums, we have a concept of LLM as a judge.
+
+34
+00:01:55,000 --> 00:02:00,000
+That is, we use an equally powerful LLM to score our system or components of our system.
+
+35
+00:02:00,000 --> 00:02:07,000
+Talking about evaluation dataset, it is meaningful as long as it is highly correlated with your
+
+36
+00:02:07,000 --> 00:02:08,000
+production distribution.
+
+37
+00:02:08,000 --> 00:02:10,000
+Same goes for the choice of your metric.
+
+38
+00:02:10,000 --> 00:02:13,000
+It needs to be correlated with your use case.
+
+39
+00:02:13,000 --> 00:02:18,000
+Public benchmarks do not correlate on both the axes while human evaluation or user testing
+
+40
+00:02:18,000 --> 00:02:24,000
+are moderate to highly correlated but are slow and expensive for rapid iteration cycles.
+
+41
+00:02:24,000 --> 00:02:29,000
+The idea is to build a small evaluation dataset, leverage LLM judges to evaluate components
+
+42
+00:02:29,000 --> 00:02:35,000
+of the system and via alignment, push this mode of evaluation to the top right quadrant.
+
+43
+00:02:35,000 --> 00:02:36,000
+That's mouthful.
+
+44
+00:02:36,000 --> 00:02:37,000
+We will go through it one by one.
+

@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:04,000
+In chapter 1, we saw how to use tf-idf vectors to build a basic retriever.
+
+2
+00:00:04,000 --> 00:00:10,000
+Here, we'll explore another type of retrieval method called best matching 25 or bm25 in short.
+
+3
+00:00:10,000 --> 00:00:16,000
+bm25 is an evolution of tf-idf that better handles document length and term frequency saturation
+
+4
+00:00:16,000 --> 00:00:22,000
+using a probabilistic approach. By implementing both methods and ingesting data into the two
+
+5
+00:00:22,000 --> 00:00:27,000
+retrievers, we can more effectively compare their impact on our RAG pipeline. Having ingested the
+
+6
+00:00:27,000 --> 00:00:32,000
+data into the retrievers, we can finally use Weave to evaluate them holistically. This allows us to
+
+7
+00:00:32,000 --> 00:00:38,000
+compare their retrieval performance as well as the overall impact on the RAG pipeline. After running
+
+8
+00:00:38,000 --> 00:00:42,000
+the evaluations, you should be able to compare the performance of the two methods in your Weave
+
+9
+00:00:42,000 --> 00:00:47,000
+dashboard. Here, you'll notice that the bm25 retriever generally performs better than the
+
+10
+00:00:47,000 --> 00:00:50,000
+tf-idf retriever on most metrics.
+

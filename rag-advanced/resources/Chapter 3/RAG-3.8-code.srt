@@ -1,0 +1,72 @@
+1
+00:00:00,000 --> 00:00:03,000
+Hello everyone and welcome to the third hands-on session of our RAG course.
+
+2
+00:00:04,000 --> 00:00:10,000
+In this chapter, we'll dive into data ingestion and pre-processing. We'll focus on tokenization,
+
+3
+00:00:10,000 --> 00:00:14,000
+chunking, and explore a few different retrieval methods and compare and evaluate their impact
+
+4
+00:00:14,000 --> 00:00:20,000
+on our RAG pipeline. So let's get started. After going through the same initial setup steps and
+
+5
+00:00:20,000 --> 00:00:25,000
+fetching our raw data set using Weave, we start with revisiting tokenization. In chapter one,
+
+6
+00:00:25,000 --> 00:00:30,000
+we naively tokenized our data set into words. But it's often good practice to tokenize our data set
+
+7
+00:00:30,000 --> 00:00:36,000
+using the same tokenizer as the model we intend to use. Here, we're using Cohere's tokenizer to
+
+8
+00:00:36,000 --> 00:00:40,000
+accurately count tokens in our documents. It's crucial for our RAG system as it helps us manage
+
+9
+00:00:40,000 --> 00:00:46,000
+context windows and estimate the computational costs of our system. Notice how we update our
+
+10
+00:00:46,000 --> 00:00:51,000
+raw data with accurate token counts. This often differs significantly from simple word counts,
+
+11
+00:00:51,000 --> 00:00:57,000
+highlighting the importance of proper tokenization in RAG pipelines. Next, we pre-process our data by
+
+12
+00:00:57,000 --> 00:01:04,000
+removing markdown elements and special characters. Here, we specifically focus on two main functions.
+
+13
+00:01:04,000 --> 00:01:09,000
+The convert contents to text function. This function converts raw markdown to HTML and then
+
+14
+00:01:09,000 --> 00:01:15,000
+uses beautiful soup to remove image links, images, and other formatting information. Then, we have the
+
+15
+00:01:15,000 --> 00:01:21,000
+make text tokenization save function. This function removes any special tokens present in the text,
+
+16
+00:01:21,000 --> 00:01:26,000
+special characters here are those defined in the tokenizer and may vary depending on the model used.
+
+17
+00:01:26,000 --> 00:01:32,000
+This cleaning step is vital for sanitizing our input and improving the retrieval accuracy.
+
+18
+00:01:32,000 --> 00:01:37,000
+Again, we publish our pre-processed data set to V for easy tracking and reproducibility.
+

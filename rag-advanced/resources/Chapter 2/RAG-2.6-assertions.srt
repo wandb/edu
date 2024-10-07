@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:05,000
+But hey, before we do any fancy evaluation, let's take a step back from LLM as a judge
+
+2
+00:00:05,000 --> 00:00:10,000
+jargon and try to express the desired output in plain code. This is direct evaluation using
+
+3
+00:00:10,000 --> 00:00:16,000
+heuristics. The heuristics should form the first layer of your system evaluation. We
+
+4
+00:00:16,000 --> 00:00:21,000
+can use these metrics to inspect the structure of the response. Some examples can be to check
+
+5
+00:00:21,000 --> 00:00:26,000
+if there are bullet points or code snippets in the response. We can also check if the
+
+6
+00:00:26,000 --> 00:00:31,000
+response is of a certain length or is a valid JSON in case of structured output. Doing these
+
+7
+00:00:31,000 --> 00:00:36,000
+types of heuristics based evaluation will reinforce what we expect and hence make the
+
+8
+00:00:36,000 --> 00:00:39,000
+system more robust.
+
+9
+00:00:39,000 --> 00:00:44,000
+Writing assertions or unit tests are application specific. A more generic evaluation strategy
+
+10
+00:00:44,000 --> 00:00:50,000
+is to do reference-based evaluation using traditional metrics, like comparing the similarity
+
+11
+00:00:50,000 --> 00:00:55,000
+ratio between the normalized model output and the expected answer, or computing the
+
+12
+00:00:55,000 --> 00:01:03,000
+Laue distance. We are also showing both ROUGE and BLEU metrics. We again set up our evaluation
+
+13
+00:01:03,000 --> 00:01:08,000
+using Weave Evaluation, but this time we evaluate a simple RAG pipeline.
+

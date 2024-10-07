@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:02,000
+Now let's look at the hybrid retriever in action.
+
+2
+00:00:02,000 --> 00:00:04,000
+The hybrid retriever re-ranker class
+
+3
+00:00:04,000 --> 00:00:07,000
+combines both the BM25 retriever and dense retriever.
+
+4
+00:00:07,000 --> 00:00:10,000
+The idea is to first retrieve top-key documents
+
+5
+00:00:10,000 --> 00:00:11,000
+using both the retriever.
+
+6
+00:00:11,000 --> 00:00:15,000
+We then use the reciprocal rank fusion to fuse the results
+
+7
+00:00:15,000 --> 00:00:17,000
+and then use Cohere re-ranker to rank
+
+8
+00:00:17,000 --> 00:00:21,000
+and then select top-n documents for our query.
+
+9
+00:00:21,000 --> 00:00:23,000
+Let's index the chunk data
+
+10
+00:00:23,000 --> 00:00:25,000
+and set up evaluation using Weave evaluation
+
+11
+00:00:25,000 --> 00:00:27,000
+using the metrics we have been using so far.
+
+12
+00:00:28,000 --> 00:00:31,000
+Let's compare the hybrid retriever re-ranker
+
+13
+00:00:31,000 --> 00:00:34,000
+with dense retriever as well as dense retriever with re-ranker.
+
+14
+00:00:34,000 --> 00:00:38,000
+This is our evaluation comparison dashboard.
+
+15
+00:00:38,000 --> 00:00:42,000
+The negative values here show that our hybrid retriever re-ranker
+
+16
+00:00:42,000 --> 00:00:45,000
+is performing better compared to the other two retrievers.
+
+17
+00:00:45,000 --> 00:00:50,000
+The hit rate is 60% compared to 31% and 48% respectively
+
+18
+00:00:50,000 --> 00:00:52,000
+for the other two retrievers.
+
+19
+00:00:52,000 --> 00:00:55,000
+We also improved the F1 score over the dense retriever
+
+20
+00:00:55,000 --> 00:00:57,000
+as well as dense retriever with re-ranker.
+
+21
+00:00:57,000 --> 00:01:01,000
+All this at the cost of a higher model of tendency,
+
+22
+00:01:01,000 --> 00:01:02,000
+which is obvious.
+

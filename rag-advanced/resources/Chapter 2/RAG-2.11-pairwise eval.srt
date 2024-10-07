@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:04,000
+Circling back to the wandbot example at the start of this chapter where I showed an 8%
+
+2
+00:00:04,000 --> 00:00:10,000
+increase in the performance, well we were very happy with our evaluator's judgement
+
+3
+00:00:10,000 --> 00:00:15,000
+but we took an extra step to set up a simple A-B test or pairwise evaluation using humans.
+
+4
+00:00:16,000 --> 00:00:20,000
+We set up this A-B test using Argilla and alternatively using a simple radio app.
+
+5
+00:00:21,000 --> 00:00:26,000
+We asked our in-house MLEs to choose the response that felt answered the given query better.
+
+6
+00:00:26,000 --> 00:00:34,000
+Well, our new system was preferred 60% of the time compared to the older system which was
+
+7
+00:00:34,000 --> 00:00:40,000
+preferred only 40% of the time. If possible, setting up such wipe checks will give more
+
+8
+00:00:40,000 --> 00:00:43,000
+confidence in deploying your application.
+

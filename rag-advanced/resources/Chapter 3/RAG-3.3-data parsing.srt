@@ -1,0 +1,148 @@
+1
+00:00:00,000 --> 00:00:04,000
+Having understood the pillars of data ingestion, let's dive into the practical side of things.
+
+2
+00:00:04,000 --> 00:00:06,000
+Preparing your data for RAG.
+
+3
+00:00:06,000 --> 00:00:11,000
+This process is crucial because it's the bridge between your data and a high-performing RAG system.
+
+4
+00:00:11,000 --> 00:00:13,000
+Let's break down the key steps.
+
+5
+00:00:13,000 --> 00:00:15,000
+First, we clean and extract the data.
+
+6
+00:00:15,000 --> 00:00:17,000
+This is like sorting through a messy closet.
+
+7
+00:00:17,000 --> 00:00:20,000
+We keep what we need and toss out what we don't.
+
+8
+00:00:20,000 --> 00:00:23,000
+Next, we convert everything into plain text.
+
+9
+00:00:23,000 --> 00:00:27,000
+Think of this as translating everything into a common language for our LLM.
+
+10
+00:00:27,000 --> 00:00:28,000
+Then comes segmentation.
+
+11
+00:00:29,000 --> 00:00:32,000
+We break our text into smaller, manageable pieces.
+
+12
+00:00:32,000 --> 00:00:34,000
+After that, we create vector representations.
+
+13
+00:00:34,000 --> 00:00:41,000
+This is where we translate our text into numerical data that our retrieval system can process efficiently.
+
+14
+00:00:41,000 --> 00:00:44,000
+Finally, we store everything in a vector database.
+
+15
+00:00:44,000 --> 00:00:47,000
+This is our organized, easily searchable library of information.
+
+16
+00:00:47,000 --> 00:00:52,000
+Each of these steps plays a crucial role in setting up your RAG system for success.
+
+17
+00:00:52,000 --> 00:00:56,000
+They ensure that when your system needs to retrieve and generate information,
+
+18
+00:00:56,000 --> 00:00:58,000
+it can do so quickly and accurately.
+
+19
+00:00:59,000 --> 00:01:01,000
+Let's examine data parsing a little more.
+
+20
+00:01:01,000 --> 00:01:07,000
+It plays a crucial role in converting raw data into a format our RAG system can work with.
+
+21
+00:01:07,000 --> 00:01:10,000
+First, let's look at some tools you might encounter in the wild.
+
+22
+00:01:10,000 --> 00:01:14,000
+You've got options like unstructured, firecrawl, multi-on,
+
+23
+00:01:14,000 --> 00:01:16,000
+textract, and Azure Document Intelligence.
+
+24
+00:01:16,000 --> 00:01:21,000
+These are great off-the-shelf solutions that can handle a wide variety of document types.
+
+25
+00:01:21,000 --> 00:01:25,000
+However, it's important to understand that sometimes a more tailored approach is necessary.
+
+26
+00:01:25,000 --> 00:01:29,000
+To illustrate this, let's look at our approach with wandbot.
+
+27
+00:01:29,000 --> 00:01:32,000
+In our case, we deal with some pretty specific document types.
+
+28
+00:01:32,000 --> 00:01:35,000
+So, we've taken a more tailored approach.
+
+29
+00:01:35,000 --> 00:01:39,000
+For our Markdown documents, we've built a custom parser that preserves the structure
+
+30
+00:01:39,000 --> 00:01:41,000
+and context of the text.
+
+31
+00:01:41,000 --> 00:01:45,000
+When it comes to Jupyter notebooks, we use nbconvert to convert them into Markdown
+
+32
+00:01:45,000 --> 00:01:48,000
+and then parse them with our custom parser.
+
+33
+00:01:48,000 --> 00:01:51,000
+And for code analysis, we use concrete syntax trees
+
+34
+00:01:51,000 --> 00:01:54,000
+to preserve and extract the syntax and structure of the code.
+
+35
+00:01:54,000 --> 00:01:58,000
+The key takeaway here is that while there are many great tools out there,
+
+36
+00:01:58,000 --> 00:02:02,000
+many a time you need a custom solution to really nail your specific use case.
+
+37
+00:02:03,000 --> 00:02:08,000
+It's all about finding the right balance between off-the-shelf convenience and tailored efficiency.
+

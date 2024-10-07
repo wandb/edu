@@ -1,0 +1,104 @@
+1
+00:00:00,000 --> 00:00:04,000
+Let's examine some of the key challenges we've encountered with wandbot and our strategies for
+
+2
+00:00:04,000 --> 00:00:10,000
+addressing them. These issues are common in RAG projects and our experiences may provide valuable
+
+3
+00:00:10,000 --> 00:00:15,000
+insights for your own implementation. A primary challenge has been keeping pace with rapidly
+
+4
+00:00:15,000 --> 00:00:20,000
+evolving LLM models and APIs. Our solution involves a systematic approach of regular
+
+5
+00:00:20,000 --> 00:00:25,000
+updates and evaluations, ensuring wandbot remains current and without compromising stability.
+
+6
+00:00:26,000 --> 00:00:31,000
+We've also faced a complex task of balancing new feature development with system refinement. Our
+
+7
+00:00:31,000 --> 00:00:36,000
+evaluation-driven framework has been instrumental in prioritizing changes that deliver the most
+
+8
+00:00:36,000 --> 00:00:41,000
+value. Another significant challenge has been developing truly representative evaluation
+
+9
+00:00:41,000 --> 00:00:47,000
+data sets. We found that combining automated processes with expert manual analysis of chat log
+
+10
+00:00:47,000 --> 00:00:53,000
+yields the most comprehensive insights. Finally, we've continuously worked to optimize the trade-off
+
+11
+00:00:53,000 --> 00:00:58,000
+between response latency and accuracy. This ongoing process involves fine-tuning our system
+
+12
+00:00:58,000 --> 00:01:04,000
+to improve both aspects simultaneously. Each obstacle overcome represents an opportunity
+
+13
+00:01:04,000 --> 00:01:09,000
+for significant improvement and by sharing these experiences, our aim is to provide you with the
+
+14
+00:01:09,000 --> 00:01:14,000
+practical strategies to address similar challenges in your own RAG system. Before we move on to our
+
+15
+00:01:14,000 --> 00:01:20,000
+hands-on session, let's discuss how to keep our RAG system evolving. This ongoing development
+
+16
+00:01:20,000 --> 00:01:26,000
+is crucial but often overlooked. With wandbot, we start with regular data set updates. This goes
+
+17
+00:01:26,000 --> 00:01:32,000
+beyond just adding new information. We ensure our evaluation data reflects current documentation
+
+18
+00:01:32,000 --> 00:01:37,000
+and real user queries. We also take a granular approach to evaluation, assessing each component
+
+19
+00:01:37,000 --> 00:01:43,000
+of our RAG system separately. This helps us pinpoint exactly where improvements are needed.
+
+20
+00:01:43,000 --> 00:01:48,000
+Don't just rely on quantitative metrics. Pay close attention to feedback from users,
+
+21
+00:01:48,000 --> 00:01:54,000
+which often reveals insights that numbers alone can't capture. Finally, we are always fine-tuning
+
+22
+00:01:54,000 --> 00:01:59,000
+our entire RAGS pipeline. This means optimizing every step of the process. This cycle of update,
+
+23
+00:01:59,000 --> 00:02:05,000
+evaluate, and improve is what keeps wandbot effective and relevant. Remember, building a RAG
+
+24
+00:02:05,000 --> 00:02:11,000
+system is just the beginning. The real challenge and opportunity lies in evolving it to meet
+
+25
+00:02:11,000 --> 00:02:16,000
+changing needs and capabilities. By following these practices, you will be well equipped to
+
+26
+00:02:16,000 --> 00:02:22,000
+create a RAG system that not only works today but also continues to improve over time.
+

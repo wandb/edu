@@ -1,0 +1,156 @@
+1
+00:00:00,000 --> 00:00:05,000
+Building any successful application requires adherence to some best practices.
+
+2
+00:00:05,000 --> 00:00:08,000
+Our experience with wandbot has taught us a few key lessons,
+
+3
+00:00:08,000 --> 00:00:11,000
+and these lessons can be applied to any RAG system you are working on.
+
+4
+00:00:12,000 --> 00:00:16,000
+First, start with a clear use case and well-defined success metrics.
+
+5
+00:00:16,000 --> 00:00:21,000
+For wandbot, we focused on improving how users navigate our documentation,
+
+6
+00:00:21,000 --> 00:00:24,000
+setting specific goals to measure our progress.
+
+7
+00:00:24,000 --> 00:00:25,000
+Data quality is crucial.
+
+8
+00:00:26,000 --> 00:00:31,000
+We put a lot of effort into ensuring our documentation is comprehensive and up-to-date.
+
+9
+00:00:31,000 --> 00:00:36,000
+This high-quality foundation is what allows wandbot to provide accurate and relevant responses.
+
+10
+00:00:37,000 --> 00:00:40,000
+Next, we fully embraced evaluation-driven development.
+
+11
+00:00:40,000 --> 00:00:44,000
+This means constantly assessing wandbot's performance against predefined metrics
+
+12
+00:00:44,000 --> 00:00:46,000
+and allowing for iterative improvement.
+
+13
+00:00:47,000 --> 00:00:50,000
+Lastly, we developed a robust evaluation framework.
+
+14
+00:00:50,000 --> 00:00:52,000
+This isn't just about accuracy.
+
+15
+00:00:52,000 --> 00:00:57,000
+It's about looking at relevance, faithfulness, and a range of other factors.
+
+16
+00:00:57,000 --> 00:01:01,000
+This multidimensional approach helps us truly understand our system's performance.
+
+17
+00:01:02,000 --> 00:01:05,000
+These practices were essential in wandbot's development
+
+18
+00:01:05,000 --> 00:01:08,000
+and can significantly improve any RAG system you are working on.
+
+19
+00:01:08,000 --> 00:01:12,000
+In the next slide, we'll continue with a few more best practices
+
+20
+00:01:12,000 --> 00:01:14,000
+that have really made a difference for us.
+
+21
+00:01:14,000 --> 00:01:18,000
+Continuing with our best practices, let's look at a few more key principles.
+
+22
+00:01:19,000 --> 00:01:23,000
+While LLMs are powerful, we've learned that regular reviews by subject matter experts
+
+23
+00:01:23,000 --> 00:01:27,000
+are essential. They ensure responses remain accurate and relevant,
+
+24
+00:01:27,000 --> 00:01:31,000
+catching any quirks that might slip through automated checks.
+
+25
+00:01:31,000 --> 00:01:34,000
+We've also prioritized user experience and interface design.
+
+26
+00:01:34,000 --> 00:01:38,000
+It's about presenting information in a way that's easy to navigate and understand.
+
+27
+00:01:38,000 --> 00:01:41,000
+Transparency is another key factor.
+
+28
+00:01:41,000 --> 00:01:44,000
+We are always upfront about users interacting with a bot
+
+29
+00:01:44,000 --> 00:01:47,000
+and provide citations for wandbot's responses.
+
+30
+00:01:47,000 --> 00:01:51,000
+This builds trust and gives users the option to dig deeper if they want.
+
+31
+00:01:52,000 --> 00:01:55,000
+Lastly, we've embraced continuous improvement.
+
+32
+00:01:55,000 --> 00:01:58,000
+Our documentation isn't static and neither are user needs.
+
+33
+00:01:58,000 --> 00:02:02,000
+We're constantly updating wandbot to keep pace with these changes.
+
+34
+00:02:02,000 --> 00:02:05,000
+These practices, combined with the ones we discussed earlier,
+
+35
+00:02:05,000 --> 00:02:08,000
+form the backbone of wandbot's success.
+
+36
+00:02:08,000 --> 00:02:11,000
+They've helped us build a RAG system that not only performs well,
+
+37
+00:02:11,000 --> 00:02:13,000
+but also earns and maintains user trust.
+
+38
+00:02:14,000 --> 00:02:17,000
+Keep these principles in mind as you build your own RAG application.
+
+39
+00:02:17,000 --> 00:02:21,000
+They can make a real difference in your application's success.
+

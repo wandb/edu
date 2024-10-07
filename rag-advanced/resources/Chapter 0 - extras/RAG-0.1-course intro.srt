@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:03,000
+Hi, we are happy to welcome you to take our RAG++ course.
+
+2
+00:00:03,000 --> 00:00:08,000
+If you have built a RAG-powered system or have developed a proof of concept
+
+3
+00:00:08,000 --> 00:00:10,000
+but lack the confidence to deploy it into production,
+
+4
+00:00:10,000 --> 00:00:12,000
+this course will help bridge that gap.
+
+5
+00:00:13,000 --> 00:00:16,000
+Over the last 21 months, we have been running wandbot,
+
+6
+00:00:16,000 --> 00:00:19,000
+a live customer support bot for weights and biases,
+
+7
+00:00:19,000 --> 00:00:23,000
+and we're excited to share what we have learned from the experience.
+
+8
+00:00:23,000 --> 00:00:27,000
+We will highlight what separates a good RAG system from a great one
+
+9
+00:00:27,000 --> 00:00:29,000
+by focusing on evaluation-driven development,
+
+10
+00:00:29,000 --> 00:00:32,000
+emphasizing the importance of an effective evaluation pipeline.
+
+11
+00:00:33,000 --> 00:00:36,000
+We will explore different metrics for evaluation,
+
+12
+00:00:36,000 --> 00:00:39,000
+like MRR, NDCG, and LLM evaluators.
+
+13
+00:00:39,000 --> 00:00:44,000
+We will also see how we can align an LLM evaluator with human feedback.
+
+14
+00:00:44,000 --> 00:00:50,000
+Next, we will dive into advanced RAG components for sophisticated data ingestion strategies,
+
+15
+00:00:50,000 --> 00:00:55,000
+effective metadata utilization, and query enhancement techniques like query decomposition.
+
+16
+00:00:55,000 --> 00:00:59,000
+We will improve retrieval quality using methods like metadata filtering,
+
+17
+00:00:59,000 --> 00:01:00,000
+routing, and re-ranking.
+
+18
+00:01:01,000 --> 00:01:03,000
+We also have two guest lecturers.
+
+19
+00:01:03,000 --> 00:01:07,000
+Charles from Weaviate will cover production-grade hybrid retrieval systems,
+
+20
+00:01:07,000 --> 00:01:13,000
+and Meor from Cohere will show how to incorporate tool-use capabilities into your RAG system.
+
+21
+00:01:13,000 --> 00:01:18,000
+The course is packed with practical insights to enhance response synthesis
+
+22
+00:01:18,000 --> 00:01:21,000
+and methods to optimize your RAG pipeline's latency.
+
+23
+00:01:22,000 --> 00:01:26,000
+By the end of this course, you will have the tools and confidence to take your RAG systems
+
+24
+00:01:26,000 --> 00:01:29,000
+from POC to production-led deployments.
+
+25
+00:01:29,000 --> 00:01:34,000
+We hope you enjoyed the course as much as we enjoyed creating it.
+
