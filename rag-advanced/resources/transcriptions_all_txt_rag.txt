@@ -1,0 +1,3825 @@
+# RAG-0.1-course intro.srt
+
+Hi, we are happy to welcome you to take our RAG++ course.
+
+If you have built a RAG-powered system or have developed a proof of concept
+
+but lack the confidence to deploy it into production,
+
+this course will help bridge that gap.
+
+Over the last 21 months, we have been running wandbot,
+
+a live customer support bot for weights and biases,
+
+and we're excited to share what we have learned from the experience.
+
+We will highlight what separates a good RAG system from a great one
+
+by focusing on evaluation-driven development,
+
+emphasizing the importance of an effective evaluation pipeline.
+
+We will explore different metrics for evaluation,
+
+like MRR, NDCG, and LLM evaluators.
+
+We will also see how we can align an LLM evaluator with human feedback.
+
+Next, we will dive into advanced RAG components for sophisticated data ingestion strategies,
+
+effective metadata utilization, and query enhancement techniques like query decomposition.
+
+We will improve retrieval quality using methods like metadata filtering,
+
+routing, and re-ranking.
+
+We also have two guest lecturers.
+
+Charles from Weaviate will cover production-grade hybrid retrieval systems,
+
+and Meor from Cohere will show how to incorporate tool-use capabilities into your RAG system.
+
+The course is packed with practical insights to enhance response synthesis
+
+and methods to optimize your RAG pipeline's latency.
+
+By the end of this course, you will have the tools and confidence to take your RAG systems
+
+from POC to production-led deployments.
+
+We hope you enjoyed the course as much as we enjoyed creating it.
+
+
+# RAG-0.2-setup.srt
+
+Before you get started, let us set you up to get the most out of this course.
+
+Throughout the course we will be recommending useful tools.
+
+However we will mainly be using Weave, Cohere and Weaviate.
+
+Weave is a lightweight toolkit for tracking and evaluating your LLM applications.
+
+We will be using Cohere family of models for text generation, re-ranking and embedding.
+
+Cohere is also providing with free credits for this course.
+
+Check out the instructions under this lesson to redeem your free Cohere API key for this
+
+course.
+
+Once you have the API keys, head over to the Colab notebook for this lesson.
+
+We first install the required packages.
+
+We then initialise our Weave client.
+
+This is where you will put in your wandb API key.
+
+We then set up our Cohere client.
+
+We will then use the Cohere model to ask about retrieval augmented generation.
+
+If everything works fine, you will have a Weave URL.
+
+Let's head over to it.
+
+This is a single trace of the Cohere client chat method.
+
+We will automatically capture the inputs to the client as well as the generated response.
+
+We also keep track of the used tokens and the time taken to complete the generation.
+
+Now let's get started with the course.
+
+Enjoy!
+
+
+# RAG-1.1-chapter introduction.srt
+
+Hello everyone and welcome to the first chapter of our course on retrieval augmented generation.
+
+In this chapter, we'll set the stage for the rest of the course by introducing a few concepts,
+
+challenges, and best practices in RAG systems. We'll also give you a sneak peek into wandbot,
+
+our production RAG system that we'll use as a case study throughout this course.
+
+Here's what you can expect to learn in this chapter. First, we'll explore the core components
+
+that make up an advanced RAG system. Then, we'll discuss the challenges that you're likely to face
+
+implementing a RAG system. Next, we'll then cover a few best practices that we've developed through
+
+our experience with building wandbot. And finally, we'll put theory into practice by guiding you
+
+through building a RAG system. This hands-on experience will serve as the foundation that
+
+we'll build upon and refine through the rest of the course. By the end of this chapter,
+
+you should have the necessary foundation required to start your journey into building an advanced
+
+RAG system that we will explore in this course.
+
+
+# RAG-1.7-code.srt
+
+Hello everyone and welcome to the first hands-on session of this course. In this session, we'll
+
+build a simple rag application over the weights and biases documentation. We start off by doing
+
+some initial setup and downloading our data set using weights and biases artifact. We've already
+
+set up most of the files for this data set so you should be able to run and get started very quickly.
+
+You will notice that most of these documents are in Markdown format and we're going to convert
+
+these documents into a list of dictionaries with some content and metadata. Metadata is usually
+
+some extra information about our documents and in this case we are just storing the source of
+
+the document and the number of tokens that is present in each document. Our data set contains
+
+about 260,000 tokens which is a good candidate for building a simple rag system. It's a good time
+
+to talk about weights and biases Weave. Weights and biases Weave is a lightweight toolkit for
+
+tracking and evaluating LLM applications and since we are building a rag application,
+
+this might be a good time to plug in weave. It helps us log and debug large language model inputs
+
+and outputs and trace their calls and also provides nice versioning of data sets and models.
+
+In this case, we're going to take our raw data set and put it into a weights and biases weave data set
+
+and then you know publish it so that we can version it and track it for future purposes.
+
+Next, we proceed with chunking our data. Chunking is usually important because you know most
+
+embedding models have a limit of about 512 tokens and we are also using it to like you know reduce
+
+the number of tokens that we send to our large language model. In this case, we'll be doing a
+
+simple chunking mechanism wherein we chunk our data into a list of words and about 500 with
+
+about 500 tokens per chunk without any overlap and we can then go ahead and store this chunked data
+
+into a weave artifact so that we can then reuse it later. But then before we do that, we also need to
+
+make our text tokenization safe. Sometimes text contains special tokens that interfere with the
+
+model's tokenization process and it's always a good practice to remove these special tokens.
+
+These special tokens might be tokens like end of text and start of text so depending on the
+
+model's tokenizer you might have to build a special you know cleaning process and in this
+
+case we've built in a cleaning process based on Cohere's tokenizer because that will be the model
+
+we are going to be using the Cohere command R model. We can then now that we've cleaned this
+
+data set we can then store this data set into a weave artifact and you can see a snapshot of what
+
+this artifact looks like. You should also have a similar artifact once you run this colab in
+
+your own environment. Now that we have our clean data set we can go ahead and vectorize the data.
+
+Vectorization is a simple process of converting our data into numerical representations so that
+
+we can then go ahead and retrieve this data based on a new query from a user and in this case we
+
+are using a simple vectorizer the tfidf vectorizer. We're just matching terms based off of the
+
+keywords that are there in a query to the keywords that are there in a document and we can store this
+
+as a weave model. A weave model is a simple way to wrap your data and your code and logic so that
+
+you can then version your application in a more systematic way as you track your experiments.
+
+In this case you can see that our tfidf retriever class has an index data method where we take in
+
+index it using a tfidf vectorizer from scikit-learn and then we also provide a search
+
+method wherein we use cosine distance to calculate the cosine distance between the input
+
+query and the existing documents and then retrieve the top k documents and return them
+
+for a given query. Now that we have our tfidf retriever we can then index our data and you know
+
+run it on a simple query like in this case I've run it on a simple query as how do I use
+
+w and v to log metrics in my training script and it does pretty well by retrieving you know
+
+documents from our technical faq and documents from our logging faq. This is a good baseline to
+
+start off with. Now that we have these retrieved documents we are then ready for generating a
+
+response from our lm. To generate a response from our lm we'll create a simple weave model
+
+that is a simple response generator. It will take in our user query the context that we've retrieved
+
+and then you know use an instruction to finally generate an output. In this case our instruction
+
+is pretty simple we say answer the following question about weights and biases provide an
+
+helpful and complete answer based only on the provided documents. You can go ahead and play
+
+with these instructions yourself by changing the initial prompt and once you pass this to your
+
+response generator you should be able to get a response from the cohere command r model.
+
+Now that we have our response generator ready we can put it all together into a simple rag pipeline.
+
+This pipeline does nothing but you know it combines the two steps the retrieval step and
+
+the response generation step. It takes in a query retrieves the required documents from our retriever
+
+and then passes it on to the lm to generate a response. Putting together the rag pipeline is
+
+pretty straightforward again and you know running the rag pipeline generates a final answer based
+
+off of the response from the lm. Since we have instrumented all of this code with weave already
+
+you should see a dashboard like this once you have published once you click on this link and
+
+the dashboard should show you the nested calls that we have in our rag pipeline starting from
+
+the rag pipeline predict that takes in the user query and generates an output to the retriever
+
+predict which shows your retrieved documents based on the query and the response generator
+
+predict which which shows the query and the context as inputs and the response generated by
+
+the llm. So to sum up in this chapter we've seen how we can take some data process pre-process it
+
+do some cleaning create a simple retriever and create a simple response generator based off of
+
+cohere's command model and generate and create a rag pipeline by putting it all together.
+
+We've also seen how we can utilize weights and biases weave to track and log traces of our llm
+
+calls and track and version our data sets and models. In the next chapter we will see how we
+
+can build upon these aspects and create more complex and advanced systems.
+
+
+# RAG-1.2-basic - advanced RAG.srt
+
+Let's start by revisiting the basics.
+
+I know most of you taking this course are probably already familiar with the fundamental
+
+RAG process, but here's a quick refresher anyway.
+
+So in a nutshell, a simple RAG system has four main steps.
+
+First, we've got the query.
+
+This is where it all begins.
+
+A user comes along with a question or a request.
+
+We then dig through our knowledge base, looking for any information that might be relevant
+
+to the user's query.
+
+Next, we take a large language model and feed it two things.
+
+The context we just retrieved and the user's original query.
+
+The LLM then works its magic to craft a response.
+
+And finally, we deliver the answer back to the user, hopefully solving their problem
+
+or answering that question.
+
+Now, this basic process is already quite powerful.
+
+It combines the precision of a retrieval system with the flexibility of a large language model
+
+to deliver a contextual response that drives value to our users.
+
+Now that we've had a refresher on the basics of a RAG system, let's kick things up a notch.
+
+In this course, we are going to transform that simple RAG system into something more
+
+sophisticated.
+
+You'll notice that we've added a few extra steps to the RAG process in this slide.
+
+Let me walk you through what's new and why it matters.
+
+Just like before, we start with the query.
+
+But here, we've added an enhancement step to improve the initial query.
+
+Doing this dramatically improves our chances of finding the right information.
+
+Next, we still got the retrieval step, but look what comes after.
+
+We've added a re-rank stage.
+
+This is crucial.
+
+It's not enough to just find the relevant information.
+
+We need to make sure we're using the most useful information.
+
+Then, we still have an LLM generate a response, but now we've added a validation stage.
+
+This is our quality control, where we double check the generated responses, make sure it's
+
+accurate, appropriate, and actually answers the user's question.
+
+Finally, we deliver the answer back to the user.
+
+Now, you might wonder, why go through all this trouble?
+
+Well, these additional stages are what separates a good RAG system from a great one.
+
+They help us handle more complex queries, provide more accurate and relevant responses,
+
+and ultimately deliver a better user experience.
+
+Of course, implementing these extra steps comes with its own challenges.
+
+We'll discuss these challenges throughout the course, along with the strategies to overcome
+
+them.
+
+
+# RAG-1.3-wandbot-.srt
+
+In this course, we'll refer to wandbot quite often as a practical example of a RAG application.
+
+So let me introduce you to wandbot and some of its applications.
+
+wandbot is our LLM-powered document assistant, and it has been a total game changer for us.
+
+First off, wandbot offers our free users support through chat and email.
+
+This has been a huge boost to our customer service,
+
+allowing us to provide instant help to users around the clock.
+
+But it's not just our external users who are benefiting.
+
+Our internal teams love wandbot.
+
+It has made finding information from our docs a total breeze.
+
+Building wandbot actually helped us improve our documentation.
+
+As we developed the system, we gained new insights into how users interact with our docs,
+
+allowing us to optimize and clarify our content.
+
+Now, here's something I'm particularly excited about.
+
+We built wandbot in the open. You can find it on GitHub right now.
+
+We wanted to share our work with the community.
+
+We hope that AI developers can use wandbot as a reference,
+
+learn from our experience, and maybe even contribute to its development.
+
+By exploring wandbot, you'll get a first-hand look at building an effective RAG system.
+
+And by the end of this course, you will have the knowledge and skills to build something similar,
+
+tailored to your own unique needs and use cases.
+
+As we progress through the course,
+
+we'll guide you through the process of building a developer assistant.
+
+We'll draw upon our experience of having had wandbot in production for over 18 months.
+
+What's interesting is how versatile RAG systems like wandbot can be.
+
+We initially created it for a specific purpose, but it ended up doing so much more.
+
+For instance, wandbot has made customer self-service incredibly easy.
+
+Our support agents are using wandbot to provide faster and more accurate help.
+
+And surprisingly, our developers are using it to quickly generate code snippets and API documentation.
+
+As we walk through the process of building a RAG application
+
+and explore the advanced techniques that make systems like wandbot so effective and adaptable,
+
+you'll gain the skills to create RAG systems that meet a wide range of needs,
+
+just like wandbot did for us.
+
+You'll get the hands-on experience that you can apply to real-world scenarios
+
+and develop robust and versatile RAG systems of your own.
+
+
+# RAG-1.4-20-80.srt
+
+Let's talk about a key principle in our development of wandbot, the 80-20 rule.
+
+We found that about 80% of user queries can be resolved using just 20% of our available
+
+information.
+
+So how do we apply this to building our RAG system?
+
+Here's our approach.
+
+First, we prioritize high-impact content, focusing on the most critical 20% of our documentation.
+
+We zero in on common queries, optimizing for the 20% that represents 80% of our users'
+
+queries.
+
+We believe in iterative improvement, tackling the most impactful problems first.
+
+And we are always mindful of technical debt, balancing quick fixes with long-term maintainability.
+
+Now some level of hallucination is unavoidable in LLM-based systems.
+
+That's why we focus on addressing issues with the most frequent and impactful queries first.
+
+Remember, the goal isn't perfection, it's excellence.
+
+By focusing on what matters most, we can create a system that delivers outstanding results
+
+for majority of use cases while continuously improving over time.
+
+This approach has been key to wandbot's success, and it's a principle you can apply to your
+
+own RAG projects to maximize impact and efficiency.
+
+Balancing risks and rewards in AI-powered systems is a bit like walking a tightrope.
+
+Our experience with wandbot has shown us that when done right, the payoff can be huge.
+
+We rolled out wandbot in stages, starting small with free users on Discord and then expanding
+
+to chat and email support.
+
+This allowed us to get real feedback and fine-tune the system without too much pressure.
+
+We tackled challenges like inaccurate responses by adding source citations and refreshing
+
+our content regularly.
+
+To address privacy concerns, we anonymized user data.
+
+And to address the lack of human touch, we ensured that customers have a clear path to
+
+get human help when needed.
+
+Now let's talk about rewards.
+
+We've seen significant improvements to user satisfaction.
+
+People love instant and accurate answers to their questions.
+
+Our support team's workload has decreased significantly.
+
+And for our global users, it's like having a 24-7 Weights & Biases expert at their fingertips.
+
+The bottom line is, wandbot has shown us that with careful planning and constant tweaking,
+
+a RAG system can greatly enhance customer assistance and keep risks at a check.
+
+
+# RAG-1.5-best practices-.srt
+
+Building any successful application requires adherence to some best practices.
+
+Our experience with wandbot has taught us a few key lessons,
+
+and these lessons can be applied to any RAG system you are working on.
+
+First, start with a clear use case and well-defined success metrics.
+
+For wandbot, we focused on improving how users navigate our documentation,
+
+setting specific goals to measure our progress.
+
+Data quality is crucial.
+
+We put a lot of effort into ensuring our documentation is comprehensive and up-to-date.
+
+This high-quality foundation is what allows wandbot to provide accurate and relevant responses.
+
+Next, we fully embraced evaluation-driven development.
+
+This means constantly assessing wandbot's performance against predefined metrics
+
+and allowing for iterative improvement.
+
+Lastly, we developed a robust evaluation framework.
+
+This isn't just about accuracy.
+
+It's about looking at relevance, faithfulness, and a range of other factors.
+
+This multidimensional approach helps us truly understand our system's performance.
+
+These practices were essential in wandbot's development
+
+and can significantly improve any RAG system you are working on.
+
+In the next slide, we'll continue with a few more best practices
+
+that have really made a difference for us.
+
+Continuing with our best practices, let's look at a few more key principles.
+
+While LLMs are powerful, we've learned that regular reviews by subject matter experts
+
+are essential. They ensure responses remain accurate and relevant,
+
+catching any quirks that might slip through automated checks.
+
+We've also prioritized user experience and interface design.
+
+It's about presenting information in a way that's easy to navigate and understand.
+
+Transparency is another key factor.
+
+We are always upfront about users interacting with a bot
+
+and provide citations for wandbot's responses.
+
+This builds trust and gives users the option to dig deeper if they want.
+
+Lastly, we've embraced continuous improvement.
+
+Our documentation isn't static and neither are user needs.
+
+We're constantly updating wandbot to keep pace with these changes.
+
+These practices, combined with the ones we discussed earlier,
+
+form the backbone of wandbot's success.
+
+They've helped us build a RAG system that not only performs well,
+
+but also earns and maintains user trust.
+
+Keep these principles in mind as you build your own RAG application.
+
+They can make a real difference in your application's success.
+
+
+# RAG-1.6-RAG evolution.srt
+
+Let's examine some of the key challenges we've encountered with wandbot and our strategies for
+
+addressing them. These issues are common in RAG projects and our experiences may provide valuable
+
+insights for your own implementation. A primary challenge has been keeping pace with rapidly
+
+evolving LLM models and APIs. Our solution involves a systematic approach of regular
+
+updates and evaluations, ensuring wandbot remains current and without compromising stability.
+
+We've also faced a complex task of balancing new feature development with system refinement. Our
+
+evaluation-driven framework has been instrumental in prioritizing changes that deliver the most
+
+value. Another significant challenge has been developing truly representative evaluation
+
+data sets. We found that combining automated processes with expert manual analysis of chat log
+
+yields the most comprehensive insights. Finally, we've continuously worked to optimize the trade-off
+
+between response latency and accuracy. This ongoing process involves fine-tuning our system
+
+to improve both aspects simultaneously. Each obstacle overcome represents an opportunity
+
+for significant improvement and by sharing these experiences, our aim is to provide you with the
+
+practical strategies to address similar challenges in your own RAG system. Before we move on to our
+
+hands-on session, let's discuss how to keep our RAG system evolving. This ongoing development
+
+is crucial but often overlooked. With wandbot, we start with regular data set updates. This goes
+
+beyond just adding new information. We ensure our evaluation data reflects current documentation
+
+and real user queries. We also take a granular approach to evaluation, assessing each component
+
+of our RAG system separately. This helps us pinpoint exactly where improvements are needed.
+
+Don't just rely on quantitative metrics. Pay close attention to feedback from users,
+
+which often reveals insights that numbers alone can't capture. Finally, we are always fine-tuning
+
+our entire RAGS pipeline. This means optimizing every step of the process. This cycle of update,
+
+evaluate, and improve is what keeps wandbot effective and relevant. Remember, building a RAG
+
+system is just the beginning. The real challenge and opportunity lies in evolving it to meet
+
+changing needs and capabilities. By following these practices, you will be well equipped to
+
+create a RAG system that not only works today but also continues to improve over time.
+
+
+# RAG-2.1-chapter introduction.srt
+
+Hello, my name is Ayush and I will be your instructor for this chapter focused on evaluating
+
+LLM applications. We will build from where Bharat left off in the last chapter.
+
+Before we start, a crucial disclaimer. Every application is unique, so we designed this
+
+chapter to help build a mental model of approaching evaluation. In this chapter, we will explore
+
+the importance of evaluating LLM applications. We will dive into practical approaches and
+
+cover a few strategies. We will explore ideas to build eval datasets and finally try to
+
+drill the idea of evaluation-driven development.
+
+Talking about evaluation-driven development, we learned it the hard way. A few months ago,
+
+we refactored wandbot to make it faster and better. In a rush to get it done quickly,
+
+in two weeks time, we skipped through evaluating major changes. Well, our first evaluation
+
+of the refactored branch gave only 9% accuracy, which was a significant drop from our baseline
+
+of 72%. We made a mistake, so you don't have to. In order to do it right, we created
+
+a GitHub branch, cherry-picked the changes and evaluated each one. After running 50 evaluations
+
+and spending $2000 over a span of another 6 weeks, we identified the key issues, resolved
+
+them and ultimately improved the accuracy by 8% over the baseline.
+
+
+# RAG-2.2-evaluation basics.srt
+
+In the last chapter, we created a simple RAG pipeline.
+
+However, RAG is as good as the quality of the retrieval system, the quality of the generated
+
+response, and the quality of LLM to follow instructions.
+
+Depending on the complexity of your application, you should consider measuring the quality
+
+of each component.
+
+Talking about components, we start off by evaluating a response by comparing it against
+
+ground truth.
+
+This is called end-to-end evaluation or system evaluation.
+
+We do this because response is non-deterministic in nature.
+
+We must also evaluate other non-deterministic components of our pipeline like the retrieval
+
+system.
+
+We can evaluate the context by ranking it against ground truth context or even ask an
+
+LLM to judge if the generated response is based on the retrieved context.
+
+This is called component evaluation.
+
+So far, we have focused on evaluation using ground truth.
+
+But the need for ground truth depends on what we want to evaluate, which can further be
+
+bucketed into three categories.
+
+We can compare evaluation measures, aspects like toxicity, racial bias, or whether a response
+
+is grounded on source text.
+
+Pairwise evaluation compares two or more responses to the same query measuring factors like tone
+
+or coherence.
+
+Both these evaluations can be done without ground truth.
+
+Finally, if we have or can create a gold standard reference, we can perform reference evaluation
+
+typically used to measure the structure of a response or its inclusion of specific information.
+
+Now let's talk about evaluation in practice.
+
+Practically, your evaluation journey begins while building your system.
+
+You eyeball the response of the system to see if it is decent.
+
+This is the quickest way of evaluation but is less reliable because you will not be covering
+
+every edge case.
+
+You can then consider hiring annotators to manually evaluate your system.
+
+While building wandbot eval set, in-house MLEs acted as the domain expert annotators.
+
+This is both expensive and time consuming but most reliable.
+
+Somewhere in between the two spectrums, we have a concept of LLM as a judge.
+
+That is, we use an equally powerful LLM to score our system or components of our system.
+
+Talking about evaluation dataset, it is meaningful as long as it is highly correlated with your
+
+production distribution.
+
+Same goes for the choice of your metric.
+
+It needs to be correlated with your use case.
+
+Public benchmarks do not correlate on both the axes while human evaluation or user testing
+
+are moderate to highly correlated but are slow and expensive for rapid iteration cycles.
+
+The idea is to build a small evaluation dataset, leverage LLM judges to evaluate components
+
+of the system and via alignment, push this mode of evaluation to the top right quadrant.
+
+That's mouthful.
+
+We will go through it one by one.
+
+
+# RAG-2.3-code-.srt
+
+Now let's head over to the Collab notebook for chapter 2, where we will be evaluating
+
+the two main components of the RAG pipeline, the Retriever as well as the Response Generator.
+
+We start off by setting up the required packages for this Collab notebook.
+
+In this chapter we will be using wandb Weave for our evaluation purposes, but I've already
+
+covered what wandb Weave is.
+
+In this chapter we will focus on Weave Evaluation, which is a lightweight class that can be used
+
+to evaluate the performance of a Weave model on a Weave dataset.
+
+We first initialize a Weave client, which can track both the traces as well as the evaluation
+
+scores.
+
+Weave Evaluation begins by first building the evaluation set.
+
+In our case, we used a subset of the evaluation dataset we had created for wandbot.
+
+If you are interested, I would highly recommend checking out our series on how to evaluate
+
+LLM, specifically part 1 as well as part 2.
+
+The main takeaway from these reports are that we first deployed wandbot for internal usage
+
+based on rigorous eyeballing-based evaluation.
+
+We then analyzed the query distribution.
+
+We sampled a good representative from the clusters we created to create a gold standard
+
+set of queries.
+
+We then used in-house MLEs to perform manual evaluation using Argila.
+
+Remember that creating such evaluation platforms are easy these days.
+
+To summarize, speed is key.
+
+Use whatever means you have to create a meaningful eval set.
+
+The evaluation samples are logged as Weave dataset.
+
+You can check out the question, answer, and context triplets.
+
+We can also drill down to individual questions, the ground truth answer, as well as the context
+
+that was used to create this ground truth answer.
+
+Obviously, while experimenting with your evaluation dataset, you will be creating multiple versions
+
+of the evaluation set.
+
+It's important that we keep track of the different versions.
+
+For example, this version 4 had 20 examples, whereas the version 3 of the evaluation set
+
+had only two examples.
+
+This is how you keep iterating on eval set and keep building better and better quality
+
+of the eval set.
+
+
+# RAG-2.4-evaluating retriever-.srt
+
+The fundamental idea of evaluating a retriever is to know how well the retrieved content
+
+matches the expected contents. One way of doing so is to rank the retrieved context against
+
+Ground-Truth Context aka Reference Evaluation. Another way is to ask another LLM to judge if
+
+the retrieved context is relevant for the user query aka Direct Evaluation. In most cases,
+
+Reference Evaluation will give a more confident measure of the quality of your retriever.
+
+A quick way of generating Ground-Truth Context is to first create clusters of semantically similar
+
+chunks. You can then sample similar chunks and ask an LLM to come up with one or more queries
+
+that can only be answered based on this information. At its core, retrieval evaluation is a search
+
+problem. Thus, it is easiest to start with traditional information retrieval metrics.
+
+Some ranking-based metrics are Hit Rate, which measures if there is at least one relevant
+
+recommendation. Min-reciprocal ranking or MRR calculates the average of the reciprocal ranks
+
+of the first relevant content. Normalized discounted cumulative gain or NDCG considers
+
+both the relevance and the position of the items in the rank list. Together, they help measure
+
+retriever's ability to pick context based on their relevance to the user or query.
+
+The position of relevant context is important for the LLM to give proper attention or attribution to
+
+it aka loss in the middle problem, which we will cover later in this chapter. We can also use
+
+predictive quality metrics that measure if the retriever can make accurate predictions about
+
+item relevance. Precision, recall, map, F1 score are familiar metrics in this category.
+
+Now let's evaluate our TFIDF retriever from chapter 1 using these metrics.
+
+Now let's evaluate our retriever using the metrics we have discussed so far.
+
+We first download the chunk data from chapter 1.
+
+We will import the TFIDF retriever, which is an instance of weave.model, and index the chunk data.
+
+All the metrics we have discussed so far are implemented in the script
+
+slash retriever underscore metrics dot py file. I would highly recommend you all to check this
+
+file out. Note that every scoring function here has the same signature wherein it expects two
+
+arguments model output, which is the list of retrieved contexts as well as context,
+
+which is which are the ground truth context. Each metric is also decorated with weave.op.
+
+Now that we have our evaluation data set, as well as the list of scoring functions,
+
+we can set up our evaluation pipeline using Weave evaluation.
+
+We then run the evaluation of our retriever using this pipeline.
+
+Once the evaluation is done, we get a summary scores like this. Note that for each metric,
+
+we have the mean score computed for us automatically.
+
+Alternatively, we can go to the evaluation section of our Weave dashboard.
+
+Here we find all the evaluation runs and we can even filter out runs based on the columns.
+
+Clicking on the evaluation we just ran, we can check out the mean of each metrics.
+
+We can also check out the scores on per sample basis.
+
+We can choose to drill down further by checking out the trace timeline for our evaluation run.
+
+
+# RAG-2.5-LLM evaluator-.srt
+
+Now let's evaluate our retriever using an LLM evaluator. We will talk more formally about
+
+this concept when we will evaluate a response generator. But here let me show you an LLM
+
+evaluator in action for evaluating a component of the RAG pipeline. The idea is to first ask an LLM
+
+to score each retrieved context based on a relevance to a given question. You can check
+
+out the system prompt. The instruction is documented here which is to rank documents
+
+based on their relevance to a given question as well as answer pair. The instructions are also
+
+followed by a rubric or the scoring criteria. Here the criteria is to give a score in a range of 0 to
+
+2 where 0 represents that the document is irrelevant whereas 1 is neutral and 2 is that
+
+the document is highly relevant to the question answer pair. The final output of the judge should
+
+look something like this where each context id is given a relevant score.
+
+Based on this scoring by LLM we can then compute two metrics the mean relevance as well as the
+
+rank score. The rank metric measures the position of the relevant chunks. We then set up our
+
+evaluation like we did in the past and run the evaluation using our LLM as a judge metric.
+
+
+# RAG-2.6-assertions.srt
+
+But hey, before we do any fancy evaluation, let's take a step back from LLM as a judge
+
+jargon and try to express the desired output in plain code. This is direct evaluation using
+
+heuristics. The heuristics should form the first layer of your system evaluation. We
+
+can use these metrics to inspect the structure of the response. Some examples can be to check
+
+if there are bullet points or code snippets in the response. We can also check if the
+
+response is of a certain length or is a valid JSON in case of structured output. Doing these
+
+types of heuristics based evaluation will reinforce what we expect and hence make the
+
+system more robust.
+
+Writing assertions or unit tests are application specific. A more generic evaluation strategy
+
+is to do reference-based evaluation using traditional metrics, like comparing the similarity
+
+ratio between the normalized model output and the expected answer, or computing the
+
+Laue distance. We are also showing both ROUGE and BLEU metrics. We again set up our evaluation
+
+using Weave Evaluation, but this time we evaluate a simple RAG pipeline.
+
+
+# RAG-2.7-limitations.srt
+
+The traditional metrics for evaluating generation fall short on measuring the semantics deeply
+
+and usually ignore the contextual relevance of the user query.
+
+It usually performs fuzzy exact match which are hard to interpret.
+
+Furthermore, most track pipelines are nuanced and subjective demanding for better evaluation
+
+metrics. Note however that these traditional metrics can be included in the evaluation suite
+
+because of its speed. LLM evaluators can help overcome some of these limitations
+
+but has its own set of problems. We have already used LLM as a judge to evaluate our retriever
+
+but let us define what it means more formally here. The idea of LLM evaluator is based on two
+
+facts. One, a powerful LLM can compare pieces of text and second it can follow instructions.
+
+Using these two facts we can give a powerful LLM pieces of text like the retrieve context,
+
+the generated response and the user query. We also give it a set of instructions which outline
+
+the scoring criteria. The LLM then gives a score based on the learned internal representations.
+
+One can pause here and ask two important questions. Are these scores deterministic
+
+to which I would say a no. If we are using an LLM to evaluate an LLM system,
+
+how can we evaluate the LLM evaluator in the first place. Well, we will get to it later.
+
+
+# RAG-2.8-LLM eval in action.srt
+
+We will now see an LLM Evaluator in action. For our use case, we care about the correctness,
+
+relevancy and faithfulness of the generative response. The correctness metric compares
+
+the response to the ground truth. The relevancy metric checks if the response is relevant
+
+to the user query, while the faithfulness measures the factual consistency of the response
+
+given retrieved context.
+
+In this colab, we have only implemented the correctness metric. We leave the other two
+
+metrics as an assignment for our viewers.
+
+We set up our evaluation and evaluate our RAG pipeline like we have been doing. Now
+
+let's go through the Weave dashboard to look through and dig deeper into the evaluation
+
+result from this evaluation run.
+
+If you have noticed, for this particular evaluation, we got a score of 0%. Why is that the case?
+
+First, let's look into the system prompt to understand what are the set of instructions
+
+that we have provided and what's the scoring criteria and then we will look through few
+
+of the examples to understand why the judge gave the score it gave.
+
+Well, it's very easy because of this trace timeline to look through the judge's system
+
+prompt. Because we are using Cohere, the underlying cohere.async, client v2 chat method
+
+is the one responsible for making the API call. You can look through the system prompt
+
+here. It clearly outlines the amount of information that is provided, what are the different instructions
+
+or the criteria for evaluation and the evaluation range. So a 0 score is incorrect and does
+
+not satisfy the criteria that is outlined here. Whereas a score of 2 is correct and
+
+thoroughly answers the question. Remember that we are asking the LLM judge to return
+
+a suggestion with the reason for why it believes the score, what is the final score, which
+
+is 0 or 1 or 2 and the decision. Remember that the decision here is that if the score
+
+is 2, only then the generative response is correct, otherwise it is not correct.
+
+Now let's look for the score for this particular example. It gave a score of 0 and let's see
+
+why. The generative answer provides code snippets for saving data to a wandb table but does
+
+not address the specific user question about logging the outputs and the parameters. It
+
+gave a score, it compared the ground truth with the response and came up with this reasoning.
+
+Let's look at some other query. In this query for example, the question was, my distributed
+
+runs are not in sync when using PyTorch Lightning integration, how do I fix that? And this is
+
+the output that the system gave. Well, it gave a score of 1. It says that the generative
+
+answer provides a code snippet to address the issue but does not cover all the relevant
+
+point mentioned in the reference answer. So it's comparing against the reference answer,
+
+such as proper logging setup, configuring the trainer and avoiding direct access to
+
+one data front. So these are the things that are missing in the reference evaluation ground
+
+truth and does it give us decision of incorrect. Like this, we can go through the entire sample
+
+of 20 or so dataset and see where it failed and why it failed. And this will help us gain
+
+more insight. What's more interesting is that for a given response, if I feel that
+
+the LLM judge gave a score which is incorrect, I can maybe go and give it a feedback of thumbs
+
+down and then I can write a piece of code and pull down all the traces or all the evaluation
+
+runs where I have given a particular kind of emoji indicating a particular kind of intent.
+
+In this case, a thumbs down is intending that the LLM response or the LLM judgment
+
+is not in line with my own judgment of the generative response. And this information
+
+or this data can help me figure out what kind of future examples I would like to give in
+
+the system prompt to align the judge with the human judgment as well as what kind of
+
+tweaking I should do with the system prompt to again align the LLM judge with my own judgment.
+
+And this is an exercise that we have done for wandbot and we'll show some flavor of this.
+
+
+# RAG-2.9-re-evaluting models.srt
+
+What's even more exciting is that because our simple RAG pipeline is written using Weave.model
+
+or in a structured manner, we can easily switch the underlying LLM from Command R to Command R+, re-initialize
+
+the RAG pipeline and run the evaluation on all the metrics that we have discussed so
+
+far.
+
+Using the Weave dashboard, we can easily compare two evaluations.
+
+In this case, I am comparing the evaluation of two RAG pipeline, one using Command R and another
+
+one using Command R+.
+
+Click on the compare button and we have the comparison dashboard created for us automatically.
+
+We can look through the differences or the delta of the metrics that changed and the
+
+best part is that we can look through individual samples and compare the answer for all of
+
+these.
+
+For example, here this particular output got a score of 1, whereas this output only got
+
+a score of 0.
+
+Maybe there was something wrong when Command R was used and we can literally run through
+
+all the 20 samples here and try to figure out where our system is failing.
+
+This concludes how we can use evaluation on Weave for evaluation driven development to
+
+improve the quality of our RAG pipeline.
+
+
+# RAG-2.10-LLM eval limitations.srt
+
+Well, LLM evaluators have limitations as well, but there are some solutions.
+
+The evaluator is non-deterministic, thus ideally we should be running 3-5 trials per experiment.
+
+You might have already thought about it if we are using an LLM to evaluate an LLM system
+
+who evaluates the evaluator. Remember the concept of alignment where we align the evaluator's
+
+judgement with that of human judgement with careful prompting.
+
+Cost is obviously higher compared to traditional metrics, but remember you are using LLM evaluator
+
+to measure abstract concepts and manual evaluation will be very costly and time consuming.
+
+Finally, the evaluation dataset needs to be updated if the data source has changed, thus
+
+requiring a careful inspection of the evaluator's alignment with human judgement. In my opinion,
+
+having a dedicated team for evaluation makes a huge difference.
+
+
+# RAG-2.11-pairwise eval.srt
+
+Circling back to the wandbot example at the start of this chapter where I showed an 8%
+
+increase in the performance, well we were very happy with our evaluator's judgement
+
+but we took an extra step to set up a simple A-B test or pairwise evaluation using humans.
+
+We set up this A-B test using Argilla and alternatively using a simple radio app.
+
+We asked our in-house MLEs to choose the response that felt answered the given query better.
+
+Well, our new system was preferred 60% of the time compared to the older system which was
+
+preferred only 40% of the time. If possible, setting up such wipe checks will give more
+
+confidence in deploying your application.
+
+
+# RAG-2.12-conclusion.srt
+
+Well, this is the end of the chapter. I hope you learned something new and useful.
+
+To conclude, here are some of the take home pointers.
+
+Make sure to spend time and resources on evaluation and evaluate all the non-deterministic
+
+components both individually and end-to-end. Use a mix of direct, pairwise and reference
+
+evaluation depending on your use case. Start building your evaluation set from the get-go,
+
+but keep iterating on it. LLM evaluators are a strong tool, but use it wisely. Make sure to
+
+align the judgment with that of humans. Finally, make sure to spend time to integrate your
+
+evaluation pipeline with better tooling early on to iterate rapidly. I hope it was useful.
+
+Let's see you in chapter 3.
+
+
+# RAG-3.1-chapter intro.srt
+
+Hello and welcome to chapter 3 of our course.
+
+In this chapter, we'll dive into a crucial aspect of RAG systems,
+
+data ingestion and pre-processing.
+
+Think of this chapter as your guidebook to transform your raw data
+
+into the fuel that powers your RAG engine.
+
+We'll explore how to process and convert all sorts of information
+
+from documents to code snippets into a format
+
+that your RAG system can work with efficiently.
+
+Let's take a look at what we're going to cover in this chapter.
+
+First, we're going to really dig into what data ingestion means for RAG systems.
+
+We'll then explore some techniques for formatting your data.
+
+Next, we're going to dive into the art of chunking.
+
+We'll also look at how to use metadata to give your system even more context.
+
+Finally, you'll learn how to spot and fix common ingestion issues.
+
+By the end of this chapter, you'll have a solid grasp
+
+of how to prepare your data for optimal RAG performance.
+
+This is the foundation that can really take your RAG system to the next level.
+
+So let's dive in.
+
+
+# RAG-3.8-code.srt
+
+Hello everyone and welcome to the third hands-on session of our RAG course.
+
+In this chapter, we'll dive into data ingestion and pre-processing. We'll focus on tokenization,
+
+chunking, and explore a few different retrieval methods and compare and evaluate their impact
+
+on our RAG pipeline. So let's get started. After going through the same initial setup steps and
+
+fetching our raw data set using Weave, we start with revisiting tokenization. In chapter one,
+
+we naively tokenized our data set into words. But it's often good practice to tokenize our data set
+
+using the same tokenizer as the model we intend to use. Here, we're using Cohere's tokenizer to
+
+accurately count tokens in our documents. It's crucial for our RAG system as it helps us manage
+
+context windows and estimate the computational costs of our system. Notice how we update our
+
+raw data with accurate token counts. This often differs significantly from simple word counts,
+
+highlighting the importance of proper tokenization in RAG pipelines. Next, we pre-process our data by
+
+removing markdown elements and special characters. Here, we specifically focus on two main functions.
+
+The convert contents to text function. This function converts raw markdown to HTML and then
+
+uses beautiful soup to remove image links, images, and other formatting information. Then, we have the
+
+make text tokenization save function. This function removes any special tokens present in the text,
+
+special characters here are those defined in the tokenizer and may vary depending on the model used.
+
+This cleaning step is vital for sanitizing our input and improving the retrieval accuracy.
+
+Again, we publish our pre-processed data set to V for easy tracking and reproducibility.
+
+
+# RAG-3.9-chunking in code.srt
+
+Now, let's look at chunking.
+
+Here, we are using a semantic chunking approach,
+
+which groups similar sentences together.
+
+This method preserves context better than simple
+
+fixed-length chunk splitting.
+
+While I'll not dive into the details of the chunker here,
+
+you should definitely explore the chunking code in the repository
+
+to develop a deeper understanding of the chunking mechanism.
+
+Notice how our chunks have varying sizes
+
+but maintain semantic coherence.
+
+This adaptive approach can significantly improve
+
+the retrieval relevance of our system.
+
+
+# RAG-3.10-BM25.srt
+
+In chapter 1, we saw how to use tf-idf vectors to build a basic retriever.
+
+Here, we'll explore another type of retrieval method called best matching 25 or bm25 in short.
+
+bm25 is an evolution of tf-idf that better handles document length and term frequency saturation
+
+using a probabilistic approach. By implementing both methods and ingesting data into the two
+
+retrievers, we can more effectively compare their impact on our RAG pipeline. Having ingested the
+
+data into the retrievers, we can finally use Weave to evaluate them holistically. This allows us to
+
+compare their retrieval performance as well as the overall impact on the RAG pipeline. After running
+
+the evaluations, you should be able to compare the performance of the two methods in your Weave
+
+dashboard. Here, you'll notice that the bm25 retriever generally performs better than the
+
+tf-idf retriever on most metrics.
+
+
+# RAG-3.2-data ingestion.srt
+
+Think of data ingestion as the gateway to your RAG system.
+
+It's where we transform raw information into something our system can work with effectively.
+
+This process is absolutely critical because the quality of your data ingestion directly impacts
+
+how well a RAG system can retrieve information and generate accurate responses.
+
+Imagine trying to find a specific book in a library where all the books are all piled up.
+
+That's what a poor data ingestion looks like for a RAG system.
+
+But with good ingestion, it's like having a well-organized library with a great catalog system.
+
+So as we explore this topic further, keep in mind that good data ingestion is key to building a RAG
+
+system that not only is functional but also truly exceptional. Now let's break down data ingestion
+
+into its core components. We'll call these the three pillars of data ingestion. First up,
+
+we have data parsing. This is where we take all those different document formats, the PDFs,
+
+Word docs, and web pages and convert them into a standard format that our RAG system can utilize.
+
+Next, we've got chunking, the art of breaking down information into bite-sized digestible chunks.
+
+It's crucial because it helps our system find and retrieve relevant information without getting
+
+bogged down into massive documents. Finally, we have metadata management. This is like adding
+
+tags or labels to our data. It helps our system understand more about the content without having
+
+to read through everything in detail. Each of these pillars plays a vital role in the preparation
+
+of our data. They work together to ensure that when our RAG system needs to retrieve information,
+
+it can do so quickly and accurately. As we go through this chapter, we'll dive into each of
+
+these pillars and see how they contribute to building a robust RAG system.
+
+
+# RAG-3.3-data parsing.srt
+
+Having understood the pillars of data ingestion, let's dive into the practical side of things.
+
+Preparing your data for RAG.
+
+This process is crucial because it's the bridge between your data and a high-performing RAG system.
+
+Let's break down the key steps.
+
+First, we clean and extract the data.
+
+This is like sorting through a messy closet.
+
+We keep what we need and toss out what we don't.
+
+Next, we convert everything into plain text.
+
+Think of this as translating everything into a common language for our LLM.
+
+Then comes segmentation.
+
+We break our text into smaller, manageable pieces.
+
+After that, we create vector representations.
+
+This is where we translate our text into numerical data that our retrieval system can process efficiently.
+
+Finally, we store everything in a vector database.
+
+This is our organized, easily searchable library of information.
+
+Each of these steps plays a crucial role in setting up your RAG system for success.
+
+They ensure that when your system needs to retrieve and generate information,
+
+it can do so quickly and accurately.
+
+Let's examine data parsing a little more.
+
+It plays a crucial role in converting raw data into a format our RAG system can work with.
+
+First, let's look at some tools you might encounter in the wild.
+
+You've got options like unstructured, firecrawl, multi-on,
+
+textract, and Azure Document Intelligence.
+
+These are great off-the-shelf solutions that can handle a wide variety of document types.
+
+However, it's important to understand that sometimes a more tailored approach is necessary.
+
+To illustrate this, let's look at our approach with wandbot.
+
+In our case, we deal with some pretty specific document types.
+
+So, we've taken a more tailored approach.
+
+For our Markdown documents, we've built a custom parser that preserves the structure
+
+and context of the text.
+
+When it comes to Jupyter notebooks, we use nbconvert to convert them into Markdown
+
+and then parse them with our custom parser.
+
+And for code analysis, we use concrete syntax trees
+
+to preserve and extract the syntax and structure of the code.
+
+The key takeaway here is that while there are many great tools out there,
+
+many a time you need a custom solution to really nail your specific use case.
+
+It's all about finding the right balance between off-the-shelf convenience and tailored efficiency.
+
+
+# RAG-3.4-chunking.srt
+
+Let's transition to the next fundamental concept of data ingestion, chunking.
+
+Chunking is segmenting large documents into smaller, more manageable pieces.
+
+It makes the content more digestible and easier to navigate.
+
+The main purpose of chunking in a rag system is to create segments rich in context but
+
+small enough for efficient retrieval.
+
+This balance is crucial for the system's performance.
+
+When it comes to chunking methods, we've got a few options in our toolkit.
+
+First, there is fixed-length chunking, where you divide the document based on the number
+
+of words or characters.
+
+Then there is semantic chunking, which is more like dividing a book into its natural
+
+chapters.
+
+And then there is content-based chunking, which adapts to the structure of the document.
+
+An important consideration when developing your chunking strategy is to begin with a
+
+well-defined use case and clearly articulated success metrics.
+
+These elements will serve as the guiding principle for your approach.
+
+Also, don't underestimate the power of evaluation-driven development.
+
+It's the compass that keeps you on the right track as you refine your chunking approach.
+
+Remember, the quality of your data is paramount.
+
+Garbage in, garbage out, as they say.
+
+Lastly, develop a robust evaluation framework.
+
+This will help you measure the effectiveness of your chunking strategy and make more informed
+
+improvements.
+
+The method you choose can significantly impact how well your system retrieves relevant information.
+
+So it's worth taking the time to get it right.
+
+Now that we've covered the basics of chunking, let's look at how to develop an optimal chunking
+
+strategy.
+
+We'll use our experience with wandbot as a practical example.
+
+In wandbot, we've tailored our chunking to approach two different types of content.
+
+For our markdown documentation, we use semantic-based approach.
+
+This preserves natural structure of an article, keeping headers, sections, and paragraphs
+
+intact and helps maintain the logical flow of content within chunks.
+
+When it comes to code examples, we use a structure-based method.
+
+This ensures that function definitions and code blocks stay together.
+
+The key here is balance.
+
+We're constantly juggling the need for context with the need to focus.
+
+Too much context and your chunks become unwieldy and too little and they lose meaning.
+
+This tailored approach has significantly improved wandbot's ability to provide relevant responses.
+
+It's not just about breaking content into smaller pieces.
+
+It's about doing so in a way that preserves meaning and also enhances retrieval efficiency.
+
+Remember, there is no one-size-fits-all solution here.
+
+The best chunking strategy for your RAG system will depend on your specific use case and
+
+the nature of your data.
+
+Don't be afraid to experiment and nitrate to find what works best for you.
+
+When it comes to chunking, you might need more sophisticated methods to handle complex
+
+data and provide more nuanced responses.
+
+Here are a few chunking techniques that we've implemented in wandbot to enhance our retrieval
+
+and generation capabilities.
+
+First up, we have hierarchical chunking.
+
+Think of this as creating a family tree for your content.
+
+You have parent chunks that provide broader context and child chunks that offer more specific
+
+details.
+
+This approach helps us balance the need for detailed information with the broader perspective.
+
+Next, we have what we call small-to-big chunking.
+
+This is like starting with a close-up view and then zooming out.
+
+We begin with specific smaller chunks and then expand to include more context as needed.
+
+It's particularly useful when dealing with long document sections.
+
+Including these methods in our ingestion pipeline has made a huge difference in wandbot's performance.
+
+Recent document chunking helps us provide context from large documentation sections
+
+when answering specific queries.
+
+Sentence window chunking, on the other hand, helps maintain coherence in our responses,
+
+especially when we are pulling information from lengthy documents.
+
+It ensures that we are not just giving isolated facts but presenting information in a way
+
+that makes sense in context.
+
+The beauty of these advanced techniques is that they allow us to be more nuanced in our
+
+approach to chunking.
+
+We are not just breaking content into uniform pieces but doing so in a way that preserves
+
+and enhances meaning.
+
+This helps to be more coherent and contextually relevant responses from our RAG system.
+
+Using such techniques will give you the tools needed to achieve the right balance between
+
+specificity and sensitivity when building your own RAG system.
+
+
+# RAG-3.5-metadata management.srt
+
+Let's talk a little bit about metadata in RAG.
+
+Metadata is essentially data about your data.
+
+It's like the nutritional information on a food package.
+
+It gives you the important details without you having to analyze the entire contents of the package.
+
+In RAG systems, we typically work with two types of metadata.
+
+There is document metadata, which is information about the entire document,
+
+such as title, source, and maybe even a brief summary of the document.
+
+On the other hand, there is chunk metadata,
+
+and this is more granular, providing context for specific segments of the text.
+
+But how do we actually extract and enhance our documents with metadata?
+
+Here are a few techniques we can use from traditional natural language processing.
+
+We can use entity extraction to identify and classify named entities in the text.
+
+We can also use classification to categorize the content and generate new tags for the text.
+
+And relationship extraction takes these a step further
+
+and helps identify how different entities in the text relate to each other.
+
+These are just a few techniques to enrich our content with metadata.
+
+By leveraging metadata effectively, a RAG system can understand
+
+and not just what the content says, but what it's about
+
+and how different pieces of information relate to each other.
+
+Now let's see how metadata works in practice by looking at our approach with wandbot.
+
+Our metadata strategy is twofold.
+
+First, we focus on document-level metadata.
+
+This includes the source of the document.
+
+For instance, is it from our official docs, our GitHub repo, or our blog post?
+
+The type of document, things like, is it API documentation, a tutorial, or a conceptual guide?
+
+The language that the document is written in.
+
+This is crucial for multilingual support.
+
+Then we dive into more granular, chunk-level metadata.
+
+We capture structural information here.
+
+For instance, is the chunk a header, a code block, or a paragraph?
+
+For code chunks, we note the programming language used.
+
+We also tag version-specific information, which is crucial for providing accurate and up-to-date responses.
+
+For instance, if a user asks about a specific pattern function,
+
+our metadata helps us quickly narrow down the relevant code chunks,
+
+ensuring we provide the most accurate and contextually appropriate response.
+
+Remember, a well-thought-out metadata strategy can significantly enhance your RAG system's ability
+
+to provide relevant and accurate responses.
+
+It's about adding those extra layers of context that helps your system understand not just the content,
+
+but its relevance and applicability.
+
+
+# RAG-3.6-data ingestion challenges-.srt
+
+Let's look at some of the challenges you might face
+
+when implementing data ingestion pipelines.
+
+Again, we'll draw upon our experience with wandbot.
+
+In our journey with wandbot,
+
+we encountered several pitfalls.
+
+First, we struggled with incorrect data parsing
+
+and had trouble with parsing the documentation
+
+and code snippets using out-of-the-box parsers.
+
+We also faced format discrepancies.
+
+Different parts of our dataset used different formats
+
+which led to inconsistencies in our parse data.
+
+Chunking was another challenge.
+
+Initially, our chunks were somewhat incoherent,
+
+breaking apart related information.
+
+This affected the quality of our responses.
+
+And of course, we had to deal with the issue
+
+of outdated knowledge.
+
+In a fast-moving field like ours,
+
+information can become obsolete really quickly.
+
+So how did we address these issues?
+
+We developed a tailored parsing approach
+
+that could handle our specific documentation structure
+
+and code formats.
+
+We implemented a systematic evaluation
+
+of our chunking strategy,
+
+continuously testing and refining our approach.
+
+We also adopted a staged approach to evaluation.
+
+Instead of trying to fix everything at once,
+
+we tackled issues in manageable groups,
+
+running evaluations on major groups of commits.
+
+This process wasn't quick or easy,
+
+but it led to significant improvements overall.
+
+It's important to note that troubleshooting
+
+ingestion issues is an ongoing process.
+
+It requires patience, systematic evaluation,
+
+and a willingness to continuously refine your approach.
+
+
+# RAG-3.7-from experience.srt
+
+As we wrap up this chapter, let's reflect on some key insights we've gained from our journey with
+
+wandbot. First and foremost, we've learned the importance of tailored pre-processing.
+
+One size doesn't fit all when it comes to RAG systems. Your ingestion pipeline should be as
+
+unique as your data and your use case. We've also discovered the delicate balance between efficiency
+
+and accuracy. It's tempting to aim for perfect accuracy, but sometimes that comes at the cost
+
+of speed. Finding the right balance is crucial for a responsive and reliable system. Another key
+
+lesson is the value of continuous evaluation. RAG systems are an intersected and forgetted solution.
+
+They require ongoing monitoring and refinement to maintain peak performance. And lastly, we've seen
+
+the power of collaborative problem solving. Some of our biggest breakthroughs came from team
+
+brainstorming sessions and cross-functional collaboration. These insights have helped us
+
+navigate challenges, optimize performance, and continuously improve our user experience.
+
+Remember these lessons when building your own RAG system. They should help you build more effective,
+
+efficient, and adaptable systems.
+
+
+# RAG-3.11-conclusion.srt
+
+To summarize, we've covered tokenization,
+
+semantic chunking, and explode BM25 as an alternative to TF-IDF retrieval.
+
+We also evaluated the impact of these techniques on the RAG system as a whole using Weave.
+
+These improvements can significantly enhance the performance of your RAG system.
+
+In the next chapter, we'll dive into improving our system's ability to understand and parse user queries better.
+
+
+# RAG-4.1-chapter intro.srt
+
+Hello and welcome to chapter 4 of our course, where we will be exploring query enhancement.
+
+In this chapter, we'll discuss some powerful tools and techniques to enrich user queries for our RAG
+
+systems. Query enhancement gives a RAG system a deep understanding of user intentions. It allows
+
+your system to grasp the real meaning and intentions behind each query. We'll give you
+
+the techniques to improve how a RAG system interprets and responds to user queries.
+
+So let's get started. By the end of this chapter, you will have a comprehensive understanding of
+
+query enhancement and its significance in RAG systems. We'll dive into four key techniques
+
+that can significantly improve query processing capabilities. These aren't just theoretical
+
+concepts. We'll examine their practical applications through our wandbot example.
+
+We'll also share some best practices to effectively implement query enhancement in your
+
+own RAG systems. This knowledge will be instrumental in enhancing a RAG system's capabilities.
+
+So let's begin our exploration of query enhancement and its potential to elevate RAG performance.
+
+
+# RAG-4.6-code.srt
+
+Hello and welcome to the hands-on session of chapter 4 of our course.
+
+In this session, we'll explore query enhancement techniques.
+
+First, we'll quickly set up the environment and load the semantically chunked data from chapter 3.
+
+Now let's dive into the core of this chapter, the query enhancer.
+
+This module performs three key tasks.
+
+Language identification, detecting whether the query is in English, Japanese, or Korean.
+
+Intent classification, determining if the query is relevant to our documentation.
+
+And subquery generation, that is breaking down complex queries into smaller, more focused subqueries.
+
+Let's look at an example from our query enhancer.
+
+As you can see, it provides language detection, generates subqueries, and classifies the intent.
+
+Next, we'll look at how we can leverage this information in our query-enhanced RAG pipeline.
+
+The query-enhanced RAG pipeline leverages the enhancements in several ways.
+
+It uses subqueries for multiple-query retrieval, broadening the scope of the relevant information.
+
+It performs context deduplication to optimize LLM input.
+
+And it implements an intent-based workflow, allowing us to handle off-topic or inappropriate queries better.
+
+Next, let's compare the performance of our query-enhanced pipeline against a simple RAG pipeline from the previous chapter.
+
+As you can see, both pipelines achieved similar correctness scores.
+
+The simple RAG pipelines showed a slightly higher overall response quality, while the query-enhanced pipeline exhibited a significantly higher latency.
+
+These results highlight important considerations when designing RAG systems.
+
+Adding complexity doesn't always lead to immediate improvements in automated metrics.
+
+The increased latency can significantly impact user experience.
+
+We might need to improve our evaluation methods as we evolve our pipeline.
+
+In conclusion, we've demonstrated the complexity of enhancing and evaluating RAG systems.
+
+We also emphasize the need for balanced system design and efficient processing and comprehensive evaluation methods.
+
+As you continue to develop RAG systems, keep these factors in mind and create more effective and user-friendly solutions.
+
+
+# RAG-4.2-key techniques.srt
+
+Let's start by understanding what query enhancement is and why it's so crucial for RAG systems.
+
+Think of query enhancement as a skilled interpreter between the user and your RAG system.
+
+It takes what the user says and refines it into something your system can better understand and
+
+process. It's like giving your RAG system x-ray vision. Suddenly, it can see user intentions more
+
+clearly, leading to more accurate information retrieval and more relevant responses.
+
+Query enhancement helped us tackle some tricky challenges when we faced in wandbot. For instance,
+
+when users ask ambiguous questions or when they fire off complex multi-part queries,
+
+this technique has helped wandbot understand the nuances of what users are asking and reply with
+
+precision. This has dramatically improved wandbot's ability to understand and respond to user queries,
+
+consequently improving the overall user experience. So, as we dive deeper into this topic,
+
+keep in mind that a good query enhancement system can be a game-changer for your RAG system's
+
+performance and user satisfaction. Now, let's talk about the four key techniques that form the
+
+backbone of effective query enhancement. Think of these techniques as the essential tools in your
+
+query enhancement toolkit. First, we have conversation history utilization. This is like
+
+giving your system a good memory. Next, there is intent recognition, which helps your system
+
+understand the why behind a user's query. Then, we have keyword extraction, which helps extract
+
+and inject domain knowledge into your user queries. And finally, there is query decomposition that
+
+breaks complex queries into manageable parts for your system to process. In wandbot, we've
+
+implemented all four of these techniques to ensure that we are getting the most out of our system.
+
+As we explore each technique in detail, you'll see how they work together to improve your system's
+
+ability to understand and process user queries. These tools are what allow your RAG system to go
+
+from just seeing user words to truly understanding what the users are asking for. Let's dive into our
+
+first technique, utilizing conversation history. Imagine trying to understand a movie by only
+
+watching five random five-minute clips. Frustrating, right? That's what it's like for a RAG system to
+
+try to understand queries without context. Utilizing conversation history is like giving
+
+your system the ability to remember parts of the conversation. It helps maintain context across
+
+multiple interactions, making responses more coherent and relevant. In wandbot, we use this
+
+technique through chat history condensation and contextual query reformulation. Here's an example.
+
+When a user asks a follow-up question about logging metrics, wandbot can look back at previous
+
+interactions and remember that the user was asking about logging metrics with PyTorch specifically.
+
+This allows it to respond in a more targeted way. This is especially useful in conversations that
+
+often involve multiple turns and related questions. By utilizing conversation history, you're
+
+essentially giving your RAG system a better memory, leading to more natural and conversational
+
+interactions. Now let's talk about our second technique, intent recognition. It's our RAG system's
+
+mind-reading ability. It helps the system in understanding the why behind the user's query.
+
+Traditionally, we use NLP techniques like classification and sentiment analysis for this.
+
+These models act like detectives analyzing the query to figure out what the user really wants.
+
+In wandbot, we prompt an LLM to classify user queries into predefined intents. For instance,
+
+when a user asks, how do I log metrics, wandbot classifies this under product features. This
+
+classification is crucial because it guides the retrieval process. It points a system in the right
+
+direction before it starts searching for information. By implementing intent recognition,
+
+you're giving your RAG system the power to understand user needs more deeply.
+
+This deeper understanding leads to more accurate and relevant responses,
+
+significantly improving the user experience. Remember, the better your system understands
+
+user intent, the more helpful and accurate its responses will be. Let's move on to our
+
+third technique, keyword enhancement. Keyword extraction and expansion is a tried and tested
+
+method in information retrieval for decades. It's part of many search engines and recommendation
+
+systems we use daily. In the context of RAG systems, keyword extraction and expansion employs
+
+machine learning algorithms to identify, extract, and enhance the most important words and phrases
+
+from user queries. In wandbot, we adopted keyword and key phrase enhancements to improve domain
+
+specificity. For example, our system extracts and injects key terms such as logging metrics,
+
+experiment tracking, and 1 DB usage to the query, how do I log metrics? These enhanced keywords act
+
+as lexical anchors guiding our system to the most relevant information in our knowledge base.
+
+When you augment queries with such keywords and phrases, you ensure more relevant and accurate
+
+information retrieval and ultimately more helpful responses for your users, especially when dealing
+
+with domain-specific knowledge. Let's talk about our fourth technique, query decomposition.
+
+Sometimes, user queries can be complex, like a puzzle with multiple pieces. Query decomposition
+
+is our way of solving that puzzle. It involves breaking down complex user queries into simple,
+
+more manageable subqueries and vector search queries. Let's look at an example. While initially
+
+a query like how do I log metrics looks quite simple, it can be decomposed into specific
+
+subqueries addressing different aspects of metric logging, like the steps involved, some examples,
+
+and even best practices to follow. We also reformulate queries into vector search queries
+
+optimized for our retrieval system. This is particularly effective when dealing with intricate
+
+or multifaceted user queries. By revealing hidden needs and identifying implicit information,
+
+query decomposition helps wandbot provide more comprehensive and accurate responses to user
+
+inquiries. This ensures that all aspects of a query and complex system are addressed, giving
+
+users a complete and satisfying answer. In a sense, query decomposition allows your
+
+rag system to tackle even the most challenging queries with precision and thoroughness.
+
+
+# RAG-4.3-enhancing context-.srt
+
+Now let's look at an often overlooked aspect of query processing,
+
+metadata extraction and how it enhances context in queries.
+
+Metadata gives your RAG system additional contextual clues.
+
+It's crucial for understanding the full picture of a user's query.
+
+For example, in wandbot, we identify the language of the user's query.
+
+This might seem simple, but it's actually quite crucial for our multilingual support.
+
+Currently, wandbot can handle queries in English and Japanese.
+
+By detecting the language, we can route queries to different language-specific resources.
+
+For instance, if a query is detected as Japanese,
+
+wandbot knows to retrieve relevant Japanese documentation and generate responses in Japanese.
+
+This contextual adaptation leads to more consistent and appropriate responses.
+
+It also streamlines the retrieval process, making our system more efficient.
+
+By implementing metadata extraction, you are essentially fine-tuning your RAC system's
+
+ability to understand and respond to queries in a more nuanced and contextually aware manner.
+
+
+# RAG-4.4-LLM in query enhancement-.srt
+
+This is a good time to talk about the role that large language models play in query enhancement.
+
+While traditional NLP techniques have been the go-to for query enhancement,
+
+in OneBot we use LLMs with function calling capabilities for our query enhancement.
+
+Here's how it works. We prompt the LLM to enhance the user queries and generate structured outputs.
+
+The LLM then gives a structured JSON that includes intent classification,
+
+keyword extraction, and subquery generation.
+
+We then use pydantic models to validate this output,
+
+ensuring it meets our schema requirements.
+
+This approach has significantly improved the accuracy of our intent classification
+
+and keyword extraction steps. It allows for more nuanced query reformulation,
+
+which is particularly effective when handling complex queries.
+
+With this, we are able to provide more contextually relevant responses,
+
+even for tricky technical queries. Using LLMs with function calling capabilities in
+
+your query enhancement process can get you started without training NLP models from scratch,
+
+giving your RAG system the extra boost of intelligence and flexibility it needs.
+
+
+# RAG-4.5-Query enhancement in Wandbot-.srt
+
+Having discussed different query enhancement techniques,
+
+let's look at its impact on our RAG system.
+
+In the case of wandbot,
+
+the results have been quite impressive.
+
+We've seen response accuracy jump from 55% to 72%.
+
+This improvement comes from more accurate
+
+intent classification, relevant keyword extraction,
+
+effective query decomposition,
+
+and improved multilingual support.
+
+But how do we measure these improvements?
+
+We use key performance indicators
+
+and metrics like retrieval relevance
+
+and response accuracy to evaluate our system's performance.
+
+You could also look at user satisfaction ratings
+
+to gauge the overall user experience.
+
+What's important is we don't just focus on isolated metrics.
+
+We look at overall impact on the system's performance.
+
+This holistic approach ensures that we are optimizing
+
+both for performance and user satisfaction.
+
+We don't just set it and forget it either.
+
+It's important to regularly assess these KPIs
+
+using insights to guide the refinement process.
+
+This evaluation-driven approach
+
+has been key to wandbot's success,
+
+and it's something you can implement
+
+in your own RAG systems to drive continuous improvements.
+
+To wrap up our chapter,
+
+let's talk about some best practices
+
+we've learned from developing wandbot
+
+and how to overcome some of these challenges.
+
+While this is repetitive, I cannot emphasize enough
+
+the importance of evaluation-driven development.
+
+Regularly analyzing user interactions
+
+and using those insights to refine your techniques
+
+is crucial for success.
+
+Next, focus on continuous learning and adaptation.
+
+The world of AI moves fast, and your RAG system should too.
+
+Incorporate logging and monitoring
+
+into your system early on.
+
+These are your eyes and ears on the ground.
+
+They will help you identify issues and track performance.
+
+Now let's talk about some challenges you might face.
+
+Ambiguous queries can be tricky.
+
+There's always a balance between flexibility and precision.
+
+Consider fine-tuning your query rewriting
+
+to strike this balance.
+
+For multilingual support, ensure your system can detect
+
+and handle different languages effectively.
+
+And of course, latency is always a concern.
+
+Optimize your system for speed without sacrificing accuracy.
+
+Remember, every RAG system is unique,
+
+but these sprints can guide you in developing robust,
+
+efficient, and usable queries.
+
+And remember, every RAG system is unique,
+
+but these sprints can guide you in developing robust,
+
+efficient, and user-friendly system.
+
+
+# RAG-5.1-chapter intro.srt
+
+Welcome back to another new chapter where we will be discussing ideas to improve our
+
+retriever's quality and talk more about advanced retriever and re-ranking techniques.
+
+I will first try to motivate the need to go beyond simple retriever systems and argue
+
+that just naively retrieving some pieces of information is not enough for complex queries.
+
+We will be discussing ideas to improve the retrieval by doing query translation.
+
+In this chapter, Charles from Weaviate is going to dig deeper into production, grade retrieval
+
+system and hybrid system.
+
+Meor from Cohere will be digging into RAG system with access to tool calls like web
+
+search or querying SQL database.
+
+Together we will hopefully be covering most of the advanced techniques for retrieval.
+
+Let's revisit retrieval.
+
+In chapter 3 Bharat talked about the idea of indexing where we will use an embedding
+
+model to convert a list of process documents or chunks to vector representations for embeddings.
+
+The collection of documents and its vector representation is called a vector store.
+
+Retrieval happens during query time where the user query is first embedded using the
+
+same embedding model or technique that was used during indexing.
+
+A similarity function like cosine similarity is used to find the top k closest embeddings
+
+in the vector store.
+
+The top k embeddings are mapped back to the corresponding chunks of text.
+
+These texts are semantically similar to the user query.
+
+
+# RAG-5.2-limitations.srt
+
+Let me present a few arguments outlining the limitations of a simple retrieval system.
+
+We start off with the embedding. TF-IDF and BM25-based embedding have limited capacity to
+
+capture different contexts of the same word. Thus, we need deep neural network-based embeddings
+
+that are trained on billions of tokens. The second argument is on misalignment.
+
+Usually, user queries lack the precise language or structure that aligns seamlessly with the
+
+wording of relevant documents. Furthermore, a simple query when embedded have a better
+
+chance of finding a suitable piece of context during retrieval. What is van-db can be answered
+
+using the first paragraph of our documentation, whereas a complex query which can be mapped to
+
+different sections of our documentation would not be able to find all the pieces of relevant
+
+information. We will go into argument 4, but just so you know that the position of relevant chunk
+
+is important.
+
+
+# RAG-5.3-comp evaluation-.srt
+
+We have implemented a cohere embed English v3 based dense retriever in the Colab notebook
+
+for this chapter. Do check it out. Here I am showing the comparison of TF-IDF based
+
+retriever and dense retriever system across multiple evaluation metrics. This is our evaluation
+
+comparison dashboard. Dense retriever got a better F1 score compared to the TF-IDF retriever.
+
+It has a better NDCG metric which is a more reliable metric compared to MRR and hit rate.
+
+The most surprising result from this comparison is the fact that TF-IDF retriever is actually
+
+slower compared to the dense retriever which is at least to me counter-intuitive.
+
+
+# RAG-5.4-query translation-.srt
+
+In order to handle complex queries, we have a few strategies collectively called query translation.
+
+The basic idea is to modify the query such that it can improve the recall of the retrieval and in-process help answer complex queries.
+
+Depending on the use case, we can consider the following strategies.
+
+We can use an LLM to rewrite the original query into multiple similar queries with slight modification.
+
+This can help improve the misalignment problem.
+
+Another strategy is to decompose the user query into smaller or simpler queries called sub-queries.
+
+The query enhancer, Bharat discussed in chapter 4, uses this strategy. This can help answer complex queries.
+
+Another idea is to convert the query to a high-level abstract query, retrieve for it, and generate an abstract response.
+
+Then use this abstract answer in documents to reason about the original query.
+
+This method can be useful if you care a lot about the factual consistency of the response.
+
+Let's look at the retrieval steps for one such query translation strategy.
+
+In the last chapter, query enhancer decomposed the query into sub-queries and then retrieved for all the sub-queries together.
+
+Alternatively, we can also retrieve sequentially.
+
+We first use an LLM to figure out intermediate sub-problems that can solve the main question.
+
+We sequentially retrieve for one sub-problem, generate an answer for it, and do it sequentially till all the sub-problems are answered.
+
+We can then use these intermediate answers to solve the main question.
+
+
+# RAG-5.5-retrieve with COT.srt
+
+For complex or multi-step QA tasks,
+
+retrieval with chain of thought reasoning
+
+is getting a lot of traction.
+
+The idea is same as retrieval with decomposition,
+
+but instead of breaking down the query into sub-questions
+
+in the first LLM call,
+
+we first retrieve relevant documents for a query Q.
+
+We then prompt LLM to read the query and documents
+
+to come up with reasoning sentence T1 and retrieve for it.
+
+We keep retrieving and reasoning
+
+till termination step is met.
+
+In this case, determination is the presence of the answer,
+
+is substring.
+
+You can come up with different complexities of retrieval
+
+with chain of thought reasoning.
+
+
+# RAG-5.6-metadata filtering.srt
+
+In chapter 3, Bharat talked about metadata management,
+
+where the vector store is not only a collection of documents and their embeddings,
+
+but also store relevant metadata associated with each document.
+
+During retrieval, the metadata filtering strategy uses an LLM to first extract the metadata
+
+from the user query based off some schema.
+
+In this example, we are extracting the year metadata from the query.
+
+We then filter the vector store to select only those documents associated with this metadata.
+
+Doing cosine similarity with this subset ensures a better and richer context for LLM.
+
+
+# RAG-5.7-logical routing.srt
+
+In cases where we have multiple sources of information,
+
+we not only retrieve information from a single vector store,
+
+but can do so over multiple vector stores.
+
+Depending on use case or business constraints,
+
+we can even use conventional SQL databases
+
+or consider doing web search.
+
+We do all this by using a concept called routing.
+
+Besides jargon, the underlying idea is simple.
+
+We take in the user query and use an LLM function calling ability
+
+to select the retrieval sources.
+
+Based on a recent study,
+
+it is best if we use one LLM call to come up with a reasoning step
+
+to select data sources and use another LLM call to do function calling.
+
+
+# RAG-5.8-context stuffing.srt
+
+Now let's look at the fourth argument I made about the position of the relevant context.
+
+After we do cosine similarity between the query embedding and all the document embeddings,
+
+we then sort it in descending order. Note that this ordering will not necessarily surface all
+
+the relevant information. Say there are six relevant pieces of information. If we take the
+
+top three chunks, we only have one relevant chunk, thus the recall is 0.167. Taking the top five
+
+chunks improves the recall to 0.4. If we take top 10 chunks, the recall will be 0.667. You get the
+
+point. The more we take from this ordered list of documents, the better the recall. But obviously
+
+there ain't any free lunch. More context increases the latency and the cost of the pipeline.
+
+Moreover, we know from control study that the position of the relevant context is crucial for
+
+the LLM to properly attend to it. In the Lost in the Middle paper, the authors change the position
+
+of the most relevant document from the first position till the 20th. Clearly the performance
+
+is highest when the relevant information occurs at the beginning or at the end of the input context
+
+and significantly degrades when models must access relevant information in the middle of long
+
+contexts. In our top k equals 10 retrieve context, two of the relevant pieces of information are in
+
+middle which will obviously impact the quality of the generated response.
+
+
+# RAG-5.9-cross encoder.srt
+
+Another powerful re-ranker model is a cross-encoder transformer.
+
+Cross-encoder because we train this transformer like BERT
+
+with pairs of documents and learn to map it to relevancy score.
+
+During the ranking, we pass it pairs of query and retrieve chunks.
+
+The model does assigns a new score to each chunk which we can order in descending order.
+
+Note that since we are processing a lot of text, this is a relatively slow process,
+
+so be mindful of the top key parameter of your retriever.
+
+
+# RAG-5.10-code.srt
+
+Now let's look at re-ranking in action.
+
+In this Colab notebook for chapter five,
+
+we first do the setup, import relevant packages,
+
+initialize Weave, and then download the chunked data.
+
+The idea here is to compare the DenseRetriever
+
+and DenseRetrieverWithReranker.
+
+We first initialize the DenseRetriever
+
+and index the chunked data.
+
+We set up evaluation using Weave Evaluation
+
+like we showed in chapter two.
+
+We do the same with DenseRetrieverWithReranker,
+
+initialize it, index the chunked data, and then evaluate it.
+
+We'll go to the evaluation comparison in a second,
+
+but let's look into the re-ranker
+
+and how we are doing retrieval with re-ranker.
+
+You can see the Cohere re-ranker here
+
+uses the Cohere client,
+
+and we send the data to the Cohere API.
+
+The data here are the query,
+
+the documents that we want to compare against,
+
+and the top end.
+
+These are the number of chunks we want to return back
+
+after re-ranking.
+
+The DenseRetrieverWithReranker
+
+first retrieves top-k context
+
+and then uses the re-ranker to return top-nchunks.
+
+This is what is fed to our LLM for response synthesis.
+
+I've already evaluated the DenseRetriever
+
+and DenseRetrieverWithReranker.
+
+Let's compare both.
+
+As you can see, the DenseRetriever,
+
+which is in purple color,
+
+has a lower hit rate at MRR
+
+compared to the DenseRetrieverWithReranker.
+
+It is slightly better in terms of NDGC and MAP,
+
+but overall, if you look at the F1 score,
+
+our DenseRetrieverWithReranker
+
+is exceeding the DenseRetriever,
+
+which means both the recall and the precision
+
+are well-balanced.
+
+
+# RAG-5.11-rank fusion.srt
+
+When you retrieve from multiple sources,
+
+re-ranking so many chunks add to the latency of the application.
+
+A simpler yet powerful way is to use rank fusion.
+
+The idea is to aggregate the rank of unique documents
+
+appearing in retrieved contexts from different retrieval sources.
+
+We then take this unified or fused rank and order it.
+
+Taking top end from here should improve the recall of the retrieval system as a whole.
+
+
+# RAG-5.12-hybrid retriever-.srt
+
+Now let's look at the hybrid retriever in action.
+
+The hybrid retriever re-ranker class
+
+combines both the BM25 retriever and dense retriever.
+
+The idea is to first retrieve top-key documents
+
+using both the retriever.
+
+We then use the reciprocal rank fusion to fuse the results
+
+and then use Cohere re-ranker to rank
+
+and then select top-n documents for our query.
+
+Let's index the chunk data
+
+and set up evaluation using Weave evaluation
+
+using the metrics we have been using so far.
+
+Let's compare the hybrid retriever re-ranker
+
+with dense retriever as well as dense retriever with re-ranker.
+
+This is our evaluation comparison dashboard.
+
+The negative values here show that our hybrid retriever re-ranker
+
+is performing better compared to the other two retrievers.
+
+The hit rate is 60% compared to 31% and 48% respectively
+
+for the other two retrievers.
+
+We also improved the F1 score over the dense retriever
+
+as well as dense retriever with re-ranker.
+
+All this at the cost of a higher model of tendency,
+
+which is obvious.
+
+
+# Weaviate - Video 1.srt
+
+Hi everyone, I'm Charles from Weaviate and in this section I'm going to be covering how to build
+
+production-ready RAG applications with Weaviate back to database, as well as how to optimize your
+
+search and increase the quality using our built-in hybrid search functionality. And finally we're
+
+going to cover how to use Cohere's re-ranker to improve the final quality of your results using
+
+Weaviate. As your use case expands from a POC stage to a fully fledged application, the question
+
+of how to make it ready for production scale will likely come to mind. Weaviate is designed to
+
+optimize the storage and querying of unstructured data to allow fast and efficient retrieval of
+
+similar objects and most importantly it enables users to quickly build AI native applications
+
+with a rich ecosystem of tooling and services. So let's jump in. So here to begin with I've just
+
+imported my Weaviate Python client as well as Weave which we'll be using to fetch the data set
+
+from the pre-processed data set from the previous sections. We're using Weaviate Cloud to streamline
+
+setting up Weaviate. This Weaviate Cloud is built on top of Weaviate's core open source database
+
+and by using Weaviate Cloud for building our application we don't need to worry about hosting
+
+or infrastructure setup, we get to just focus on building the application. So all I need for using
+
+Weaviate Cloud is my Weaviate URL and my Weaviate key. So I'm going to set those here.
+
+Oops. Set those here and I'm also going to fetch our pre-processed data
+
+from Weave that we created in the last section.
+
+So Weaviate also has a number of modules and integrations. One of them is Cohere and we provide
+
+integrations for Cohere's embed, re-rank and chat APIs. When initializing our Weaviate client below
+
+we simply add the Cohere API key in as an entry to our headers argument and we're ready to start
+
+using any of the API integrations that we need. So I create our client here and that's it, that's
+
+our Weaviate client created. So now we need to create a collection. So collections are where we
+
+store objects and build vector indexes. To create a collection we need a unique property collection
+
+and then we need a list of properties and their corresponding data types. Optionally we can add
+
+additional configuration such as a vectorizer config and a re-ranker config which in this setup
+
+we're going to use Cohere's APIs for. So once created the collection is ready to ingest and index data.
+
+There's no need to pass vectors in manually. Our vectorizer will make all the calls to Cohere's
+
+embed endpoint in the background. So here you can see I have a collection and I'm giving it this name
+
+wandb weaviate demo. I've passed in a vectorizer config which is text-effect Cohere as well as a
+
+re-ranker config which is Cohere's re-ranker. I've added four properties, parsed content, source, words
+
+and parse tokens as well as the corresponding data type for each of those. So if I hit enter here
+
+that should create the collection. So now it's time to import our data. Before we start querying
+
+our data for the rag app we need to first get it into Weaviate. Weaviate provides an optimized batch
+
+API that enables users to add multiple data objects to their collection without having to
+
+worry about configuring batches themselves. By initializing a batch object and adding your
+
+batches inside the context manager the client will dynamically add batches to your collection
+
+and since we've already initialized our collection the default Cohere vectorizer
+
+vectorizes these objects and they'll have their embeddings created during the import step.
+
+So here you can see I'm just creating the batch object and I'm just adding
+
+adding objects from our data set to that and those will all be added automatically. So let's run this.
+
+And there we have it the objects are imported and we can double check that they've all been added by
+
+doing the length of the collection and here we can see that there's 406 items which corresponds to
+
+all the docs that we've added. So that's it that's how you can add set up a Weaviate client and
+
+collection and add your data to it. It only takes a few short steps and we're now ready to start
+
+querying.
+
+
+# Weaviate - Video 2.srt
+
+Hi everyone, I'm Charles from Weaviate and today we're going to be covering how to set up Weaviate for your RAG application
+
+and how to ingest your data into Weaviate.
+
+And after that we're going to be learning how to query Weaviate for hybrid search
+
+and using re-ranking to improve the quality of your results.
+
+In this section we're going to be covering querying Weaviate and hybrid search.
+
+So vector search is extremely powerful at capturing the semantic relationships between a query
+
+and the documents you have stored in your database.
+
+However sometimes we also want to add some of the precision of a traditional keyword search
+
+which retrieves documents based on exact matches with your input queries.
+
+Hybrid search is the answer for these scenarios and as such it's a critical component for building RAG applications.
+
+By conducting a hybrid search we can ensure that our system is still able to retrieve documents
+
+that may use very specific terms for fields such as medicine including medical names, anatomical terms
+
+that otherwise might be lost with a pure vector search where the embedding model
+
+might not be able to accurately represent certain domains.
+
+So under the hood in Weaviate when you conduct a hybrid search
+
+Weaviate conducts both a vector and keyword search in parallel.
+
+The results of both of these searches are then merged and ranked accordingly to a weighted system.
+
+The degree to which your search favors or keyword or vector results can be manually adjusted with the alpha parameter.
+
+Tuning this parameter balances precision and recall.
+
+So how do we understand the alpha parameter?
+
+Well in Weaviate an alpha parameter of zero would result in a pure BM25 search over your documents.
+
+An alpha parameter of one would result in a pure vector search over your documents
+
+and an alpha parameter of 0.5 would give you a balanced 50-50 blend of results between BM25 and vector search.
+
+Also in this section we're going to be covering re-ranking using Cohere's re-ranking API.
+
+We will re-rank our results to ensure that we get the best possible results for more difficult questions.
+
+So let's dive in.
+
+To begin with before we do a hybrid search I'm going to show this query using a pure vector search.
+
+With Weaviate Client a pure vector search can be conducted using the near vector method
+
+or in our case because we already configured the vectorizer for collection the near text method.
+
+So firstly let's just do a direct vector search.
+
+So the question here is how to get started using Weave.
+
+Well if we actually look at the result here we can see it's kind of right.
+
+It's brought us to a page which gives us an introduction for Weave
+
+but really what I'm looking for here is how to actually get started using Weave in my code.
+
+So for that we're going to switch over to a hybrid search
+
+and all you need to do to conduct a hybrid search is do collection.query.hybrid.
+
+You pass in your query, you pass in your limit which is how many results you want
+
+and then you also just pass in your alpha parameter.
+
+So here we're going to put in an alpha parameter of 0.5
+
+meaning we want a balance between BM25 and pure vector search.
+
+So let's run that exact same query again.
+
+Well now the results are actually showing more what I was looking for
+
+which is an actual code setup of how to get started using Weave in your project.
+
+So here we can see that the addition of BM25 has actually really brought in results that
+
+kind of really emphasize how to get started because that's what this document mentions.
+
+So finally we're going to use a re-ranker to help answer more complex questions.
+
+So here we have a query, how do I set up a sweep to run on multiple GPU-enabled machines at the same time?
+
+So this is a more complex query.
+
+So let's see how it performs firstly just with the hybrid search that we conducted in the last section.
+
+So I've just brought that query in and the result we get isn't quite what I was looking for.
+
+It's actually bringing back pages from a tutorial on how to set up minikube with GPUs
+
+whereas that's not really what we're looking for in this section.
+
+However if I go down here and now rerun the same question using the Cohere re-ranker
+
+which we simply call by passing a re-rank parameter into our hybrid query.
+
+If we run that now, let's have a look at the page it brought back.
+
+So it brought back guides, sweep, parallelize agents.
+
+That's what we were looking for.
+
+This is a page that describes how to do a parallel sweep using wandb agents on multiple GPUs.
+
+And this really shows the power of re-rankers in these types of situations because
+
+they can really focus on all the data we brought back compared to the query and
+
+kind of recontextualize and reorder the documents according to the query that we had.
+
+So that's it for how to set up Weaviate for your rag applications.
+
+So in this you should now know how to import your data objects into Weaviate,
+
+how to set up vectorizers and re-rankers for your collection,
+
+and finally how to conduct hybrid searches and then how to re-rank those results using a re-ranker.
+
+Thanks.
+
+
+# RAG-5.13-conclusion.srt
+
+Well, this is the end of this chapter.
+
+To summarize, there aren't any silver bullets,
+
+so experiment and evaluate with different retrieval techniques.
+
+For complex queries, try breaking down the query into smaller subqueries
+
+or rewrite the query to improve the recall of your retrieval system.
+
+Metadata filtering helps speed up retrieval time
+
+and enforce correct information to be picked.
+
+Don't be afraid to create multiple vector databases
+
+or retrieve using different algorithms,
+
+because we can re-rank different retrieved contexts
+
+to improve the recall.
+
+However, this is a slow technique,
+
+so reciprocal rank fusion is a better way or a quicker way
+
+to select the best chance across multiple retrieval techniques,
+
+which can also be followed with Cohere re-ranking.
+
+I hope you learned something new and exciting in this chapter.
+
+Thank you.
+
+
+# Cohere - Video 1.srt
+
+Hi, my name is Meor. In this section, we'll be talking about the agentic approach of
+
+performing RAG and specifically we'll be using the tool use capabilities of the Cohere API.
+
+In this first section, we'll talk about the transition from RAG to tool use approach.
+
+RAG gives LLMs the capability to ground their responses in external text data.
+
+So tool use takes the RAG concept to the next level. It gives the flexibility and robustness
+
+to a RAG system. Whereas a typical RAG system only have access on a vector store, for example,
+
+that stores unstructured data that are retrieved through the embeddings. With tool use, you can
+
+access any kind of tool that can give you information given a type of query that you give them.
+
+So it can be a web search tool, it can be a Python interpreter tool, it can be structured data, it can
+
+be any API that you can interact with that you can send and get information back. So instead of
+
+retrieving information from unstructured documents in simple RAG, we can do that from any source tool
+
+use. So tool use generalizes the concept of RAG and whereas the concept in general is still the
+
+same, if you look at these two diagrams, it's still sending, getting a message, retrieving
+
+something and giving a response. With tool use, you can do this with a much broader set of tools
+
+and much more, in much more flexible way. So this makes an LLM more connected to the external world,
+
+can take a broader range of actions and is more flexible overall.
+
+
+# Cohere - Video 2.srt
+
+So in this section, we'll get the first introduction to tool use by looking at the
+
+tool use workflow with a few specific examples. So in a nutshell, tool use workflow works in four
+
+steps. You have four different components. The first is the user, the application that the user
+
+is interacting with. In our case, we'll be using Jupyter notebook as the app. We also have the LLM
+
+as the engine to run all the different parts of tool calling and response generation. And you also
+
+have the tools themselves. So the first step in the workflow is to first get the user message.
+
+And using this user message, the second step is for the LLM to generate the tool calls
+
+to the tools that it's given to. And then step three is for the application to execute the tool
+
+calling and to get back the two results and sending it back to the LLM. And finally, for the
+
+LLM to use these results to generate response with citations. So note that steps two and three can
+
+run multiple times before the response is generated. For example, in complex scenarios
+
+where the model will need to look for information in multiple sequences. So this is where the Cohere
+
+API helps you by supporting this out of the box. So with the Cohere API, you also get citations
+
+from tool use. The same way that you get citations from using the chat API for RAG, you also get that
+
+with tool use and citations make responses verifiable. And we'll see how it works in the
+
+Cohere example. So here we are importing the necessary libraries and that also includes
+
+the two definitions that we have defined in the previous section, as well as defining the Cohere
+
+client, which we are using the version 2 client in this example. So we are also defining the
+
+functions map variable here for us to use in the function call later as a helper function.
+
+We are also defining a system message, which tells a bit more information to the LLM to help it
+
+go through and run its tasks. So you are in system helps developers use ways and biases
+
+and so on. So you are equipped with a number of tools that can provide different types of
+
+information and yeah, just giving a bit more information to the LLM on the kind of task that
+
+is expected to do. So now going back to the slide that we showed you now, this is the first step of
+
+getting the user message. In this case, we'll try a few examples where we can refine the output of
+
+a run being the first one. And here we are pending and building the chat history through the messages
+
+variable, first with a system message and then pending with the user message. And this chat
+
+history will be required for the LLM as it goes along with the tool calling and generating the
+
+response so that it has all the context it needs to perform a task. And step two, the model will
+
+generate tool calls if it determines that it requires any. So what happens here is that we
+
+are calling the chat endpoint, giving the model parameter as command R+, which is what we're going
+
+to use. The messages, which is the chat history that we have defined earlier. Tools, so this is
+
+the list of tool schemas that we have defined in the previous section as well as the temperature
+
+in this case, we are giving it 0.3. And the response contains a few, a couple of important
+
+information. So the first is tool plan. So here the model will describe the plan it will do given
+
+the user query. So the next step is to execute the tools, which is done by calling the developer docs.
+
+And if you recall, we are, we having a predefined list of documents that we pass for any query,
+
+just for simplicity. And this is done by the function variable that we had defined earlier
+
+and passing back the result to this cohere tool content object and appending the required
+
+information that you see here in terms of the tool call ID that's generated as well as the
+
+content that we get back. So this is the tool as you could change step. And then we are now
+
+in a position that the model has all the information that it needs to respond to the
+
+user message. Now that it has performed the tool calls and received the results back. So it takes
+
+the messages that is now updated with the tool calls and tool results and uses it to generate
+
+the response. And here it says that to view the output of run navigate to the app UI, select
+
+relevant project and choose run from the runs table. So you can further verify the response by
+
+printing the citation. So you have another object in the message response. So here you can see that
+
+it generates fine grained citations, which contains the start and end points of specific
+
+text spans where it uses external documents to ground its response. And to make it simpler,
+
+you can see all the citations here, which are now printed in a more simpler way. So you have
+
+all the start and end points, and you have the exact text where it cites from the source and also
+
+the sources themselves.
+
+
+# Cohere - Video 3.srt
+
+The tool use approach becomes more powerful when it involves working with complex queries,
+
+and that requires tool use to run in a sequential manner, and we call it multi-step tool use.
+
+So let's look at examples on what this means. So the example that we have seen in the previous
+
+section is a single step scenario where, for example, in this case, you are given two tools.
+
+One is the web search and the other one is Python interpreter. So given the question of what is
+
+Apple's revenue in 2023, you just need one information to answer the question, which is
+
+Apple 2023 revenue, and the LLM will have enough information to respond to the query. The Cohere
+
+API also supports parallel tool calling, which we didn't see in the previous section. So now,
+
+if the question is what is Apple's and Google's revenue in 2023, now the LLM needs two separate
+
+information, the revenue of Apple and Google separately for it to be able to respond. And for
+
+this, it needs to run queries in parallel. And then we get to the scenario of sequential
+
+reasoning where the tool calls run in multiple steps. So for example, if you have a question
+
+of plot Apple's 2023 revenue on a bar chart, you first need to get the Apple 2023 revenue
+
+information, and then only you can use that information to run a Python function to plot
+
+it on a chart. And the same way how you saw in single step, the Cohere API also supports
+
+running multi-step in parallel. Okay, so now we are back to the code example,
+
+and now we are using the same steps that we saw in the previous section. The only difference is
+
+that we are now wrapping the whole four steps in a function. And the reason for that is we are
+
+allowing for multi-step to happen. And in particular, here we have a loop of tool calls.
+
+As long as the model continues to generate tool calls in every step, it will continue to run in
+
+this loop of tool calling and getting the two results in steps two and three. And finally,
+
+once the model decides that no more tool calls are required, it will continue to generate the
+
+response. Okay, so this is an example that we're going to use. The question is, what's that feature
+
+to view artifacts? Do you have any Jupyter notebook examples? So this requires the model to
+
+first figure out what's that feature. And once it knows what that feature is, only then it will be
+
+able to search for the code examples for that feature. So it requires two steps to respond to
+
+this question. So now you can see that showing in the tool plan here. So it says that the model
+
+will search for the feature to view artifacts and then search for Jupyter notebooks examples
+
+of this feature. So that's an example of a model taking multiple steps to answer a question. So
+
+let's extend that concept a little bit further. So multi-step scenario is useful for sequential
+
+reasoning example that we saw earlier, but it's also useful when the model needs to make
+
+adjustments and corrections based on the output that it receives from a particular step. The
+
+model says that I will search for weave product from the developer docs and write an answer based
+
+on that. It goes on to search the developer docs, but the problem we have here is that the developer
+
+docs doesn't contain information about the weave product. So now the model says that I could not
+
+find information about weave product. So it does a replanning and it will search the internet for
+
+this information. Now it needs a second step to respond to the query. And now in the second step
+
+is calling the internet with a similar query. It gets back the results. And now the internet
+
+does contain more information about weave and because of that is able to generate the response.
+
+Weave is the lightweight toolkit for tracking and evaluating LLM applications.
+
+
+# Cohere - Video 4.srt
+
+The tool use approach is especially useful
+
+because it enables you to perform
+
+RAG over structured data.
+
+So we have looked at the search code example
+
+tool briefly in the previous session,
+
+but now we are formally introducing it.
+
+So what we have here is we have a Python function
+
+to query code examples.
+
+But now instead of just querying based on textual information,
+
+we have further information that we
+
+can use to filter the examples that we want retrieved.
+
+So the query itself, which is the string, now
+
+we have the file type, programming language,
+
+as well as the language.
+
+So let's look at the first example
+
+of using structured queries on the search code examples tool.
+
+So the question here is any GPT notebook for data
+
+visioning with artifacts.
+
+And based on that, the model response
+
+that is a GPT notebook for the model data
+
+visioning with artifacts.
+
+So for querying structured data, we'll
+
+use an example of querying this CSV of mock evaluation results.
+
+So in order to be able to query the CSV file,
+
+we are going to leverage a langchain set of tools, which
+
+is the Python interpreter.
+
+And how we implement it is over here.
+
+So we define a Python interpreter using line chain.
+
+And here is how we're going to define it in the schema
+
+that we provide to the model.
+
+So here we give the name, analyze evaluation results,
+
+and we give a description of generating Python code
+
+using the pandas library to analyze
+
+evaluation results from a data frame called
+
+evaluation_results.
+
+So now we have set up the tool schema for the model
+
+to generate the right code to pass to the Python
+
+interpreter.
+
+So let's now see how it works with the code example.
+
+So we have a question now, what's the average evaluation
+
+score in run A?
+
+So now the model decides that it needs
+
+to use the analyze evaluation results tool.
+
+It generates the pandas code, and it gets the answer
+
+based on the code it generates.
+
+So yeah, it's filtering the data frame for run A,
+
+calculating the average score over here,
+
+and printing the results.
+
+So 0.63 is the correct answer.
+
+We'll try with a few more examples.
+
+Again, it decides to use the same tool,
+
+generating the pandas code, and then giving the answer.
+
+And as you notice, again, it generates the citations
+
+based on the result that it gets from the two results
+
+that it gets from the Python interpreter.
+
+And this sample is 4.8 seconds, which is also the correct answer
+
+that we are looking for.
+
+Let's try a bit more complex example.
+
+Which use case uses the least amount of tokens on average?
+
+Show the comparison in the markdown table.
+
+So now it will again use the same tool,
+
+generate the two calls, and then giving the response
+
+in the markdown table.
+
+And now we look at the final example
+
+of using the Python interpreter to create plots.
+
+And here it generates the evaluation score
+
+by temperature for extract names, use case for each
+
+of the temperature settings.
+
+And that concludes the section on agentic RAG with tool use.
+
+
+# RAG-6.1-chapter intro.srt
+
+Hello and welcome to chapter 6 of our course where we'll be talking about response synthesis.
+
+In this chapter, we'll explore how RAG systems transform the retrieved information
+
+into coherent and relevant answers for our users. Response synthesis is a critical component that
+
+bridges the gap between raw data retrieval and a user-friendly output. By the end of this chapter,
+
+you'll understand the key techniques and best practices for crafting high-quality responses
+
+in your RAG system. So let's get started. Here's what you will learn in this chapter.
+
+We're going to unpack the important role of response synthesis in RAG systems.
+
+We'll start by introducing a few key prompting techniques. These are the building blocks of an
+
+effective RAG response generation system. You'll see how these techniques come to life through
+
+our wandbot example. We'll also dive into some best practices and troubleshooting strategies.
+
+These lessons will be invaluable when you're building your own RAG system.
+
+By the end of this chapter, you'll have a comprehensive toolkit for crafting high-quality
+
+and relevant responses from your RAG system. You'll understand how to guide LLM behavior
+
+and ensure accuracy and adapt to diverse queries. So let's dive in.
+
+
+# RAG-6.2-response synthesis.srt
+
+Let's kick things off by understanding response synthesis and prompting.
+
+Think of response synthesis as the translator in your RAG system.
+
+It takes the raw data and transforms it into a user-friendly answer.
+
+It's the bridge between what your system retrieves and what the user sees.
+
+Now, prompting is like giving your LLM a really good instruction manual.
+
+It guides the LLM's behavior, ensuring that it generates relevant and friendly responses.
+
+In wandbot, we've seen firsthand how crucial these elements are.
+
+The beauty of effective prompting is its versatility.
+
+It allows RAG systems like wandbot to handle a wide range of queries,
+
+ranging from simple questions to complex technical issues.
+
+
+# RAG-6.3-prompting in RAG.srt
+
+let's talk a little bit about the art of crafting effective prompts.
+
+Prompting is more like being a coach. You need to give clear instructions and set the context right.
+
+A well-structured prompt typically includes a few key elements, a clear role for the LLM,
+
+a specific goal we intend to achieve, some relevant context, and detailed instructions
+
+on how to generate the outputs. However, in case of RAG systems, we also need to be guiding the
+
+LLM in blending the retrieved information with its pre-trained knowledge. It's like combining
+
+new ingredients in an existing recipe. One way to achieve this is to use dynamic prompt construction,
+
+adjusting your prompts based on the query and the retrieved data. For instance, in wandbot,
+
+we tweak our prompts for technical queries versus sales inquiries. This flexible, context-aware
+
+approach has improved wandbot's ability to provide relevant responses across a wide range of
+
+scenarios. Remember, effective prompt engineering is key to unlocking the full potential of your
+
+RAG system. Refining prompts is like fine-tuning an instrument. You need to keep adjusting to get
+
+the best performance. Our refinement process focuses on three key areas. Data-driven optimization,
+
+testing prompt variations, and continuous monitoring. It's a cycle of improvement.
+
+In wandbot's journey, we started with basic prompts and systematically analyzed how they performed.
+
+We identified areas of improvement and implemented and refined our prompts and rigorously tested them.
+
+Rinse and repeat. This process has paid off big time. We've seen a remarkable increase in the
+
+response quality, especially in handling tricky queries about machine learning workflows. A couple
+
+of pro tips. Keep version control of your prompts and involve your whole team in the refinement
+
+process. It's amazing how insights from different perspectives can lead to breakthroughs.
+
+Remember, the key to success is persistence and a data-driven approach. Keep refining and you'll
+
+see your RAG system get smarter and more helpful over time.
+
+
+# RAG-6.4-system prompt.srt
+
+Let's dive into some best practices for system prompt iteration.
+
+These are the habits that separate a good drag system from great ones.
+
+First up, version control.
+
+Treat your prompts like code.
+
+Track changes and their impacts.
+
+It's a lifesaver when you need to roll back or understand what worked.
+
+Next, schedule regular performance reviews.
+
+Catch issues early and keep improving consistently.
+
+Next, involve your whole team.
+
+Developers, domain experts, designers.
+
+They all bring unique perspectives.
+
+And in our experience, this cross-functional approach is what leads to more robust solutions.
+
+And lastly, document everything.
+
+Write down why you've made each refinement.
+
+It builds your team's knowledge base and saves time in the long run.
+
+Again, consistency is key.
+
+Implement these practices and you'll see your drag system evolve and improve over time.
+
+
+# RAG-6.5-few shot prompting.srt
+
+We found few-shot prompting to be highly effective in our RAG system.
+
+Few-shot learning bridges the gap between zero-shots approaches and fine-tuning.
+
+By providing a small set of examples within the prompt,
+
+we enabled the model to quickly adapt to specific tasks.
+
+Here's the process we followed while implementing this in wandbot.
+
+We carefully selected representative examples covering common query types and desired response formats.
+
+The key is balancing diversity with specificity to our use cases.
+
+Ensuring that wandbot can handle a wide range of queries while maintaining expertise in the Weights & Biases documentation.
+
+The impact has been significant.
+
+We achieved a 6% overall performance boost, increasing from 66% to 72% in terms of answer correctness.
+
+This improvement encompasses more accurate responses, better code snippets, and enhanced user satisfaction.
+
+Few-shot prompting has proven particularly effective for domain-specific applications like documentation assistance.
+
+It's a valuable technique to consider when optimizing your RAG system for improved performance and adaptability.
+
+Moving on to the nitty-gritty of few-shot prompting,
+
+I want to share some key practices that can really boost your RAG system's performance.
+
+At the top of our list is using high-quality, diverse examples.
+
+It's crucial to tailor these examples to common query types.
+
+This prepares your system to handle the most frequent user needs with precision.
+
+Now, here's where it gets tricky.
+
+You need to balance performance with token usage.
+
+And finally, keep your example set dynamic.
+
+As your system grows, so should your examples.
+
+Regularly update and ensure your system stays in tune with the evolving use cases.
+
+These practices have been a game-changer for wandbot,
+
+helping us maintain top-notch responses while adapting to shifting user needs.
+
+The key takeaway? Guide your model effectively, but don't overwhelm it.
+
+Implement these practices, and you'll see a significant uplift in your RAG system's capabilities.
+
+
+# RAG-6.6-advanced prompting.srt
+
+We'll now look at a few advanced prompting techniques.
+
+These strategies are where RAG systems start to really flex their muscles.
+
+First is Chain of Thought Prompting.
+
+It helps the LLM break down complex problems into step-by-step solutions.
+
+Next we have Self-reflection Prompting.
+
+Here's where an LLM double checks its own work and refines its responses for improved
+
+accuracy.
+
+Next we have Tree of Thought Prompting.
+
+This technique allows your LLM to explore multiple reasoning paths simultaneously,
+
+much like a chess player considering various moves simultaneously.
+
+These techniques pack a punch in terms of benefits.
+
+They sharpen the reasoning skills, tackle complex queries with ease, and produce nuanced
+
+and more context-aware responses.
+
+But here's the catch.
+
+With the increased power comes increased complexity.
+
+You might find yourself juggling token limitations and intricate prompt designs.
+
+The secret sauce is finding the right balance for your specific use case.
+
+For those hungry for more, we have a full course dedicated to these techniques.
+
+Check out the link in the description to dive deeper into this fascinating world.
+
+
+# RAG-6.7-ensuring quality-.srt
+
+When it comes to quality control in RAG systems, we focus on three key elements
+
+guardrails, grounding, and citations.
+
+Think of output guardrails as your system's safety net.
+
+We use structural checks, semantic filters, and safety measures
+
+to keep responses on topic and appropriate.
+
+Grounding techniques are all about anchoring the responses in facts.
+
+For example, in wandbot, we tightly couple the responses with our documentation
+
+and fact check against our knowledge base.
+
+This has reduced hallucinations and improved response accuracy significantly.
+
+Citations are our transparency tool.
+
+By including links and in-text references, we have enhanced user trust
+
+and users appreciate being able to verify information themselves.
+
+The impact on wandbot has evolved from a basic query system
+
+to a trusted documentation assistant.
+
+For example, when explaining complex features,
+
+it now provides accurate step-by-step guidance with verifiable sources.
+
+Remember, these techniques work together to create a robust, trustworthy RAG system.
+
+Implement them consistently and you will see a marked improvement
+
+in output quality and user satisfaction.
+
+
+# RAG-6.8-troubleshooting.srt
+
+Let's wrap up with some troubleshooting tips and best practices.
+
+Even the best RAG systems face challenges, but with the right approach, we can overcome them.
+
+Common issues include incoherent responses, struggles with ambiguous queries,
+
+and inconsistency across topics.
+
+For improving coherence, we use structured prompts to guide logical flow.
+
+It's like giving your LLM a roadmap for its responses.
+
+When dealing with ambiguous queries, clarification prompts are what you need.
+
+They help your system ask for more information when needed.
+
+To maintain consistency, regular knowledge base updates are crucial.
+
+Keep your system's information fresh and aligned.
+
+These techniques aren't just theoretical.
+
+In wandbot, they've improved the response coherence and halved our irrelevant responses.
+
+Remember, troubleshooting is an ongoing process.
+
+Stay vigilant, keep refining, and your RAG system will continue to improve over time.
+
+By implementing these practices, you're not just fixing problems,
+
+you're building a robust, reliable system that can handle whatever the user throws at them.
+
+
+# RAG-6.9-code.srt
+
+Hello and welcome to this walkthrough of chapter 6 of our RAG course where we'll be focusing on
+
+response synthesis and prompting techniques. First, we'll set up our environment and load
+
+the chunk data like we did in the previous chapters. With the initial setup out of the way,
+
+let's jump straight into the core concepts. Our goal is to improve the response quality through
+
+iterative prompt engineering. We'll start with a baseline prompt and make several improvements.
+
+So here's our baseline prompt. It's simple and provides basic instructions.
+
+Let's run our evaluation and see how it performs. As we can see, our baseline scores gives us a good
+
+starting point for the comparison. In our first iteration, we've added more precise instructions.
+
+We've defined a role, included a few dynamic elements, and provided a structured approach
+
+for responses. You should notice that upon running evaluations, there is a marked improvement in the
+
+response metrics. For our second iteration, we'll include an example output in the system prompt.
+
+This demonstrates proper formatting, citation use, and the expected level of detail to the LLM.
+
+Upon running evaluations, we should see some improvements in the metrics,
+
+again showing us the value of providing a concrete example to the LLM.
+
+In our third iteration, we have incorporated model reasoning. We are now asking the model
+
+to explain its thought process and break down complex queries. Again, this approach should lead
+
+to significant improvements in our response quality metrics. And for our final iteration,
+
+we'll keep the same prompt but switch to a more advanced language model.
+
+This demonstrates how combining refined prompts with better models can yield synergistic improvements.
+
+Now let's compare our results across these iterations. We can see a clear trend of improvement
+
+in response quality with some trade-offs in latency for later iterations. To wrap up what
+
+we've learned, iterative prompt engineering significantly enhances response quality.
+
+Structured instructions and examples guide the model effectively.
+
+Encouraging reasoning transparency leads to more trustworthy responses and combining refined
+
+prompts with advanced models yields the best results. It's crucial to balance response quality
+
+with system efficiency. Remember, RAG system development is an ongoing process. Continuously
+
+analyze, refine, and optimize your prompts and model selection for the best results.
+
+That's all for this chapter and thank you for watching.
+
+
+# RAG-7.1-chapter intro.srt
+
+Welcome to the last chapter in this course.
+
+If you have made it this far, we have some nuggets of wisdom that we want to share in this chapter.
+
+We will share general tips and tricks to speed up the latency of your LLM system
+
+and go over general considerations like parallelization of your LLM calls
+
+and making your application configurable.
+
+In chapter 2, we covered how we evaluated wandbot to achieve 8% accuracy over our baseline of 72%.
+
+In this chapter, we will spend some time to discuss ideas on how we did it by reducing the latency by 84%.
+
+
+# RAG-7.2-frameworks.srt
+
+Let's start by talking about frameworks.
+
+In general, be happy to use whatever suits your purpose,
+
+but avoid framework overload.
+
+While building wandbot, we switched from LlamaIndex to Instructor to LangChain or a mix of them.
+
+It was an exercise to see what works well, but honestly, they are all great.
+
+If your workflow is data heavy, consider using LlamaIndex.
+
+And if it is LLM Paul heavy, consider using LangChain.
+
+I highly recommend evaluating frameworks for yourself.
+
+I'm also an active believer of using less abstractions wherever possible.
+
+For wandbot, we use frameworks for generic tasks,
+
+but wrote custom pure Pythonic code for performance-critical sections.
+
+Finally, this is obvious, but asynchronous programming is your best friend.
+
+Don't shy away from it.
+
+Depending on use case, there can be multiple IO Bottlenecks,
+
+and async programming can help.
+
+
+# RAG-7.3-data ingestion.srt
+
+Let's look at data ingestion and how we can speed it up and make it more efficient.
+
+A general rule of thumb is to use multi-processing for your data ingestion operations,
+
+like converting raw files to text or chunking them.
+
+Depending on your use case, you can also approach indexing in multiple ways.
+
+If you only have a few thousand samples, doing flat indexing is not a bad option.
+
+You can also consider various variants of hierarchical indexing
+
+to speed up searching through most relevant pieces of information.
+
+Make sure your files, be it PDF, web pages or markdown are converted to a simple text
+
+and associated metadata. This makes the whole application more efficient.
+
+I like LlamaIndex's Document class which is an excellent abstraction for handling data.
+
+Make sure you have validation in place which is very important.
+
+Also ensure to keep track of your data versions with Weave dataset.
+
+Baking in versioning tool like Weave is a one-time work but you get the benefits out of it
+
+throughout the lifecycle of the project.
+
+
+# RAG-7.4-vector store.srt
+
+Selecting the right vector store is also very important.
+
+Usually the likes of Chroma and Weaviate are all you need.
+
+In wandbot, when we switched from FAISS to Chroma,
+
+we got a massive speed boost.
+
+This was mostly coming from the fact
+
+that we were able to do efficient metadata filtering.
+
+Note that for most applications,
+
+fancy vector store is not necessary.
+
+Vector stores are usually fast,
+
+and super fast vector stores gain their speed
+
+at the cost of recall.
+
+For most applications like RAG, recall is more important.
+
+For wandbot, we used in-memory vector store
+
+to lower latency,
+
+but note that this was only possible
+
+because the total size of the documents to index
+
+wasn't that huge.
+
+And many applications will fall in this bracket.
+
+However, using dedicated cloud managed DBs
+
+make the application overall easy to manage
+
+and easy to configure.
+
+
+# RAG-7.5-LLM calls.srt
+
+LLM calls take the most time in a RAG pipeline.
+
+If you're using an open source model, there are ways to speed up generation,
+
+but most frontier LLM providers are already employing these tricks.
+
+So the way ahead to reduce overhead due to LLM calls
+
+is to make it parallel wherever possible.
+
+Most frontier LLM providers can handle multiple requests
+
+and this helps in parallelization.
+
+Language expression language (LECL) is something we have used in wandbot
+
+and something we recommend to parallelize LLM calls
+
+while making the code more readable and efficient.
+
+LECL allows to chain small components both sequentially and parallelly
+
+and the best part is you can switch between sync and async mode
+
+without changing anything in the code.
+
+It just works.
+
+Finally, try to batch user queries wherever possible.
+
+
+# RAG-7.6-configuration-.srt
+
+Talking about configurability, if you are experimenting a lot with different LLM providers,
+
+using LiteLLM's unified API is a good approach.
+
+I, however, am also in favor of using the target LLM's SDK
+
+if you aren't sure on what LLM you are going to be using.
+
+Talking about system prompt, it can live directly in the script where it is going to be consumed
+
+for a less complex code base, but we recommend using text files or JSON files to keep track
+
+of the system prompts for more complex code bases.
+
+Following good software principles is the best way ahead and make sure to evaluate everything possible.
+
+Write unit tests, create LLM judges and everything else that we have covered in the chapters so far.
+
+Something like wandb Weave can be really useful to keep track and version control everything,
+
+be it code, the LLM, the prompts, etc.
+
+It is a lightweight package and it doesn't take up a lot of code real estate.
+
+Consider using it.
+
+Finally, caching is something we recommend if you are handling a many requests at the same time.
+
+The general idea is to cache pairs of input and output,
+
+especially your LLM generated response for a given query.
+
+During query time, if a new query matches some condition to an already existing cached query,
+
+serve the cached response instead of generating a response.
+
+This will massively speed up your application.
+
+Well, this is the end of this short chapter.
+
+I hope you learned something new and useful.
+
+To conclude, here are some of the key takeaway pointers.
+
+You should follow good software development practices to develop efficient applications.
+
+Doing it right will give insights to improve and debug your application as well.
+
+There is no need to stress about frameworks and make sure to evaluate everything you do.
+
+Evaluation driven development is the best approach.
+
+Finally, most tricks are use case dependent.
+
+We have documented our wandbot refactoring journey,
+
+which reduced the latency by 84% in this report.
+
+I would highly recommend you all check this out.
+
+
+# RAG-0.3-course outro.srt
+
+That concludes our RAG++ course.
+
+Thank you for joining us and taking the time
+
+to enhance your skills
+
+in building production-ready RAG systems.
+
+We appreciate your commitment
+
+and hope you found the course valuable.
+
+Your feedback is important to us.
+
+Please take a moment to leave a review
+
+and share your thoughts.
+
+Thank you once again,
+
+and we look forward to seeing the innovative solutions
+
+you will be creating.
+
+Best of luck and happy building.
+
+
