@@ -1,11 +1,12 @@
 ## LLM Friendly Resources
 
-This directory contains LLM friendly resources that can be used by students to augment their learnings from the course. Thus mainly includes the transcriptions of the videos in each chapter in srt format and the exercise notebooks in markdown format. Students should be able to simply copy-paste these resources in any chat available chat UI and interact with the material using an LLM.
+This directory contains LLM friendly resources that can be used by students to augment their learnings from the course. This includes the transcriptions of the videos in each chapter in srt format and the exercise notebooks in markdown format. Students should be able to simply copy-paste these resources in any chat available chat UI and interact with the material using an LLM.
 
-## Resources
+### Full Course
+-  `transcriptions_all_txt_rag.txt` (26851 tokens) contains the transcriptions of all the videos in the course in a single text file.
+-  `notebooks_all_chapters.md` (20777 tokens) contains the markdown version of all the exercise notebooks in the course. 
 
-The following resources are available in this directory:
-
+### Course Sections
 
 | Chapter | Resource | tokens |
 |---------|----------|--------|
@@ -89,6 +90,3 @@ The following resources are available in this directory:
 |  | Cohere - Video 4.srt | 1940 |
 | Weaviate | Weaviate - Video 1.srt | 1759 |
 |  | Weaviate - Video 2.srt | 2311 |
-
-
-The `transcriptions_all_txt_rag.txt` (26851 tokens) contains the transcriptions of all the videos in the course in a single text file. The `notebooks_all_chapters.md` (20777 tokens) contains the markdown version of all the exercise notebooks in the course. These might be useful for students who want to interact with the material using a longcontext LLM.
