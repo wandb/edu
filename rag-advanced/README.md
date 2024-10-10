@@ -1,6 +1,6 @@
 # RAG++
 
-This repository contains the code for the [Advanced RAG course](https://www.wandb.courses/courses/rag-in-production).
+This repository contains the code for the [RAG++ : From POC to Production course](https://www.wandb.courses/courses/rag-in-production).
 
 # Course Overview
 
