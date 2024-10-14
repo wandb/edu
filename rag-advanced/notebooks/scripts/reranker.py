@@ -39,9 +39,9 @@ class LiteLLMReranker(weave.Model):
         )
 
         outputs = []
-        for result in response:
-            reranked_doc = docs[result['index']]
-            reranked_doc["relevance_score"] = result['relevance_score']
+        for doc in response.results:
+            reranked_doc = docs[doc["index"]]
+            reranked_doc["relevance_score"] = doc["relevance_score"]
             outputs.append(reranked_doc)
         return outputs[:top_n]
 

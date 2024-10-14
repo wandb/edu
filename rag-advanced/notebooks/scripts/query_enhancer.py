@@ -4,14 +4,55 @@ This module contains the QueryEnhancer class for enhancing user queries using Li
 import json
 import os
 from enum import Enum
-from typing import Any, Dict, List
-
+from typing import Any, Dict, List, Literal
 import litellm
+from litellm import acompletion
 import weave
 from ftlangdetect import detect as detect_language
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from instructor import from_litellm
 
 from .utils import extract_json_from_markdown
+
+completion_with_instructor = from_litellm(acompletion)
+
+class Intent(BaseModel):
+    """
+    Model representing an intent with a label and a reason.
+    """
+    intent: Literal[
+        "financial_performance",
+        "operational_metrics",
+        "market_analysis",
+        "risk_assessment",
+        "strategic_initiatives",
+        "accounting_practices",
+        "management_insights",
+        "capital_structure",
+        "segment_analysis",
+        "comparative_analysis",
+        "unrelated",
+        "needs_more_info",
+        "opinion_request",
+        "nefarious_query",
+        "other"
+    ] = Field(
+        ..., 
+        description="The predicted intent label for the query"
+    )
+    reason: str = Field(
+        ..., 
+        description="The reasoning behind the predicted intent"
+    )
+
+class IntentPrediction(BaseModel):
+    """
+    Model representing a list of intents.
+    """
+    intents: List[Intent] = Field(
+        ..., 
+        description="List of predicted intents for the query"
+    )
 
 @weave.op()
 async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
@@ -25,49 +66,16 @@ async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the validated response with enum keys replaced by their values.
     """
 
-    class Labels(str, Enum):
-        """
-        Enum representing different financial analysis intent labels and additional categories.
-        """
-
-        FINANCIAL_PERFORMANCE = "financial_performance"
-        OPERATIONAL_METRICS = "operational_metrics"
-        MARKET_ANALYSIS = "market_analysis"
-        RISK_ASSESSMENT = "risk_assessment"
-        STRATEGIC_INITIATIVES = "strategic_initiatives"
-        ACCOUNTING_PRACTICES = "accounting_practices"
-        MANAGEMENT_INSIGHTS = "management_insights"
-        CAPITAL_STRUCTURE = "capital_structure"
-        SEGMENT_ANALYSIS = "segment_analysis"
-        COMPARATIVE_ANALYSIS = "comparative_analysis"
-        UNRELATED = "unrelated"
-        NEEDS_MORE_INFO = "needs_more_info"
-        OPINION_REQUEST = "opinion_request"
-        NEFARIOUS_QUERY = "nefarious_query"
-        OTHER = "other"
-
-    class Intent(BaseModel):
-        """
-        Model representing an intent with a label and a reason.
-        """
-
-        intent: Labels
-        reason: str
-
-    class IntentPrediction(BaseModel):
-        """
-        Model representing a list of intents.
-        """
-
-        intents: List[Intent]
-
-    cleaned_text = extract_json_from_markdown(response_text)
-    parsed_response = json.loads(cleaned_text)
-    validated_response = IntentPrediction(**parsed_response)
+    # cleaned_text = extract_json_from_markdown(response_text)
+    # print(cleaned_text)
+    # parsed_response = json.loads(cleaned_text)
+    # print(parsed_response)
+    # validated_response = IntentPrediction(**parsed_response)
+    validated_response = response_text
     response_dict = validated_response.model_dump()
 
     response_dict["intents"] = [
-        {"intent": intent.intent.value, "reason": intent.reason}
+        {"intent": intent.intent, "reason": intent.reason}
         for intent in validated_response.intents
     ]
 
@@ -97,13 +105,14 @@ async def call_litellm_with_retry(
     for attempt in range(max_retries):
         response_text = ""
         try:
-            response = await litellm.acompletion(
+            response = await completion_with_instructor.chat.completions.create(
                 model=model,
                 messages=messages,
                 temperature=0.0,
                 max_tokens=1000,
+                response_model=IntentPrediction,
             )
-            response_text = response.choices[0].message.content
+            response_text = response
 
             return await parse_and_validate_response(response_text)
         except Exception as e:
