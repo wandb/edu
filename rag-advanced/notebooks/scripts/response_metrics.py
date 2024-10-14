@@ -8,7 +8,7 @@ import re
 import string
 from typing import Any, Dict, List
 
-import cohere
+from litellm import acompletion
 import Levenshtein
 import weave
 from nltk import word_tokenize
@@ -18,7 +18,7 @@ from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 from pydantic import BaseModel, field_validator
 from rouge import Rouge
 
-from .utils import extract_json_from_markdown, make_cohere_api_call
+from .utils import extract_json_from_markdown
 
 wn.ensure_loaded()
 
@@ -178,21 +178,19 @@ async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
 
 
 @weave.op
-async def call_cohere_with_retry(
-    co_client: cohere.AsyncClientV2,
+async def call_litellm_with_retry(
     messages: List[Dict[str, str]],
     max_retries: int = 5,
 ) -> Dict[str, Any]:
     """
-    Call the Cohere API with retry logic.
+    Call the LiteLLM API with retry logic.
 
     Args:
-        co_client (cohere.AsyncClient): The Cohere asynchronous client.
-        messages (List[Dict[str, str]]): The list of messages to send to the Cohere API.
+        messages (List[Dict[str, str]]): The list of messages to send to the LiteLLM API.
         max_retries (int, optional): The maximum number of retry attempts. Defaults to 5.
 
     Returns:
-        Dict[str, Any]: The parsed and validated response from the Cohere API.
+        Dict[str, Any]: The parsed and validated response from the LiteLLM API.
 
     Raises:
         Exception: If the maximum number of retries is reached without successful validation.
@@ -201,13 +199,13 @@ async def call_cohere_with_retry(
 
     for attempt in range(max_retries):
         try:
-            response_text = await make_cohere_api_call(
-                co_client,
-                messages,
-                model="command-r-plus",
+            response = await acompletion(
+                model="gpt-4o",
+                messages=messages,
                 temperature=0.0,
                 max_tokens=250,
             )
+            response_text = response.choices[0].message.content
             return await parse_and_validate_response(response_text)
         except Exception as e:
             error_message = f"Your previous response resulted in an error:\n{str(e)}"
@@ -249,7 +247,6 @@ async def evaluate_correctness_using_llm_judge(
     Returns:
         Dict[str, Any]: The evaluation result containing the final score and decision.
     """
-    co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
     messages = json.load(open(prompt_file))
     message_template = """<question>\n{question}\n</question><reference_answer>\n
     {reference_answer}\n</reference_answer>\n<generated_answer>\n{generated_answer}\n</generated_answer>"""
@@ -264,7 +261,7 @@ async def evaluate_correctness_using_llm_judge(
         }
     )
 
-    return await call_cohere_with_retry(co_client, messages)
+    return await call_litellm_with_retry(messages)
 
 
 @weave.op

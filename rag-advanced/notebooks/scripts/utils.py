@@ -5,9 +5,10 @@ import inspect
 import os
 import re
 from functools import partial
-from typing import Dict, List
+from typing import Dict, List, Any
 
-import cohere
+from litellm import acompletion, completion, encode
+
 import requests
 import weave
 from rich.console import Console
@@ -58,7 +59,7 @@ def extract_json_from_markdown(text: str) -> str:
 
 @weave.op
 async def make_cohere_api_call(
-    co_client: cohere.AsyncClientV2,
+    _client: acompletion,
     messages: List[Dict[str, any]],
     **kwargs,
 ) -> str:
@@ -73,7 +74,7 @@ async def make_cohere_api_call(
     Returns:
         str: The content of the first message in the response.
     """
-    response = await co_client.chat(
+    response = await _client.chat(
         messages=messages,
         **kwargs,
     )
@@ -101,34 +102,37 @@ def get_special_tokens_set(tokenizer_url=TOKENIZERS["command-r"]):
     return set([tok["content"] for tok in response.json()["added_tokens"]])
 
 
-def tokenize_text(text: str, model: str = "command-r") -> List[str]:
+def tokenize_text(text: str, model: str = "gpt-4o-mini") -> List[int]:
     """
     Tokenizes the given text using the specified model.
 
     Args:
         text (str): The text to be tokenized.
-        model (str): The model to use for tokenization. Defaults to "command-r".
+        model (str): The model to use for tokenization. Defaults to "gpt-4o-mini".
 
     Returns:
-        List[str]: A list of tokens.
+        List[int]: A list of token ids.
     """
-    co = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
-    return co.tokenize(text=text, model=model, offline=True)
+    return encode(model=model, text=text)
 
 
-def length_function(text, model="command-r"):
+def length_function(text, model="gpt-4o-mini"):
     """
     Calculate the length of the tokenized text using the specified model.
 
     Args:
         text (str): The text to be tokenized and measured.
-        model (str): The model to use for tokenization. Defaults to "command-r".
+        model (str): The model to use for tokenization. Defaults to "gpt-4-mini".
 
     Returns:
         int: The number of tokens in the tokenized text.
     """
-    return len(tokenize_text(text, model=model).tokens)
+    return len(tokenize_text(text, model=model))
 
 
-length_function_command_r = partial(length_function, model="command-r")
-length_function_command_r_plus = partial(length_function, model="command-r-plus")
+# Update the partial function to use gpt-4o-mini as default
+length_function_gpt4_mini = partial(length_function, model="gpt-4o-mini")
+
+# You can keep these if you still need them, or remove if not necessary
+# length_function_command_r = partial(length_function, model="command-r")
+# length_function_command_r_plus = partial(length_function, model="command-r-plus")

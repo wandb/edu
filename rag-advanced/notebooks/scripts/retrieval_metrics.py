@@ -5,12 +5,12 @@ import json
 import os
 from typing import Any, Dict, List
 
-import cohere
+import litellm
 import numpy as np
 import weave
 from pydantic import BaseModel, field_validator
 
-from .utils import extract_json_from_markdown, make_cohere_api_call
+from .utils import extract_json_from_markdown
 
 
 @weave.op
@@ -379,17 +379,15 @@ async def parse_and_validate_response(
 
 
 @weave.op
-async def call_cohere_with_retry(
-    co_client: cohere.AsyncClientV2,
+async def call_litellm_with_retry(
     messages: List[Dict[str, any]],
     num_contexts: int,
     max_retries: int = 5,
 ) -> Dict[str, Any]:
     """
-    Call the Cohere API with retry logic.
+    Call the LiteLLM API with retry logic.
 
     Args:
-        co_client (cohere.AsyncClientV2): The Cohere client instance.
         messages (List[Dict[str, any]]): The list of messages to send to the API.
         num_contexts (int): The expected number of contexts.
         max_retries (int, optional): The maximum number of retry attempts. Defaults to 5.
@@ -403,13 +401,13 @@ async def call_cohere_with_retry(
     for attempt in range(max_retries):
         response_text = ""
         try:
-            response_text = await make_cohere_api_call(
-                co_client,
-                messages,
-                model="command-r-plus",
+            response = await litellm.acompletion(
+                model="gpt-4o",
+                messages=messages,
                 temperature=0.0,
                 max_tokens=250,
             )
+            response_text = response.choices[0].message.content
             return await parse_and_validate_response(response_text, num_contexts)
         except Exception as e:
             error_message = f"Your previous response resulted in an error: {str(e)}"
@@ -450,8 +448,6 @@ async def evaluate_retrieval_with_llm(
     Returns:
         Dict[str, Any]: The validated response from the language model.
     """
-    co_client = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])
-
     messages = json.load(open(prompt_file))
 
     message_template = """<question>
@@ -470,7 +466,7 @@ async def evaluate_retrieval_with_llm(
         }
     )
 
-    return await call_cohere_with_retry(co_client, messages, len(contexts))
+    return await call_litellm_with_retry(messages, len(contexts))
 
 
 @weave.op

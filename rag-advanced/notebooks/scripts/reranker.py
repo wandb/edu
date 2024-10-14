@@ -1,21 +1,21 @@
 """
-This module contains classes for reranking documents using Cohere's reranking model and a fusion ranking approach.
+This module contains classes for reranking documents using LiteLLM's reranking capabilities and a fusion ranking approach.
 """
 import json
 import os
 from typing import Any, Dict, List
 
-import cohere
 import numpy as np
 import weave
+from litellm import rerank
 
 
-class CohereReranker(weave.Model):
+class LiteLLMReranker(weave.Model):
     """
-    A class to rerank documents using Cohere's reranking model.
+    A class to rerank documents using LiteLLM's reranking capabilities.
     """
 
-    model: str = "rerank-english-v3.0"
+    model: str = "cohere/rerank-english-v3.0"
 
     @weave.op()
     def rerank(self, query, docs, top_n=None):
@@ -30,16 +30,18 @@ class CohereReranker(weave.Model):
         Returns:
             List[Dict[str, Any]]: A list of reranked documents with relevance scores.
         """
-        client = cohere.Client(os.environ["COHERE_API_KEY"])
         documents = [doc["text"] for doc in docs]
-        response = client.rerank(
-            model=self.model, query=query, documents=documents, top_n=top_n or len(docs)
+        response = rerank(
+            model=self.model,
+            query=query,
+            documents=documents,
+            top_n=top_n or len(docs)
         )
 
         outputs = []
-        for doc in response.results:
-            reranked_doc = docs[doc.index]
-            reranked_doc["relevance_score"] = doc.relevance_score
+        for result in response:
+            reranked_doc = docs[result['index']]
+            reranked_doc["relevance_score"] = result['relevance_score']
             outputs.append(reranked_doc)
         return outputs[:top_n]
 
