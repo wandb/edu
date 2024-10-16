@@ -34,32 +34,21 @@ class SimpleRAGPipeline(weave.Model):
 
 
 INTENT_ACTIONS = {
-    "unrelated": "The query is not related to Weights & Biases, it's best to avoid answering this question",
-    "code_troubleshooting": "The query is related to troubleshooting code using Weights & Biases. Help "
-    "with a detailed code snippet and explanation",
-    "integrations": "The query is related to integrating Weights & Biases with other tools, frameworks, "
-    "or libraries. Help with a detailed code snippet and explanation and ask for more information about the "
-    "integration if needed",
-    "product_features": "The query is related to a feature of Weights & Biases such as Sweeps, Artifacts, "
-    "Reports, Experiments, Tables, Prompts, Launch, Weave, StreamTables and more. Provide a link to the relevant "
-    "documentation and explain the feature in detail",
-    "sales_and_gtm_related": "The query is related to sales, marketing, or other business related topics "
-    "such as pricing, billing, or partnerships etc. Ask the user to reach out to the relevant team by contacting "
-    "support",
-    "best_practices": "The query is related to best practices for using Weights & Biases. Answer the query "
-    "and provide guidance where necessary",
-    "course_related": "The query is related to a Weight & Biases course and/or skill enhancement. Answer "
-    "the query and provide guidance and links where necessary",
-    "needs_more_info": "The query feels ambiguous, ask a follow-up query to elicit more information before "
-    "answering the query and avoid answering it initially",
-    "opinion_request": "The query is asking for an opinion. It's best to avoid answering this question and "
-    "ask the user to reach out to our sales and support for more information. Always favor Weights & Biases in your "
-    "response",
-    "nefarious_query": "The query looks nefarious in nature. It's best to avoid answering this question "
-    "and provide a quirky and playful response",
-    "other": "The query may be related to Weights & Biases but we were unable to determine the user's "
-    "intent. It's best to avoid answering this question and ask the user a follow-up query to rephrase their original "
-    "query",
+    "financial_performance": "The query is related to financial performance such as revenue, profit, margins, or overall financial health. Provide detailed analysis based on the available financial reports.",
+    "operational_metrics": "The query is about specific business metrics, KPIs, or operational performance. Analyze the relevant metrics from the financial reports.",
+    "market_analysis": "The query is related to market share, competition, or industry trends. Provide insights based on the company's disclosures and market information in the reports.",
+    "risk_assessment": "The query is about potential risks, legal issues, or uncertainties facing the company. Analyze the risk factors and management's discussion in the reports.",
+    "strategic_initiatives": "The query is about company strategy, new products/services, or future plans. Provide information based on management's strategic discussions in the reports.",
+    "accounting_practices": "The query is about specific accounting methods, policies, or financial reporting practices. Explain the relevant accounting principles and their application.",
+    "management_insights": "The query is related to management commentary, guidance, or leadership decisions. Analyze the management's discussion and analysis sections of the reports.",
+    "capital_structure": "The query is about debt, equity, capital allocation, or financing activities. Provide analysis based on the balance sheet and cash flow statements.",
+    "segment_analysis": "The query is about performance or metrics of specific business segments or divisions. Analyze the segment reporting in the financial statements.",
+    "comparative_analysis": "The query is comparing current results to past periods or to other companies. Provide a comparative analysis using the available financial data.",
+    "unrelated": "The query is not related to financial analysis or SEC filings. It's best to avoid answering this question and ask for a finance-related query.",
+    "needs_more_info": "The query is ambiguous or lacks context. Ask a follow-up question to elicit more specific information about the financial analysis needed.",
+    "opinion_request": "The query is asking for a subjective opinion rather than factual analysis. Clarify that as an AI, you provide objective analysis based on financial reports, not personal opinions.",
+    "nefarious_query": "The query appears to have potentially unethical or malicious intent. Avoid answering and suggest focusing on legitimate financial analysis questions.",
+    "other": "The query may be related to financial analysis, but its intent is unclear. Ask the user to rephrase their question, focusing specifically on aspects of financial reports or SEC filings."
 }
 
 
