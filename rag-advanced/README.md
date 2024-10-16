@@ -3,6 +3,7 @@
 This repository contains the code for the [RAG++ : From POC to Production course](https://www.wandb.courses/courses/rag-in-production).
 
 **LLM-friendly Resources**
+
 To help learn with ChatGPT etc, full text concatentation of the entire course transcript and course notebooks [can be found here](https://github.com/wandb/edu/tree/main/rag-advanced/resources#llm-friendly-resources)
 
 # Course Overview
