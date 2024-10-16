@@ -2,6 +2,9 @@
 
 This repository contains the code for the [RAG++ : From POC to Production course](https://www.wandb.courses/courses/rag-in-production).
 
+**LLM-friendly Resources**
+To help learn with ChatGPT etc, full text concatentation of the entire course transcript and course notebooks [can be found here](https://github.com/wandb/edu/tree/main/rag-advanced/resources#llm-friendly-resources)
+
 # Course Overview
 
 Practical RAG techniques for engineers: learn production-ready solutions from industry experts to optimize performance, cut costs, and enhance the accuracy and relevance of your applications.
