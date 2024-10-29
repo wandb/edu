@@ -48,10 +48,14 @@ def print_dialogue_data(
             data = entry[idx]
             label = index_labels[idx]
             
-            # Handle dict unpacking for input/output
+            # Handle different data types
             if isinstance(data, dict):
-                # Input and Output are dicts with single keys
-                content = next(iter(data.values()))
+                # Format dictionary contents with one item per line
+                content = "\n".join(f"{k}: {v}" for k, v in data.items())
+            elif isinstance(data, (int, float, bool)):
+                content = str(data)
+            elif data is None:
+                content = "None"
             else:
                 content = str(data)
             
