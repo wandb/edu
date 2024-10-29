@@ -2,6 +2,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from typing import Any, List, Optional
+from rich.markdown import Markdown
 
 def print_dialogue_data(
     weave_data: Any,
@@ -27,6 +28,7 @@ def print_dialogue_data(
         "Input",
         "Output",
         "Annotation",
+        "Criteria Annotation",
         "Note",
         "Task Description",
         "Metric Details"
@@ -69,3 +71,14 @@ def print_dialogue_data(
                 
     except (IndexError, KeyError) as e:
         console.print(f"[red]Error accessing data: {str(e)}")
+
+def display_prompt(prompt_text: str) -> None:
+    """
+    Renders a prompt nicely formatted in the terminal using rich markdown.
+    
+    Args:
+        prompt_text (str): The prompt text to display
+    """
+    console = Console()
+    md = Markdown(prompt_text)
+    console.print(md)
