@@ -11,7 +11,7 @@ from scipy.spatial.distance import cdist
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .embedding import sync_embed
-from .reranker import CohereReranker, FusionRanker
+from .reranker import LiteLLMReranker, FusionRanker
 
 
 class TFIDFRetriever(weave.Model):
@@ -231,11 +231,11 @@ class DenseRetrieverWithReranker(weave.Model):
 
     Attributes:
         retriever (DenseRetriever): The dense retriever model.
-        reranker (CohereReranker): The reranker model.
+        reranker (LiteLLMReranker): The reranker model.
     """
 
     retriever: DenseRetriever = DenseRetriever()
-    reranker: CohereReranker = CohereReranker()
+    reranker: LiteLLMReranker = LiteLLMReranker()
 
     def index_data(self, data):
         """
@@ -281,13 +281,13 @@ class HybridRetrieverReranker(weave.Model):
         sparse_retriever (BM25Retriever): The sparse retriever model using BM25.
         dense_retriever (DenseRetrieverWithReranker): The dense retriever model with a reranker.
         fusion_ranker (FusionRanker): The fusion ranker to combine sparse and dense retrievals.
-        ranker (CohereReranker): The final reranker model.
+        ranker (LiteLLMReranker): The final reranker model.
     """
 
     sparse_retriever: BM25Retriever = BM25Retriever()
     dense_retriever: DenseRetrieverWithReranker = DenseRetrieverWithReranker()
     fusion_ranker: FusionRanker = FusionRanker()
-    ranker: CohereReranker = CohereReranker()
+    ranker: LiteLLMReranker = LiteLLMReranker()
 
     def index_data(self, data):
         """

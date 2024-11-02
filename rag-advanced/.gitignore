@@ -1,3 +1,5 @@
 .env
 
 data/wandb_docs/*
+
+.venv
