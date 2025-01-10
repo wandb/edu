@@ -15,6 +15,7 @@ from .embedding import sync_embed
 from .utils import length_function
 
 nltk.download("punkt")
+nltk.download("punkt_tab")
 CHUNK_SIZE = 512
 
 
