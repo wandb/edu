@@ -7,8 +7,9 @@ from typing import Dict, List
 
 import cohere
 import weave
-from weave.integrations.cohere import cohere_patcher
+from weave.integrations.cohere import get_cohere_patcher
 
+cohere_patcher = get_cohere_patcher()
 cohere_patcher.attempt_patch()
 
 
