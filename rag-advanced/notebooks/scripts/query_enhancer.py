@@ -15,7 +15,6 @@ from .utils import extract_json_from_markdown, make_cohere_api_call
 
 
 @weave.op()
-@weave.op()
 async def parse_and_validate_response(response_text: str) -> Dict[str, Any]:
     """
     Parse and validate the response text.
