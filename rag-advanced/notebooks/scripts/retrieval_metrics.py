@@ -15,13 +15,13 @@ from .utils import extract_json_from_markdown, make_cohere_api_call
 
 @weave.op
 def compute_hit_rate(
-    model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
+    output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
     """
     Calculate the hit rate (precision) for a single query.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
                 - 'score': The relevance score of the document.
@@ -37,7 +37,7 @@ def compute_hit_rate(
     This metric is useful for assessing the accuracy of the retrieval system by determining the relevance of the
     retrieved documents.
     """
-    search_results = [doc["source"] for doc in model_output]
+    search_results = [doc["source"] for doc in output]
     relevant_sources = [
         context["source"] for context in contexts if context["relevance"] != 0
     ]
@@ -55,13 +55,13 @@ def compute_hit_rate(
 
 @weave.op
 def compute_mrr(
-    model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
+    output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
     """
     Calculate the Mean Reciprocal Rank (MRR) for a single query.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
                 - 'score': The relevance score of the document.
@@ -84,25 +84,25 @@ def compute_mrr(
     ]
 
     mrr_score = 0
-    for rank, result in enumerate(model_output, 1):
+    for rank, result in enumerate(output, 1):
         if result["source"] in relevant_sources:
             mrr_score += 1 / rank
 
     if mrr_score == 0:
         return 0.0
     else:
-        return mrr_score / len(model_output)
+        return mrr_score / len(output)
 
 
 @weave.op
 def compute_ndcg(
-    model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
+    output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
     """
     Calculate the Normalized Discounted Cumulative Gain (NDCG) for a single query.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
         contexts (List[Dict[str, Any]]): A list of dictionaries representing the relevant contexts.
@@ -118,7 +118,7 @@ def compute_ndcg(
     dcg = 0.0
     idcg = 0.0
 
-    for i, result in enumerate(model_output):
+    for i, result in enumerate(output):
         rel = relevance_map.get(result["source"], 0)
         dcg += (2**rel - 1) / np.log2(i + 2)
 
@@ -137,13 +137,13 @@ def compute_ndcg(
 
 @weave.op
 def compute_map(
-    model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
+    output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
     """
     Calculate the Mean Average Precision (MAP) for a single query.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
                 - 'score': The relevance score of the document.
@@ -172,7 +172,7 @@ def compute_map(
     num_relevant = 0
     sum_precision = 0.0
 
-    for i, result in enumerate(model_output):
+    for i, result in enumerate(output):
         if result["source"] in relevant_sources:
             num_relevant += 1
             sum_precision += num_relevant / (i + 1)
@@ -186,13 +186,13 @@ def compute_map(
 
 @weave.op
 def compute_precision(
-    model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
+    output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
     """
     Calculate the Precision for a single query.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
                 - 'score': The relevance score of the document.
@@ -208,7 +208,7 @@ def compute_precision(
     relevant_sources = {
         context["source"] for context in contexts if context["relevance"] != 0
     }
-    retrieved_sources = {result["source"] for result in model_output}
+    retrieved_sources = {result["source"] for result in output}
 
     relevant_retrieved = relevant_sources & retrieved_sources
 
@@ -221,13 +221,13 @@ def compute_precision(
 # Recall
 @weave.op
 def compute_recall(
-    model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
+    output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
     """
     Calculate the Recall for a single query.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
                 - 'score': The relevance score of the document.
@@ -243,7 +243,7 @@ def compute_recall(
     relevant_sources = {
         context["source"] for context in contexts if context["relevance"] != 0
     }
-    retrieved_sources = {result["source"] for result in model_output}
+    retrieved_sources = {result["source"] for result in output}
 
     relevant_retrieved = relevant_sources & retrieved_sources
 
@@ -256,13 +256,13 @@ def compute_recall(
 # F1 Score
 @weave.op
 def compute_f1_score(
-    model_output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
+    output: List[Dict[str, Any]], contexts: List[Dict[str, Any]]
 ) -> float:
     """
     Calculate the F1-Score for a single query.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
             Each dictionary contains:
                 - 'source': A unique identifier for the document.
                 - 'score': The relevance score of the document.
@@ -275,8 +275,8 @@ def compute_f1_score(
 
     F1-Score is the harmonic mean of Precision and Recall.
     """
-    precision = compute_precision(model_output, contexts)
-    recall = compute_recall(model_output, contexts)
+    precision = compute_precision(output, contexts)
+    recall = compute_recall(output, contexts)
 
     if precision + recall == 0:
         return 0.0
@@ -495,21 +495,21 @@ def compute_rank_score(scores: List[int]) -> float:
 
 @weave.op
 async def llm_retrieval_scorer(
-    model_output: List[Dict[str, Any]], question: str
+    output: List[Dict[str, Any]], question: str
 ) -> Dict[str, float]:
     """
     Evaluate the retrieval results using a language model and compute relevance scores.
 
     Args:
-        model_output (List[Dict[str, Any]]): The list of retrieved documents from the model.
+        output (List[Dict[str, Any]]): The list of retrieved documents from the model.
         question (str): The query or question for which the retrieval is being evaluated.
 
     Returns:
         Dict[str, float]: A dictionary containing the mean relevance score and the relevance rank score.
     """
-    scores = await evaluate_retrieval_with_llm(question, model_output)
+    scores = await evaluate_retrieval_with_llm(question, output)
     relevance_scores = [item["relevance"] for item in scores["final_scores"]]
-    mean_relevance = sum(relevance_scores) / len(model_output)
+    mean_relevance = sum(relevance_scores) / len(output)
     rank_score = compute_rank_score(relevance_scores)
     return {"relevance": mean_relevance, "relevance_rank_score": rank_score}
 
