@@ -406,7 +406,7 @@ async def call_cohere_with_retry(
             response_text = await make_cohere_api_call(
                 co_client,
                 messages,
-                model="command-r-plus",
+                model="command-r-plus-08-2024",
                 temperature=0.0,
                 max_tokens=250,
             )

@@ -101,13 +101,13 @@ def get_special_tokens_set(tokenizer_url=TOKENIZERS["command-r"]):
     return set([tok["content"] for tok in response.json()["added_tokens"]])
 
 
-def tokenize_text(text: str, model: str = "command-r") -> List[str]:
+def tokenize_text(text: str, model: str = "command-r-08-2024") -> List[str]:
     """
     Tokenizes the given text using the specified model.
 
     Args:
         text (str): The text to be tokenized.
-        model (str): The model to use for tokenization. Defaults to "command-r".
+        model (str): The model to use for tokenization. Defaults to "command-r-08-2024".
 
     Returns:
         List[str]: A list of tokens.
@@ -116,13 +116,13 @@ def tokenize_text(text: str, model: str = "command-r") -> List[str]:
     return co.tokenize(text=text, model=model, offline=True)
 
 
-def length_function(text, model="command-r"):
+def length_function(text, model="command-r-08-2024"):
     """
     Calculate the length of the tokenized text using the specified model.
 
     Args:
         text (str): The text to be tokenized and measured.
-        model (str): The model to use for tokenization. Defaults to "command-r".
+        model (str): The model to use for tokenization. Defaults to "command-r-08-2024".
 
     Returns:
         int: The number of tokens in the tokenized text.
@@ -130,5 +130,5 @@ def length_function(text, model="command-r"):
     return len(tokenize_text(text, model=model).tokens)
 
 
-length_function_command_r = partial(length_function, model="command-r")
-length_function_command_r_plus = partial(length_function, model="command-r-plus")
+length_function_command_r = partial(length_function, model="command-r-08-2024")
+length_function_command_r_plus = partial(length_function, model="command-r-plus-08-2024")

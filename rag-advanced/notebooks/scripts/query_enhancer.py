@@ -97,7 +97,7 @@ async def call_cohere_with_retry(
             response_text = await make_cohere_api_call(
                 co_client,
                 messages,
-                model="command-r-plus",
+                model="command-r-plus-08-2024",
                 temperature=0.0,
                 max_tokens=1000,
             )
@@ -147,7 +147,7 @@ class QueryEnhancer(weave.Model):
         messages.append({"role": "user", "content": f"## Question\n{query}"})
 
         response = await co_client.chat(
-            model="command-r-plus",
+            model="command-r-plus-08-2024",
             temperature=0.5,
             max_tokens=500,
             messages=messages,
