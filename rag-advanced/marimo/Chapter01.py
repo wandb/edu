@@ -57,10 +57,42 @@ def _(mo):
     import os
     import pathlib
     import sys
+    import urllib.request
 
     # The course's shared code lives in ../notebooks/scripts; make it importable.
     NOTEBOOKS_DIR = pathlib.Path(mo.notebook_dir()).resolve().parent / "notebooks"
     DATA_DIR = pathlib.Path(mo.notebook_dir()).resolve().parent / "data"
+
+    # When the notebook runs outside the repo (e.g. opened on molab, which only
+    # imports this single file), fetch the shared course code from GitHub.
+    _REPO_RAW = "https://raw.githubusercontent.com/wandb/edu/feat/rag-advanced-marimo-pilot/rag-advanced/notebooks"
+    _SCRIPT_FILES = [
+        "__init__.py",
+        "chunking.py",
+        "embedding.py",
+        "preprocess.py",
+        "query_enhancer.py",
+        "rag_pipeline.py",
+        "reranker.py",
+        "response_generator.py",
+        "response_metrics.py",
+        "retrieval_metrics.py",
+        "retriever.py",
+        "utils.py",
+    ]
+    _PROMPT_FILES = ["initial_system.txt"]
+    if not (NOTEBOOKS_DIR / "scripts" / "__init__.py").exists():
+        (NOTEBOOKS_DIR / "scripts").mkdir(parents=True, exist_ok=True)
+        (NOTEBOOKS_DIR / "prompts").mkdir(parents=True, exist_ok=True)
+        for _name in _SCRIPT_FILES:
+            urllib.request.urlretrieve(
+                f"{_REPO_RAW}/scripts/{_name}", NOTEBOOKS_DIR / "scripts" / _name
+            )
+        for _name in _PROMPT_FILES:
+            urllib.request.urlretrieve(
+                f"{_REPO_RAW}/prompts/{_name}", NOTEBOOKS_DIR / "prompts" / _name
+            )
+
     if str(NOTEBOOKS_DIR) not in sys.path:
         sys.path.insert(0, str(NOTEBOOKS_DIR))
     return DATA_DIR, NOTEBOOKS_DIR, os, pathlib
@@ -860,11 +892,6 @@ def _(mo):
     """),
         kind="success",
     )
-    return
-
-
-@app.cell
-def _():
     return
 
 
