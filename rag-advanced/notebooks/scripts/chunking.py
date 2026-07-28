@@ -9,7 +9,7 @@ import nltk
 import numpy as np
 from nltk import sent_tokenize
 from sklearn.metrics.pairwise import cosine_distances
-from tqdm.notebook import tqdm
+from tqdm.auto import tqdm
 
 from .embedding import sync_embed
 from .utils import length_function
