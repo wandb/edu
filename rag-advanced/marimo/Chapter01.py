@@ -634,7 +634,7 @@ def _(mo):
 def _(data_source, mo, preview_table, weave, weave_client):
     mo.stop(weave_client is None)
     _chunked_data_ref = (
-        "weave:///rag-course/rag-course/object/chunked_data:Lt6M8qCUICD1JZTlMYzuDLTVtvFYESxvj3tcAIoPrtE"
+        "weave:///wandb-smle/rag-course/object/chunked_data:CRbEh79BgxWPqbD1rOozLNw12pky0LhQYF2PIXgc2pQ"
         if data_source.value == "course"
         else "chunked_data:latest"
     )
